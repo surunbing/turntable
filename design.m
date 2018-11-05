@@ -105,43 +105,46 @@ ub = 1e19 * ones(series.count + 1, 1);
 ub(6) = 1000;
 ub(7) = 1000;
 
+%% 确定需要频点
+
+
 % start = zeros(series.count + 1, 1);
 % start(1) = 1;
 start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
 %start = [later.gain, 2, 42, -2, 41, later.alpha, later.fre];
-frequence = linspace(1, 10, 10)' * 2 * pi;
-P = GetTf(start, series);
-[Mag, Phi] = bode(P, frequence);
-Mag = 20 * log10(Mag);
-[mag1, phi1] = GetMagPhi(start, series, frequence);
+% frequence = linspace(1, 10, 10)' * 2 * pi;
+% P = GetTf(start, series);
+% [Mag, Phi] = bode(P, frequence);
+% Mag = 20 * log10(Mag);
+% [mag1, phi1] = GetMagPhi(start, series, frequence);
 
-% 
-% options = optimset('Algorithm','interior-point');
-% % options = optimset('Algorithm','sqp','MaxIter',1600);
-% tic
-% [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P)...
-%     , start, [], [], [], [], lb, ub, @(x)nonlcon(x, data, series, G_P, bandwidth), options);
-% toc
-% 
-% P = GetTf(X, series);
-% 
-% figurename('控制器');
-% bode(P);
-% grid on
-% 
-% figurename('对象');
-% bode(G_P * P);
-% grid on
-% 
-% figurename('bihuan');
-% bode(G_P * P / (1 + G_P * P));
-% grid on
-% 
-% figurename('margin');
-% margin(G_P);
-% grid on
-% hold on
-% margin(G_P * P);
+
+options = optimset('Algorithm','interior-point');
+% options = optimset('Algorithm','sqp','MaxIter',1600);
+tic
+[X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P)...
+    , start, [], [], [], [], lb, ub, @(x)nonlcon(x, data, series, G_P, bandwidth), options);
+toc
+
+P = GetTf(X, series);
+
+figurename('控制器');
+bode(P);
+grid on
+
+figurename('对象');
+bode(G_P * P);
+grid on
+
+figurename('bihuan');
+bode(G_P * P / (1 + G_P * P));
+grid on
+
+figurename('margin');
+margin(G_P);
+grid on
+hold on
+margin(G_P * P);
 autoArrangeFigures
 
 
