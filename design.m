@@ -72,7 +72,7 @@ grid on;
 % 
 % % %% 给定指定频率的开环相关数据
 count = round(bandwidth / 2 / pi);
-fre = linspace(1, count, count) * 2 * pi;
+fre = linspace(1, count, count)' * 2 * pi;
 [mag, phi, w] = bode(G_P, fre);
 
 data.fre = fre;
@@ -111,19 +111,14 @@ ub(7) = 1000;
 % start = zeros(series.count + 1, 1);
 % start(1) = 1;
 start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
-%start = [later.gain, 2, 42, -2, 41, later.alpha, later.fre];
-% frequence = linspace(1, 10, 10)' * 2 * pi;
-% P = GetTf(start, series);
-% [Mag, Phi] = bode(P, frequence);
-% Mag = 20 * log10(Mag);
-% [mag1, phi1] = GetMagPhi(start, series, frequence);
+[fre_Rp, fre_con] = GetFrequence(bandwidth, ratio);
 
 
 options = optimset('Algorithm','interior-point');
 % options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
-[X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P)...
-    , start, [], [], [], [], lb, ub, @(x)nonlcon(x, data, series, G_P, bandwidth), options);
+[X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, fre_Rp)...
+    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data, series, G_P, bandwidth, fre_con), options);
 toc
 
 P = GetTf(X, series);

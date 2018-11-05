@@ -3,7 +3,7 @@ function cost = MY_costfunction(x, data, series, P, fre_Rp)  %% Resonance peak
 cost = 0;
 % % 计算频点处的特性
 % % 开环
-frequence = [data.fre'; fre_Rp];
+frequence = [data.fre; fre_Rp];
 [mag, phi] = GetMagPhi(x, series, frequence);
 mag = mag + data.mag;
 phi = phi + data.phi;

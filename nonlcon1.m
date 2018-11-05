@@ -20,7 +20,7 @@ complex_bode = complex_bode ./ (1 + complex_bode);
 Mag = log10(abs(complex_bode)) * 20;
 % Phi = angle(complex_bode) / pi * 180;
 for i = nCount + 1 : nCount * 2
-    c(i) = 2 - Mag(i);
+    c(i) = 7 - Mag(i);
 end
 
 % 
