@@ -1,6 +1,8 @@
 clc, clear
 close all
 
+nRp = 15;
+
 bandwidth = 10 * 2 * pi;
 
 %% Object
@@ -72,8 +74,9 @@ grid on;
 % 
 % % %% 给定指定频率的开环相关数据
 count = round(bandwidth / 2 / pi);
-fre = linspace(1, count, count)' * 2 * pi;
-[mag, phi, w] = bode(G_P, fre);
+[fre_Rp, fre_con] = GetFrequence(bandwidth, ratio, nRp);
+fre = [linspace(1, count, count)' * 2 * pi; fre_Rp];
+[mag, phi, ~] = bode(G_P, fre);
 
 data.fre = fre;
 data.mag = zeros(length(fre), 1);
@@ -88,6 +91,21 @@ for i = 1:length(fre)
     data.complex(i) = 10 ^ (mag(1, 1, i) / 20) * complex(cos(data.phi_rad(i)), sin(data.phi_rad(i)));
 end
 
+%% 约束对应的值
+data_con.fre = fre_con;
+data_con.mag = zeros(length(fre_con), 1);
+data_con.phi = zeros(length(fre_con), 1);
+data_con.phi_rad = zeros(length(fre_con), 1);  
+data_con.complex = zeros(length(fre_con), 1);
+[mag, phi, w] = bode(G_P, data_con.fre);
+
+for i = 1:length(fre_con)
+    data_con.mag(i) = 20 * log10(mag(1, 1, i));
+    data_con.phi(i) = phi(1, 1, i);
+    data_con.phi_rad(i) = phi(1, 1, i) / 180 * pi;
+    data_con.complex(i) = 10 ^ (mag(1, 1, i) / 20) * complex(cos(data_con.phi_rad(i)), sin(data_con.phi_rad(i)));
+end
+
 %% 整形优化
 
 series.real_pole = 0;   % 极点  a
@@ -98,7 +116,7 @@ series.lead = 1;            % 环节    a,b
 series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
 
 % 约束
-lb = zeros(series.count + 1, 1) + 0.000001;
+lb = zeros(series.count + 1, 1) + 0.01;
 lb(6) = 0.01;
 lb(7) = 0.001;
 ub = 1e19 * ones(series.count + 1, 1);
@@ -111,14 +129,13 @@ ub(7) = 1000;
 % start = zeros(series.count + 1, 1);
 % start(1) = 1;
 start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
-[fre_Rp, fre_con] = GetFrequence(bandwidth, ratio);
 
 
 options = optimset('Algorithm','interior-point');
 % options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
-[X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, fre_Rp)...
-    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data, series, G_P, bandwidth, fre_con), options);
+[X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
+    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth), options);
 toc
 
 P = GetTf(X, series);

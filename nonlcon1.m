@@ -1,11 +1,13 @@
 % G 对象
-function [c,ceq] = nonlcon1(x, data, series, P, bandwidth, fre)
+function [c,ceq] = nonlcon1(x, data, series, P, bandwidth)
 
-[mag, phi] = GetMagPhi(x, series, fre);
-nCount = length(fre);
+[mag, phi] = GetMagPhi(x, series, data.fre);
+mag = mag + data.mag;
+phi = phi +data.phi;
+nCount = length(data.fre);
 c = zeros(nCount * 2, 1);
 for i = 1 : nCount - 2
-    c(i) = phi(i) - 180;
+    c(i) = - phi(i) - 170;
 end
 c(nCount - 1) = -mag(nCount - 1);
 c(nCount) = mag(nCount);
@@ -19,10 +21,10 @@ complex_bode = complex_bode ./ (1 + complex_bode);
 %转成bode形式
 Mag = log10(abs(complex_bode)) * 20;
 % Phi = angle(complex_bode) / pi * 180;
-for i = nCount + 1 : nCount * 2
-    c(i) = 7 - Mag(i);
+for i = nCount + 1 : nCount * 2 - 1
+    c(i) = Mag(i - nCount) - 4;
 end
-
+ceq = [];
 % 
 % G = GetTf(x, series);
 % [mag, phi, w] = bode(G * P);
@@ -34,7 +36,7 @@ end
 % c(1) = Wmp - 320;
 % c(2) = 35 - Pm;
 % c(3) = 1 - Gm;
-c(4) = Pm - 55;
-c(5) = 150 - Wmp;
-c(6) = abs(phi_min) - 170;
-ceq = [ ];
+% c(4) = Pm - 55;
+% c(5) = 150 - Wmp;
+% c(6) = abs(phi_min) - 170;
+% ceq = [ ];
