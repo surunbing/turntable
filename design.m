@@ -127,9 +127,6 @@ ub(7) = 1000;
 
 %% 确定需要频点
 
-
-% start = zeros(series.count + 1, 1);
-% start(1) = 1;
 start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
 
 
