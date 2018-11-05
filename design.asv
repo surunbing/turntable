@@ -4,8 +4,6 @@ close all
 nRp = 15;
 nCon = 15;
 nCRp = 20;
-ratio = 3;
-
 
 bandwidth = 10 * 2 * pi;
 
@@ -44,6 +42,7 @@ grid on
 %% 补相位
 phi_advance = 30;
 phi_advance_margin = 0;
+ratio = 3;
 advance = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth);
 
 G_P = advance.gain * G * advance.P;
@@ -73,7 +72,8 @@ grid on;
 % figurename('陷波闭环');
 % bode(G_PPP / (1 + G_PPP));
 % grid on
-
+% 
+% 
 % % %% 给定指定频率的开环相关数据
 count = round(bandwidth / 2 / pi);
 [fre_Rp, fre_con] = GetFrequence(bandwidth, ratio, nRp, nCon, nCRp);
@@ -109,6 +109,7 @@ for i = 1:length(fre_con)
 end
 
 %% 整形优化
+
 series.real_pole = 0;   % 极点  a
 series.real_zero = 0;   % 零点  a
 series.complex_pole = 1;    % 复极点  a+bj
@@ -118,7 +119,6 @@ series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + s
 
 % 约束
 lb = zeros(series.count + 1, 1) + 0.01;
-lb(1) = 1;
 lb(6) = 0.01;
 lb(7) = 0.001;
 ub = 1e19 * ones(series.count + 1, 1);
@@ -130,8 +130,8 @@ ub(7) = 1000;
 start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
 
 
-% options = optimset('Algorithm','interior-point', 'TolX',1e-14);
-options = optimset('Algorithm','sqp','MaxIter',1600);
+options = optimset('Algorithm','interior-point');
+% options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
 [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
     , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp), options);
@@ -154,11 +154,7 @@ hold on
 margin(G_P * P);
 
 %% 增加前置滤波器
-alpha = 1.5;
-fre = 100;
-tau = 1 / (sqrt(alpha) * fre);
-T = alpha * tau;
-Prefilter = tf([tau, 1], [T, 1]);
+Prefilter = 
 figurename('前置滤波器');
 bode(Prefilter);
 grid on
