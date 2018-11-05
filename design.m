@@ -2,6 +2,8 @@ clc, clear
 close all
 
 nRp = 15;
+nCon = 15;
+nCRp = 20;
 
 bandwidth = 10 * 2 * pi;
 
@@ -74,7 +76,7 @@ grid on;
 % 
 % % %% 给定指定频率的开环相关数据
 count = round(bandwidth / 2 / pi);
-[fre_Rp, fre_con] = GetFrequence(bandwidth, ratio, nRp);
+[fre_Rp, fre_con] = GetFrequence(bandwidth, ratio, nRp, nCon, nCRp);
 fre = [linspace(1, count, count)' * 2 * pi; fre_Rp];
 [mag, phi, ~] = bode(G_P, fre);
 
@@ -135,7 +137,7 @@ options = optimset('Algorithm','interior-point');
 % options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
 [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
-    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth), options);
+    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp), options);
 toc
 
 P = GetTf(X, series);
