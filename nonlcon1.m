@@ -7,7 +7,7 @@ phi = phi +data.phi;
 nCount = nCon;
 c = zeros(nCon + 2 + nCRp, 1);
 for i = 1 : nCon
-    c(i) = - phi(i) - 170;
+    c(i) = - phi(i) - 175;
 end
 c(nCount + 1) = -mag(nCount + 1);
 c(nCount + 2) = mag(nCount + 2);

@@ -7,7 +7,7 @@ nCRp = 20;
 ratio = 3.5;
 
 
-bandwidth = 18 * 2 * pi;
+bandwidth = 14 * 2 * pi;
 
 %% Object
 K = 1.56 * 180 / pi;
@@ -33,13 +33,13 @@ for i = 1:length(fre)
 end
 
 %% 名义对象 绘图
-figurename('bode');
-subplot 211;
-semilogx(data.fre, data.mag, 'b-');
-grid on
-subplot 212;
-semilogx(data.fre, data.phi, 'b-');
-grid on
+% figurename('bode');
+% subplot 211;
+% semilogx(data.fre, data.mag, 'b-');
+% grid on
+% subplot 212;
+% semilogx(data.fre, data.phi, 'b-');
+% grid on
 
 %% 补相位
 phi_advance = 30;
@@ -59,17 +59,16 @@ figurename('闭环');
 bode(G_C);
 grid on
 
-later = Boostedlfgain(data, advance, 0.01 * 2 * pi);
+later = Boostedlfgain(data, advance, 0.01 * 2 * pi, 5);
 G_PP = G_P * later.gain * later.G_later;
+later2 = Boostedlfgain(data, advance, 0.01 * 2 * pi, 1);
+G_PP = G_PP * later2.gain * later2.G_later;
 % figurename('迟后通道');
 % margin(G_PP);
 % grid on;
 
 trap = trapfilter(data, advance, later, 7 * 2 * pi, 20, 1.5);
 G_PPP = G_PP * trap.G;
-figurename('陷波通道');
-margin(G_PPP);
-grid on;
 figurename('初始对象');
 margin(G_PPP);
 grid on
@@ -113,24 +112,28 @@ series.real_pole = 0;   % 极点  a
 series.real_zero = 0;   % 零点  a
 series.complex_pole = 1;    % 复极点  a+bj
 series.complex_zero = 1;    % 复领点  a+bj
-series.lead = 1;            % 环节    a,b
+series.lead = 2;            % 环节    a,b
 series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
 
 % 约束
-lb = zeros(series.count + 1, 1) + 0.01;
+lb = zeros(series.count + 1, 1) + 0.001;
 lb(1) = 1;
 lb(6) = 0.01;
-lb(7) = 0.01;
+lb(7) = 0.005;
+lb(8) = 0.01;
+lb(9) = 0.005;
 ub = 1e19 * ones(series.count + 1, 1);
 ub(6) = 1000;
 ub(7) = 100;
+ub(8) = 1000;
+ub(9) = 100;
 
 %% 确定需要频点
 
-start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
+start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre, later2.alpha, later2.fre];
 
 
-options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs');
+options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals', 60000, 'MaxIter', 2000);
 % options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
 [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
