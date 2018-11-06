@@ -2,9 +2,9 @@ clc, clear
 close all
 
 nRp = 15;
-nCon = 45;
+nCon = 25;
 nCRp = 20;
-ratio = 3.5;
+ratio = 3.65;
 
 
 bandwidth = 18 * 2 * pi;
@@ -130,7 +130,7 @@ ub(7) = 100;
 start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
 
 
-options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs');
+options = optimset('Algorithm','interior-point', 'Hessian', );
 % options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
 [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
