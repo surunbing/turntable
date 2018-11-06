@@ -2,12 +2,12 @@ clc, clear
 close all
 
 nRp = 15;
-nCon = 25;
+nCon = 35;
 nCRp = 20;
 ratio = 3;
 
 
-bandwidth = 10 * 2 * pi;
+bandwidth = 18 * 2 * pi;
 
 %% Object
 K = 1.56 * 180 / pi;
