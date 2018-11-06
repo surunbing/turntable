@@ -2,7 +2,7 @@ clc, clear
 close all
 
 nRp = 15;
-nCon = 15;
+nCon = 25;
 nCRp = 20;
 ratio = 3;
 
@@ -70,9 +70,9 @@ G_PPP = G_PP * trap.G;
 figurename('陷波通道');
 margin(G_PPP);
 grid on;
-% figurename('陷波闭环');
-% bode(G_PPP / (1 + G_PPP));
-% grid on
+figurename('初始对象');
+margin(G_PPP);
+grid on
 
 % % %% 给定指定频率的开环相关数据
 count = round(bandwidth / 2 / pi);
@@ -120,18 +120,18 @@ series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + s
 lb = zeros(series.count + 1, 1) + 0.01;
 lb(1) = 1;
 lb(6) = 0.01;
-lb(7) = 0.001;
+lb(7) = 0.01;
 ub = 1e19 * ones(series.count + 1, 1);
 ub(6) = 1000;
-ub(7) = 1000;
+ub(7) = 100;
 
 %% 确定需要频点
 
 start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
 
 
-% options = optimset('Algorithm','interior-point', 'TolX',1e-14);
-options = optimset('Algorithm','sqp','MaxIter',1600);
+options = optimset('Algorithm','interior-point');
+% options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
 [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
     , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp), options);

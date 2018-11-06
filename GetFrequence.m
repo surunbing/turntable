@@ -6,9 +6,9 @@ fre_start = log10(bandwidth * ratio * 0.8);
 fre_end = log10(bandwidth * ratio * 1.7);
 fre_Rp = logspace(fre_start, fre_end,  nRp)';
 
-fre_start = log10(bandwidth * 0.3);
+fre_start = log10(bandwidth * 0.003);
 fre_end = log10(bandwidth * ratio * 0.9);
-fre_con = [logspace(fre_start, fre_end,  nCon), bandwidth * 3, bandwidth * 5, logspace(2, 3,  nCRp)]';
+fre_con = [logspace(fre_start, fre_end,  nCon), bandwidth * 2.7, bandwidth * 5, logspace(2, 3,  nCRp)]';
 
 end
 

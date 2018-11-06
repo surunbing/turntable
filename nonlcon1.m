@@ -20,5 +20,5 @@ complex_bode = complex_bode ./ (1 + complex_bode);
 %转成bode形式
 Mag = log10(abs(complex_bode)) * 20;
 Mag_max = max(Mag);
-c(nCount + 3) = Mag_max - 5.5;
+c(nCount + 3) = Mag_max - 6;
 ceq = [];
