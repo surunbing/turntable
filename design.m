@@ -4,10 +4,10 @@ close all
 nRp = 15;
 nCon = 45;
 nCRp = 20;
-ratio = 3.5;
+ratio = 3;
 
 
-bandwidth = 14 * 2 * pi;
+bandwidth = 11 * 2 * pi;
 
 %% Object
 K = 1.56 * 180 / pi;
@@ -110,27 +110,35 @@ end
 %% 整形优化
 series.real_pole = 0;   % 极点  a
 series.real_zero = 0;   % 零点  a
-series.complex_pole = 1;    % 复极点  a+bj
-series.complex_zero = 1;    % 复领点  a+bj
+% series.complex_pole = 1;    % 复极点  a+bj
+% series.complex_zero = 1;    % 复领点  a+bj
+series.trap = 1;
 series.lead = 2;            % 环节    a,b
-series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
+series.count = series.real_pole + series.real_zero + series.trap * 3  + series.lead * 2;
+% series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
 
 % 约束
 lb = zeros(series.count + 1, 1) + 0.001;
 lb(1) = 1;
-lb(6) = 0.01;
-lb(7) = 0.005;
-lb(8) = 0.01;
-lb(9) = 0.005;
+lb(2) = 0.01;
+lb(3) = 1.0001;
+lb(4) = 0.01;
+lb(5) = 0.01;
+lb(6) = 0.005;
+lb(7) = 0.01;
+lb(8) = 0.005;
 ub = 1e19 * ones(series.count + 1, 1);
-ub(6) = 1000;
-ub(7) = 100;
-ub(8) = 1000;
-ub(9) = 100;
+ub(2) = 50;
+ub(3) = 100;
+ub(4) = 100;
+ub(5) = 1000;
+ub(6) = 100;
+ub(7) = 1000;
+ub(8) = 100;
 
 %% 确定需要频点
 
-start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre, later2.alpha, later2.fre];
+start = [later.gain, trap.e, trap.T, trap.f, later.alpha, later.fre, later2.alpha, later2.fre];
 
 
 options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals', 60000, 'MaxIter', 2000);
