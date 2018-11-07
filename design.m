@@ -4,10 +4,10 @@ close all
 nRp = 15;
 nCon = 45;
 nCRp = 20;
-ratio = 3.5;
+ratio = 3;
 
 
-bandwidth = 14 * 2 * pi;
+bandwidth = 15 * 2 * pi;
 
 %% Object
 K = 1.56 * 180 / pi;
@@ -44,7 +44,7 @@ end
 %% 补相位
 phi_advance = 30;
 phi_advance_margin = 0;
-advance = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth);
+[advance, ratio] = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth);
 
 G_P = advance.gain * G * advance.P;
 % figurename('前向通道');
@@ -61,8 +61,8 @@ grid on
 
 later = Boostedlfgain(data, advance, 0.01 * 2 * pi, 5);
 G_PP = G_P * later.gain * later.G_later;
-later2 = Boostedlfgain(data, advance, 0.01 * 2 * pi, 1);
-G_PP = G_PP * later2.gain * later2.G_later;
+later2 = Boostedlfgain(data, advance, 1 * 2 * pi, 1.5);
+% G_PP = G_PP * later2.gain * later2.G_later;
 % figurename('迟后通道');
 % margin(G_PP);
 % grid on;
@@ -74,63 +74,34 @@ margin(G_PPP);
 grid on
 
 % % %% 给定指定频率的开环相关数据
-count = round(bandwidth / 2 / pi);
-[fre_Rp, fre_con] = GetFrequence(bandwidth, ratio, nRp, nCon, nCRp);
-fre = [linspace(1, count, count)' * 2 * pi; fre_Rp];
-[mag, phi, ~] = bode(G_P, fre);
-
-data.fre = fre;
-data.mag = zeros(length(fre), 1);
-data.phi = zeros(length(fre), 1);
-data.phi_rad = zeros(length(fre), 1);  
-data.complex = zeros(length(fre), 1);
-
-for i = 1:length(fre)
-    data.mag(i) = 20 * log10(mag(1, 1, i));
-    data.phi(i) = phi(1, 1, i);
-    data.phi_rad(i) = phi(1, 1, i) / 180 * pi;
-    data.complex(i) = 10 ^ (mag(1, 1, i) / 20) * complex(cos(data.phi_rad(i)), sin(data.phi_rad(i)));
-end
-
-%% 约束对应的值
-data_con.fre = fre_con;
-data_con.mag = zeros(length(fre_con), 1);
-data_con.phi = zeros(length(fre_con), 1);
-data_con.phi_rad = zeros(length(fre_con), 1);  
-data_con.complex = zeros(length(fre_con), 1);
-[mag, phi, w] = bode(G_P, data_con.fre);
-
-for i = 1:length(fre_con)
-    data_con.mag(i) = 20 * log10(mag(1, 1, i));
-    data_con.phi(i) = phi(1, 1, i);
-    data_con.phi_rad(i) = phi(1, 1, i) / 180 * pi;
-    data_con.complex(i) = 10 ^ (mag(1, 1, i) / 20) * complex(cos(data_con.phi_rad(i)), sin(data_con.phi_rad(i)));
-end
+[data, data_con] = UpdateOptdata(G_P, bandwidth, ratio, nRp, nCon, nCRp);
 
 %% 整形优化
 series.real_pole = 0;   % 极点  a
 series.real_zero = 0;   % 零点  a
 series.complex_pole = 1;    % 复极点  a+bj
 series.complex_zero = 1;    % 复领点  a+bj
-series.lead = 2;            % 环节    a,b
+series.lead = 1;            % 环节    a,b
 series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
 
 % 约束
 lb = zeros(series.count + 1, 1) + 0.001;
-lb(1) = 1;
+lb(1) = 0.2;
 lb(6) = 0.01;
 lb(7) = 0.005;
-lb(8) = 0.01;
-lb(9) = 0.005;
+% lb(8) = 0.01;
+% lb(9) = 0.005;
 ub = 1e19 * ones(series.count + 1, 1);
 ub(6) = 1000;
 ub(7) = 100;
-ub(8) = 1000;
-ub(9) = 100;
+% ub(8) = 1000;
+% ub(9) = 100;
 
 %% 确定需要频点
+start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
 
-start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre, later2.alpha, later2.fre];
+
+% start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre, later2.alpha, later2.fre];
 
 
 options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals', 60000, 'MaxIter', 2000);
@@ -146,6 +117,10 @@ figurename('控制器');
 bode(P);
 grid on
 
+figurename('margin_later2');
+margin(G_P * P * later2.gain * later2.G_later);
+grid on
+
 figurename('bihuan');
 bode(G_P * P / (1 + G_P * P));
 grid on
@@ -155,16 +130,6 @@ margin(G_P);
 grid on
 hold on
 margin(G_P * P);
-
-%% 增加前置滤波器
-alpha = 1.5;
-fre = 100;
-tau = 1 / (sqrt(alpha) * fre);
-T = alpha * tau;
-Prefilter = tf([tau, 1], [T, 1]);
-figurename('前置滤波器');
-bode(Prefilter);
-grid on
 
 
 autoArrangeFigures

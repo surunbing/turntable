@@ -1,10 +1,15 @@
-function [advance] = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth)
+function [advance, ratio] = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth)
 
 %补相位
 advance.phi_advance = phi_advance;
 advance.phi_advance_margin = phi_advance_margin;
 % 穿越频率3-5倍
-fre_error = abs(data.fre - bandwidth * ones(1, length(data.fre)) * ratio);
+fre_through = bandwidth * ratio;
+if fre_through > 380
+    fre_through = 380;
+    ratio = fre_through / bandwidth;
+end
+fre_error = abs(data.fre - fre_through * ones(1, length(data.fre)));
 fre = min(fre_error);
 num = find(fre_error == fre);
 advance.fre = data.fre(num);
