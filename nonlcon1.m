@@ -1,5 +1,5 @@
 % G ∂‘œÛ
-function [c,ceq] = nonlcon1(x, data, series, P, bandwidth, nCon, nCRp)
+function [c,ceq] = nonlcon1(x, data, series, P, bandwidth, nCon, nCRp, phi_reg, mag_max)
 
 [mag, phi] = GetMagPhi(x, series, data.fre);
 mag = mag + data.mag;
@@ -7,7 +7,7 @@ phi = phi +data.phi;
 nCount = nCon;
 c = zeros(nCon + 2 + nCRp, 1);
 for i = 1 : nCon
-    c(i) = - phi(i) - 170;
+    c(i) = - phi(i) - phi_reg;
 end
 c(nCount + 1) = -mag(nCount + 1);
 c(nCount + 2) = mag(nCount + 2);
@@ -21,6 +21,6 @@ complex_bode = complex_bode ./ (1 + complex_bode);
 Mag = log10(abs(complex_bode)) * 20;
 %Mag_max = max(Mag);
 for i = 1 : nCRp
-    c(nCount + 2 + i) = Mag(nCon + 2 + i) - 5.5;
+    c(nCount + 2 + i) = Mag(nCon + 2 + i) - mag_max;
 end
 ceq = [];

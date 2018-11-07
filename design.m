@@ -2,7 +2,7 @@ clc, clear
 close all
 
 nRp = 15;
-nCon = 45;
+nCon = 25;
 nCRp = 20;
 ratio = 3;
 
@@ -61,7 +61,7 @@ grid on
 
 later = Boostedlfgain(data, advance, 0.01 * 2 * pi, 5);
 G_PP = G_P * later.gain * later.G_later;
-later2 = Boostedlfgain(data, advance, 1 * 2 * pi, 1.5);
+later2 = Boostedlfgain(data, advance, 0.01 * 2 * pi, 1.05);
 % G_PP = G_PP * later2.gain * later2.G_later;
 % figurename('迟后通道');
 % margin(G_PP);
@@ -86,7 +86,7 @@ series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + s
 
 % 约束
 lb = zeros(series.count + 1, 1) + 0.001;
-lb(1) = 0.2;
+lb(1) = 1;
 lb(6) = 0.01;
 lb(7) = 0.005;
 % lb(8) = 0.01;
@@ -108,17 +108,13 @@ options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals
 % options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
 [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
-    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp), options);
+    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp, 170, 6), options);
 toc
 
 P = GetTf(X, series);
 
 figurename('控制器');
 bode(P);
-grid on
-
-figurename('margin_later2');
-margin(G_P * P * later2.gain * later2.G_later);
 grid on
 
 figurename('bihuan');
@@ -129,8 +125,71 @@ figurename('margin');
 margin(G_P);
 grid on
 hold on
+margin(G_P * P * later2.gain * later2.G_later);
+hold on
 margin(G_P * P);
 
+
+%% 第二次设计 加入一个环节，起始点由上一个决定
+%% 整形优化
+series.real_pole = 0;   % 极点  a
+series.real_zero = 0;   % 零点  a
+series.complex_pole = 1;    % 复极点  a+bj
+series.complex_zero = 1;    % 复领点  a+bj
+series.lead = 2;            % 环节    a,b
+series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
+
+% 约束
+lb = zeros(series.count + 1, 1) + 0.001;
+lb(1) = 1;
+% lb(2) = 50;
+% lb(3) = 0.001;
+% lb(4) = 10;
+% lb(5) = 50;
+lb(6) = 0.01;
+lb(7) = 0.005;
+lb(8) = 0.01;
+lb(9) = 0.005;
+ub = 500 * ones(series.count + 1, 1);
+% ub(2) = 500;
+% ub(3) = 1;
+% ub(4) = 200;
+% ub(5) = 500;
+ub(6) = 1000;
+ub(7) = 100;
+ub(8) = 1000;
+ub(9) = 100;
+
+%% 确定需要频点
+start = [X, later2.alpha, later2.fre];
+start(1) = start(1) * later2.gain;
+
+
+% start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre, later2.alpha, later2.fre];
+
+
+options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals', 60000, 'MaxIter', 2000);
+% options = optimset('Algorithm','sqp','MaxIter',1600);
+tic
+[X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
+    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp, 175, 6.1), options);
+toc
+
+P = GetTf(X, series);
+
+figurename('控制器2');
+bode(P);
+grid on
+
+figurename('bihuan2');
+bode(G_P * P / (1 + G_P * P));
+grid on
+
+figurename('margin2');
+margin(G_P);
+grid on
+hold on
+margin(G_P * P);
 
 autoArrangeFigures
 

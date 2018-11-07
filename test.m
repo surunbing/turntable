@@ -1,20 +1,16 @@
 clc, clear
 close all
-tic
-G = tf(1, [0.1, 1]);
-G = G * G * G;
-[mag, phi, fre] = bode(G);
-toc
-tic
-mag = zeros(1, 100);
-phi = zeros(1, 100);
-for i = 1 : 100
-    a = 1 / complex(i, 1) * 1 / complex(i, 1) * 1 / complex(i, 1);
-    mag(i) = abs(a);
-    phi = angle(a);
-end
-toc
+depth = 0.6;
+width = 50;
+fre = 100;
 
-tic
-a = conv([1, 2], [1, -2]) / 1;
-toc
+e = depth;
+T = width;
+f = fre;
+
+a = [1, e * T, f^2];
+b = [1, T, f^2 * 0.5];
+
+G = tf(a, b);
+bode(G);
+grid on
