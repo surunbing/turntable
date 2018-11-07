@@ -7,7 +7,7 @@ nCRp = 20;
 ratio = 3;
 
 
-bandwidth = 10 * 2 * pi;
+bandwidth = 18 * 2 * pi;
 
 %% Object
 K = 1.56 * 180 / pi;
@@ -137,7 +137,7 @@ series1.complex_pole = 1;    % 复极点  a+bj
 series1.complex_zero = 1;    % 复领点  a+bj
 series1.lead = 0;            % 环节    a,b
 series1.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
-P = GetTf(X, series1) / X(1);
+P = GetTf(X, series)
 G_P = G_P * P;
 [data, data_con] = UpdateOptdata(G_P, bandwidth, ratio, nRp, nCon, nCRp);
 
@@ -170,7 +170,7 @@ start = [X(1) * later2.gain, X(6), X(7), later2.alpha, later2.fre];
 % start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre, later2.alpha, later2.fre];
 
 
-options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals', 60000, 'MaxIter', 2000);
+options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals', 6000, 'MaxIter', 2000);
 % options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
 [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
