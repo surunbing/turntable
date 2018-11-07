@@ -22,8 +22,8 @@ for i = 1:series.trap
     e = x(i * 4 + num - 3);
     T = x(i * 4 + num - 2);
     f = x(i * 4 + num - 1);
-    f1 = x(i * 4 + num);
-    res = (complex(f * f * ones(nLength, 1) - fre .* fre, e * T * fre) / f / f) ./ (complex(f1 * f1 * ones(nLength, 1) - fre .* fre, T * fre) / f1 / f1);
+    f1 = 
+    res = complex(f * f * ones(nLength, 1) - fre .* fre, e * T * fre) ./ complex(f * f * ones(nLength, 1) - fre .* fre, T * fre);
     mag = mag .* abs(res);
     phi = phi + angle(res); 
 end

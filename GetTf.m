@@ -15,14 +15,15 @@ end
 
 num = num + series.real_zero;
 for i = 1:series.trap
-    e = x(i * 3 + num - 2);
-    T = x(i * 3 + num - 1);
-    f = x(i * 3 + num);
-    P = tf([1, e * T, f^2], [1, T, f^2]);
+    e = x(i * 4 + num - 3);
+    T = x(i * 4 + num - 2);
+    f = x(i * 4 + num - 1);
+    f1 = x( i * 4 + num); 
+    P = tf([1, e * T, f^2] / f / f, [1, T, f1^2] / f1 / f1);
     G = G * P; 
 end
 
-num = num + series.trap * 3;
+num = num + series.trap * 4;
 for i = 1:series.lead  
 %     P = tf([1 / x(i * 2 + num - 1), 1], [1 / x(i * 2 + num), 1]);
     alpha = x(i * 2 + num - 1);
