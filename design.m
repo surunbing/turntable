@@ -7,7 +7,7 @@ nCRp = 20;
 ratio = 3;
 
 
-bandwidth = 15 * 2 * pi;
+bandwidth = 17 * 2 * pi;
 
 %% Object
 K = 1.56 * 180 / pi;
@@ -89,20 +89,20 @@ series.count = series.real_pole + series.real_zero + series.trap * 4 + series.le
 lb = zeros(series.count + 1, 1) + 0.001;
 lb(1) = 1;
 lb(2) = 0.01;
-lb(3) = 0.1;
+lb(3) = 0.05;
 lb(4) = 0.01;
 lb(5) = 0.1;
-lb(6) = 0.01;
-lb(7) = 0.01;
+lb(6) = 0.005;
+lb(7) = 0.005;
 % lb(8) = 0.01;
 % lb(9) = 0.01;
 ub = 1e19 * ones(series.count + 1, 1);
-ub(2) = 100;
-ub(3) = 100;
+ub(2) = 500;
+ub(3) = 500;
 ub(4) = 1000;
 ub(5) = 1000;
-ub(6) = 100;
-ub(7) = 100;
+ub(6) = 1000;
+ub(7) = 1000;
 % ub(8) = 100;
 % ub(9) = 100;
 

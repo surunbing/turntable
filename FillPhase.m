@@ -14,7 +14,7 @@ fre = min(fre_error);
 num = find(fre_error == fre);
 advance.fre = data.fre(num);
 advance.phi = data.phi(num);
-advance.phi_error = abs(advance.phi) - 135; 
+advance.phi_error = abs(advance.phi) - 132; 
 advance.num = num;
 
 %%²ð·Ö³¬Ç°

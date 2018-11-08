@@ -14,7 +14,7 @@ else
     ratio_min = 2.7;
 end
 ratio_max = 380;
-fre_con = [logspace(fre_start, fre_end,  nCon), bandwidth * ratio_min, ratio_max, logspace(2, 3,  nCRp)]';
+fre_con = [logspace(fre_start, fre_end,  nCon), bandwidth * ratio_min, ratio_max, bandwidth * ratio, logspace(2, 3,  nCRp)]';
 
 end
 
