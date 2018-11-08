@@ -14,24 +14,16 @@ for i = 1:series.real_zero
 end
 
 num = num + series.real_zero;
-for i = 1:series.complex_pole
-    pole1 = complex(-x(i * 2 + num - 1), x(i * 2 + num)); 
-    pole2 = complex(-x(i * 2 + num - 1), - x(i * 2 + num)); 
-    circle_rad = x(i * 2 + num - 1) ^ 2 + x(i * 2 + num) ^ 2;
-    P = tf(1, conv([1, -pole1], [1, -pole2]) / circle_rad);
+for i = 1:series.trap
+    e = x(i * 4 + num - 3);
+    T = x(i * 4 + num - 2);
+    f = x(i * 4 + num - 1);
+    f1 = x( i * 4 + num); 
+    P = tf([1, e * T, f^2] / f / f, [1, T, f1^2] / f1 / f1);
     G = G * P; 
 end
 
-num = num + series.complex_pole * 2;
-for i = 1:series.complex_zero
-    pole1 = complex(-x(i * 2 + num - 1), x(i * 2 + num)); 
-    pole2 = complex(-x(i * 2 + num - 1), - x(i * 2 + num)); 
-    circle_rad = x(i * 2 + num - 1) ^ 2 + x(i * 2 + num) ^ 2;
-    P = tf(conv([1, -pole1], [1, -pole2]) / circle_rad, 1);
-    G = G * P; 
-end
-
-num = num + series.complex_zero * 2;
+num = num + series.trap * 4;
 for i = 1:series.lead  
 %     P = tf([1 / x(i * 2 + num - 1), 1], [1 / x(i * 2 + num), 1]);
     alpha = x(i * 2 + num - 1);
@@ -44,4 +36,3 @@ end
 
 
 end
-

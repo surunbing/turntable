@@ -4,15 +4,15 @@ close all
 nRp = 15;
 nCon = 25;
 nCRp = 20;
-ratio = 3.2;
+ratio = 3;
 
 
-bandwidth = 18 * 2 * pi;
+bandwidth = 15 * 2 * pi;
 
 %% Object
 K = 1.56 * 180 / pi;
 taue = 0.0039035;
-taum = 0.984871194396488 * 2;
+taum = 0.984871194396488;
 G = tf(K, [taue * taum, taum, 1, 0]);
 %% 加入惯性环节
 T = 1 / (bandwidth / 2 / pi) / 15; 
@@ -61,7 +61,7 @@ grid on
 
 later = Boostedlfgain(data, advance, 0.01 * 2 * pi, 5);
 G_PP = G_P * later.gain * later.G_later;
-later2 = Boostedlfgain(data, advance, 0.01 * 2 * pi, 1.05);
+% later2 = Boostedlfgain(data, advance, 0.1 * 2 * pi, 1.1);
 % G_PP = G_PP * later2.gain * later2.G_later;
 % figurename('迟后通道');
 % margin(G_PP);
@@ -79,36 +79,43 @@ grid on
 %% 整形优化
 series.real_pole = 0;   % 极点  a
 series.real_zero = 0;   % 零点  a
-series.complex_pole = 1;    % 复极点  a+bj
-series.complex_zero = 1;    % 复领点  a+bj
-series.lead = 2;            % 环节    a,b
-series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
+% series.complex_pole = 1;    % 复极点  a+bj
+% series.complex_zero = 1;    % 复领点  a+bj
+series.trap = 1;
+series.lead = 1;            % 环节    a,b
+series.count = series.real_pole + series.real_zero + series.trap * 4 + series.lead * 2;
 
 % 约束
 lb = zeros(series.count + 1, 1) + 0.001;
 lb(1) = 1;
+lb(2) = 0.01;
+lb(3) = 0.1;
+lb(4) = 0.01;
+lb(5) = 0.1;
 lb(6) = 0.01;
-lb(7) = 0.005;
-lb(8) = 0.01;
-lb(9) = 0.005;
+lb(7) = 0.01;
+% lb(8) = 0.01;
+% lb(9) = 0.01;
 ub = 1e19 * ones(series.count + 1, 1);
-ub(6) = 1000;
+ub(2) = 100;
+ub(3) = 100;
+ub(4) = 1000;
+ub(5) = 1000;
+ub(6) = 100;
 ub(7) = 100;
-ub(8) = 1000;
-ub(9) = 100;
+% ub(8) = 100;
+% ub(9) = 100;
 
 %% 确定需要频点
-% start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre];
+start = [later.gain , trap.e, trap.T, trap.f, trap.f, later.alpha, later.fre];
 
-
-start = [later.gain * later2.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre, later2.alpha, later2.fre];
-
+% start = [later.gain * later2.gain, trap.e, trap.T, trap.f, trap.f, later.alpha, later.fre, later2.alpha, later2.fre];
 
 options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals', 60000, 'MaxIter', 2000);
 % options = optimset('Algorithm','sqp','MaxIter',1600);
 tic
 [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
-    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp, 172, 6.3), options);
+    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp, 170, 6), options);
 toc
 
 P = GetTf(X, series);
@@ -122,12 +129,9 @@ bode(G_P * P / (1 + G_P * P));
 grid on
 
 figurename('margin');
-margin(G_P);
-grid on
-hold on
-margin(G_P * P * later2.gain * later2.G_later);
-hold on
 margin(G_P * P);
+grid on
+
 
 
 %% 第二次设计 加入一个环节，起始点由上一个决定
