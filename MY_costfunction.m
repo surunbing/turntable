@@ -19,5 +19,5 @@ for i = 1 : count
     cost = cost + mag(i) * mag(i) * 1.5 + phi(i) * phi(i);
 end
 for i =  1 : nRp
-    cost = cost + mag(count + i) * mag(count + i) * 1 / nRp;
+    cost = cost + mag(count + i) * mag(count + i) * 1 / nRp * 0;
 end
