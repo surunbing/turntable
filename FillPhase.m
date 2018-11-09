@@ -1,4 +1,4 @@
-function [advance, ratio] = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth)
+function [advance] = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth)
 
 %补相位
 advance.phi_advance = phi_advance;
@@ -14,7 +14,7 @@ fre = min(fre_error);
 num = find(fre_error == fre);
 advance.fre = data.fre(num);
 advance.phi = data.phi(num);
-advance.phi_error = abs(advance.phi) - 132; 
+advance.phi_error = abs(advance.phi) - 135; 
 advance.num = num;
 
 %%拆分超前
@@ -51,7 +51,8 @@ P = P * advance.G_advance1;
 [mag, ~] = bode(P, data.fre(num));
 Mag = 20 * log10(mag(1, 1, 1)) + data.mag(num);
 advance.gain = 1 / 10 ^ (Mag / 20);    
-advance.P = P;
+advance.P = P * advance.gain;
+advance.ratio = ratio;
 
 end
 
