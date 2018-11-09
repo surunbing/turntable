@@ -40,6 +40,13 @@ else
     % 不可以正常设计
     bNormal = 0;
 end
+if bNormal == 1
+    f1 = BANDWIDTH * advance.ratio;
+    T = 500;
+    e = logspace(log10(0.05), 1, 10);
+    alpha = logspace(log10(0.01), log10(0.15), 10);
+    
+end
 
 
 

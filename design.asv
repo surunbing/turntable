@@ -6,13 +6,12 @@ nCon = 25;
 nCRp = 20;
 ratio = 3;
 
-
-bandwidth = 18 * 2 * pi;
+bandwidth = 17 * 2 * pi;
 
 %% Object
-K = 25; %1.56 * 180 / pi;
-taue = 0.00796;%0.0039035;
-taum = 0.09947;%0.984871194396488 * 2;
+K = 1.56 * 180 / pi;
+taue = 0.0039035;
+taum = 0.984871194396488 * 3;
 G = tf(K, [taue * taum, taum, 1, 0]);
 %% 加入惯性环节
 T = 1 / (bandwidth / 2 / pi) / 15; 
@@ -44,174 +43,106 @@ end
 %% 补相位
 phi_advance = 30;
 phi_advance_margin = 0;
-[advance, ratio] = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth);
+advance = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth);
 
-G_P = advance.gain * G * advance.P;
-% figurename('前向通道');
-% margin(G_P);
-% grid on;
+G_P = G * advance.P;
+
+figurename('前向通道');
+margin(G_P);
+grid on;
+figurename('bihuan1');
+bode(G_P / (1 + G_P));
+grid on
 % figurename('超前环节');
 % bode(advance.P);
 % grid on;
+% 
+% G_C = G_P / (1 + G_P);
+% figurename('闭环');
+% bode(G_C);
+% grid on
+% 
+% later = Boostedlfgain(data, advance, 0.01 * 2 * pi, 5);
+% G_PP = G_P * later.gain * later.G_later;
+% % later2 = Boostedlfgain(data, advance, 0.1 * 2 * pi, 1.1);
+% % G_PP = G_PP * later2.gain * later2.G_later;
+% % figurename('迟后通道');
+% % margin(G_PP);
+% % grid on;
+% 
+% trap = trapfilter(data, advance, later, 7 * 2 * pi, 20, 1.5);
+% G_PPP = G_PP * trap.G;
+% figurename('初始对象');
+% margin(G_PPP);
+% grid on
 
-G_C = G_P / (1 + G_P);
-figurename('闭环');
-bode(G_C);
+[Mag, Phi] = bode(G_P, data.fre);
+mag = zeros(length(data.fre), 1);
+phi = zeros(length(data.fre), 1);
+for i = 1 : length(data.fre)
+    mag(i) = 20 * log10(Mag(1, 1, i));
+    phi(i) = Phi(1, 1, i);
+end
+data_cur.fre = data.fre;
+data_cur.mag = mag;
+data_cur.phi = phi;
+num = advance.num;
+
+e = 0.566315961;
+T = 499.99775130;
+f1 = 320.6384535;
+alpha = 0.0402494756585578;
+f2 = 100.756; %92.53771513;
+fre = 43.3341; %18.389328242984;
+tau = 1 / (sqrt(alpha) * fre);
+P = tf([1, e * T, f1 * f1] / f1 / f1, [1, T, f2 * f2] / f2 / f2) * tf([tau, 1], [alpha * tau, 1]);
+h1 = figurename('bode');
+margin(G_P * P);
 grid on
 
-later = Boostedlfgain(data, advance, 0.01 * 2 * pi, 5);
-G_PP = G_P * later.gain * later.G_later;
-% later2 = Boostedlfgain(data, advance, 0.1 * 2 * pi, 1.1);
-% G_PP = G_PP * later2.gain * later2.G_later;
-% figurename('迟后通道');
-% margin(G_PP);
-% grid on;
+count = round(bandwidth / 2 / pi);
+fre = [linspace(1, count, count)' * 2 * pi];
+[mag, phi, ~] = bode(G_P, fre);
 
-trap = trapfilter(data, advance, later, 7 * 2 * pi, 20, 1.5);
-G_PPP = G_PP * trap.G;
-figurename('初始对象');
-margin(G_PPP);
-grid on
+data.fre = fre;
+data.mag = zeros(length(fre), 1);
+data.phi = zeros(length(fre), 1);
 
-% % %% 给定指定频率的开环相关数据
-[data, data_con] = UpdateOptdata(G_P, bandwidth, ratio, nRp, nCon, nCRp);
+for i = 1:length(fre)
+    data.mag(i) = 20 * log10(mag(1, 1, i));
+    data.phi(i) = phi(1, 1, i);
+end
 
-%% 整形优化
-series.real_pole = 0;   % 极点  a
-series.real_zero = 0;   % 零点  a
-% series.complex_pole = 1;    % 复极点  a+bj
-% series.complex_zero = 1;    % 复领点  a+bj
-series.trap = 1;
-series.lead = 1;            % 环节    a,b
-series.count = series.real_pole + series.real_zero + series.trap * 4 + series.lead * 2;
-
-% 约束
-lb = zeros(series.count + 1, 1) + 0.001;
-lb(1) = 1;
-lb(2) = 0.01;
-lb(3) = 0.05;
-lb(4) = 0.01;
-lb(5) = 0.1;
-lb(6) = 0.005;
-lb(7) = 0.005;
-% lb(8) = 0.01;
-% lb(9) = 0.01;
-ub = 1e19 * ones(series.count + 1, 1);
-ub(2) = 500;
-ub(3) = 500;
-ub(4) = 1000;
-ub(5) = 1000;
-ub(6) = 5.1;
-ub(7) = 1000;
-% ub(8) = 100;
-% ub(9) = 100;
-
-%% 确定需要频点
-start = [later.gain , trap.e, trap.T, trap.f, trap.f, later.alpha, later.fre];
-% [c, ceq] = nonlcon1(start, data_con, series, G_P, bandwidth, nCon, nCRp, 170, 6);
-%% 检查约束
-start = [later.gain	0.425059903	499.9996082	250.3586394	204.5508838	1.310526167	22.76268321];
-
-% start = [later.gain * later2.gain, trap.e, trap.T, trap.f, trap.f, later.alpha, later.fre, later2.alpha, later2.fre];
-
-options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals', 60000, 'MaxIter', 2000);
-% options = optimset('Algorithm','sqp','MaxIter',1600);
-tic
-[X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
-    , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp, 170, 6), options);
-toc
-
-P = GetTf(X, series);
-
-figurename('控制器');
-bode(P);
-grid on
-
-figurename('bihuan');
+h2 = figurename('bihuan');
 bode(G_P * P / (1 + G_P * P));
 grid on
 
-figurename('margin');
-margin(G_P * P);
-hold on
-margin(G_P * P * 
-grid on
+e = logspace(log10(0.05), 1, 10);
+alpha = logspace(log10(0.01), log10(0.15), 10);
+res = zeros(10, 10, 2);
+for i = 1 : 10
+    for j = 1 : 10
+%         p = myfun([f2, fre], data_cur, f1, e, T, alpha, num);
+        tic
+        res(i, j, :) = fsolve(@(x)myfun(x, data_cur, f1, e(i), T, alpha(j), num), [f1 * 1.5, bandwidth / 2 / pi]');
+        toc
+        f2 = res(i, j, 1);
+        fre = res(i, j, 2);
+        tau = 1 / (sqrt(alpha(j)) * fre);
+        P = tf([1, e(i) * T, f1 * f1] / f1 / f1, [1, T, f2 * f2] / f2 / f2) * tf([tau, 1], [alpha(j) * tau, 1]);
+        figure(h1);
 
+        margin(G_P * P);
+        grid on
 
+        figure(h2);
+        bode(G_P * P / (1 + G_P * P));
+        grid on
+    end
+end
 
-%% 第二次设计 加入一个环节，起始点由上一个决定
-% series1.real_pole = 0;   % 极点  a
-% series1.real_zero = 0;   % 零点  a
-% series1.complex_pole = 1;    % 复极点  a+bj
-% series1.complex_zero = 1;    % 复领点  a+bj
-% series1.lead = 0;            % 环节    a,b
-% series1.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
-% P = GetTf(X, series1) / X(1);
-% G_P = G_P * P;
-% [data, data_con] = UpdateOptdata(G_P, bandwidth, ratio, nRp, nCon, nCRp);
-% 
-% %% 整形优化
-% series.real_pole = 0;   % 极点  a
-% series.real_zero = 0;   % 零点  a
-% series.complex_pole = 0;    % 复极点  a+bj
-% series.complex_zero = 0;    % 复领点  a+bj
-% series.lead = 2;            % 环节    a,b
-% series.count = series.real_pole + series.real_zero + series.complex_pole * 2 + series.complex_zero * 2 + series.lead * 2;
-% 
-% % 约束
-% lb = zeros(series.count + 1, 1) + 0.001;
-% lb(1) = 1;
-% lb(2) = 0.01;
-% lb(3) = 0.005;
-% lb(4) = 0.01;
-% lb(5) = 0.005;
-% ub = 500 * ones(series.count + 1, 1);
-% ub(2) = 1000;
-% ub(3) = 100;
-% ub(4) = 1000;
-% ub(5) = 100;
-% 
-% %% 确定需要频点
-% start = [X(1) * later2.gain, X(6), X(7), later2.alpha, later2.fre];
-% % start(1) = start(1) * later2.gain;
-% 
-% 
-% % start = [later.gain, trap.poles(1), trap.poles(2), trap.zeros(1), trap.zeros(2), later.alpha, later.fre, later2.alpha, later2.fre];
-% 
-% 
-% options = optimset('Algorithm','interior-point', 'Hessian', 'bfgs', 'MaxFunEvals', 60000, 'MaxIter', 2000);
-% % options = optimset('Algorithm','sqp','MaxIter',1600);
-% tic
-% [X, fval, exitflag] = fmincon(@(x)MY_costfunction(x, data, series, G_P, nRp)...
-%     , start, [], [], [], [], lb, ub, @(x)nonlcon1(x, data_con, series, G_P, bandwidth, nCon, nCRp, 175, 6.1), options);
-% toc
-% 
-% P = GetTf(X, series);
-% 
-% figurename('控制器2');
-% bode(P);
-% grid on
-% 
-% figurename('bihuan2');
-% bode(G_P * P / (1 + G_P * P));
-% grid on
-% 
-% figurename('margin2');
-% margin(G_P);
-% grid on
-% hold on
-% margin(G_P * P);
 
 autoArrangeFigures
-
-
-
-
-
-
-
-
-
 
 
 

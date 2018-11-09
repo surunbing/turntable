@@ -12,3 +12,7 @@ grid on
 hold on
 G = tf([1, e * T, f1 * f1], [1, T, f2 * f2]);
 bode(G);
+
+x = fsolve(@(x)myfun(x, data, f1, e, T, alpha, num), [f1 * 1.5, bandwidth / 2 / pi]');
+
+function q=myfun(p)
