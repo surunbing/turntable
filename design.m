@@ -4,7 +4,7 @@ close all
 nRp = 15;
 nCon = 25;
 nCRp = 20;
-ratio = 2.1;
+ratio = 2.2;
 
 bandwidth = 18 * 2 * pi;
 
@@ -89,7 +89,7 @@ data_cur.phi = phi;
 num = advance.num;
 
 e = 0.566315961;
-T = 800;%499.99775130;
+T = 500;%499.99775130;
 f1 = bandwidth * ratio;
 alpha = 0.0402494756585578;
 f2 = 92.53771513;
@@ -120,7 +120,7 @@ h2 = figurename('bihuan');
 bode(G_P * P / (1 + G_P * P));
 grid on
 N = 20;
-e = logspace(log10(0.01), 1, N);
+e = linspace(0.01, 1, N);
 alpha = logspace(log10(0.005), log10(0.15), N);
 res = zeros(N, N, 2);
 Cost = zeros(N, N);
@@ -152,28 +152,49 @@ for i = 1 : N
 %         grid on
     end
 end
-i = 9;
+i = 12;
 j = 1;
 f2 = res(i, j, 1);
 fre = res(i, j, 2);
 tau = 1 / (sqrt(alpha(j)) * fre);
 x = [e(i), T, f1, f2, alpha(j), fre];
 P = tf([1, e(i) * T, f1 * f1] / f1 / f1, [1, T, f2 * f2] / f2 / f2) * tf([tau, 1], [alpha(j) * tau, 1]);
+Wm = 0;%tf([20, 1], [1, 20, 80089]);
 figurename('margin');
 margin(G_P * P);
 grid on
+hold on
+margin(G_P * P * (1 + Wm) * 1.5);
 figurename('闭环');
-bode(G_P * P / (1 + G_P * P));
+bode(G_P * P * (1 + Wm) / (1 + G_P * P * (1 + Wm)));
 grid on
+%% 前馈
+K = 45;%1.56 * 180 / pi;
+taue = 0.00396;% 0.0039035;
+taum = 0.09947;%0.984871194396488;
+G_F = 1 / tf(K, [taue * taum, taum, 1, 0]) * 0.5;
 
-fre = bandwidth * ratio * 2;
-alpha = 2;
-tau = 1 / (sqrt(alpha) * fre);
-T = alpha * tau;
-G_later = tf([tau, 1], [T, 1]);
-figurename('迟后环节');
-bode(G_later);
+K = 45;%1.56 * 180 / pi;
+taue = 0.00396;% 0.0039035;
+taum = 0.09947;%0.984871194396488;
+G = tf(K, [taue * taum, taum, 1, 0]);
+%% 加入惯性环节
+T = 1 / (bandwidth / 2 / pi) / 15; 
+Inertial = tf(1, [T, 1]);
+
+G_C = (G_P * P + G * G_F) / (1 + G_P * P);
+figurename('前馈');
+bode(G_C);
 grid on
+% 
+% fre = bandwidth * ratio * 2;
+% alpha = 2;
+% tau = 1 / (sqrt(alpha) * fre);
+% T = alpha * tau;
+% G_later = tf([tau, 1], [T, 1]);
+% figurename('迟后环节');
+% bode(G_later);
+% grid on
 
 autoArrangeFigures
 
