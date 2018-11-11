@@ -4,14 +4,14 @@ close all
 nRp = 15;
 nCon = 25;
 nCRp = 20;
-ratio = 3;
+ratio = 4;
 
-bandwidth = 17 * 2 * pi;
+bandwidth = 18 * 2 * pi;
 
 %% Object
-K = 1.56 * 180 / pi;
-taue = 0.0039035;
-taum = 0.984871194396488 * 3;
+K = 45;%1.56 * 180 / pi;
+taue = 0.00396;% 0.0039035;
+taum = 0.09947;%0.984871194396488;
 G = tf(K, [taue * taum, taum, 1, 0]);
 %% 加入惯性环节
 T = 1 / (bandwidth / 2 / pi) / 15; 
@@ -89,8 +89,8 @@ data_cur.phi = phi;
 num = advance.num;
 
 e = 0.566315961;
-T = 499.99775130;
-f1 = 320.6384535;
+T = 500;%499.99775130;
+f1 = 320;
 alpha = 0.0402494756585578;
 f2 = 92.53771513;
 fre = 18.389328242984;
@@ -99,6 +99,7 @@ P = tf([1, e * T, f1 * f1] / f1 / f1, [1, T, f2 * f2] / f2 / f2) * tf([tau, 1], 
 h1 = figurename('bode');
 margin(G_P * P);
 grid on
+[Gm, Pm, Wcm, Wcp] = margin(G_P * P);
 
 count = round(bandwidth / 2 / pi);
 Fre = linspace(1, count, count)' * 2 * pi;
@@ -137,7 +138,7 @@ for i = 1 : N
         tau = 1 / (sqrt(alpha(j)) * fre);
         P = tf([1, e(i) * T, f1 * f1] / f1 / f1, [1, T, f2 * f2] / f2 / f2) * tf([tau, 1], [alpha(j) * tau, 1]);
         [Gm, Pm, Wcm, Wcp] = margin(G_P * P);
-        if Pm < 30 || Gm < 0
+        if Pm < 30 || Gm < 1
              Cost(i, j) = 0;
         end
 %         P = tf([1, e(i) * T, f1 * f1] / f1 / f1, [1, T, f2 * f2] / f2 / f2) * tf([tau, 1], [alpha(j) * tau, 1]);
@@ -151,8 +152,8 @@ for i = 1 : N
 %         grid on
     end
 end
-i = 1;
-j = 1;
+i = 9;
+j = 8;
 f2 = res(i, j, 1);
 fre = res(i, j, 2);
 tau = 1 / (sqrt(alpha(j)) * fre);
