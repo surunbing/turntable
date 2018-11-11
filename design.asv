@@ -166,14 +166,14 @@ figurename('闭环');
 bode(G_P * P / (1 + G_P * P));
 grid on
 
-fre = bandwidth * ratio * 2;
+fre = bandwidth * ratio;
 alpha = 2;
-tau = 1 / (sqrt(alpha) * fre);
+tau = 1 / (sqrt(alpha2) * fre);
 T = alpha * tau;
-G_later = tf([tau, 1], [T, 1]);
+later.G_later = tf([tau, 1], [T, 1]);
+later = Boostedlfgain(data, advance, bandwidth * ratio, 2);
 figurename('迟后环节');
-bode(G_later);
-grid on
+bode(later.G_later);
 
 autoArrangeFigures
 
