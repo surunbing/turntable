@@ -10,30 +10,20 @@ taum = 0.67;
 taue = 0.0035;
 
 T = 0.0014;
-wfr = 10 * 2 * pi;
+wfr = 15 * 2 * pi;
 kgr = 5;
 Mre = 6;
 wcmax = 315;
-pmr = 35;
-
-%% 基于双十指标的优化
 start = [0.8, 405.4322];
-lb = [0.00001; 0.00001];
-ub = [inf; inf];
-% options = optimset('Algorithm','interior-point');
-options = optimset('Algorithm','sqp');
-[X, fval, exitflag] = fmincon(@(x)GetWsCost(x, T)...
-    , start, [], [], [], [], lb, ub, @(x)nlconws(x, T, pmr, kgr, Mre, wcmax), options);
+lb = [0; 0];
+ub = [1; inf];
+options = optimset('Algorithm','interior-point');
+% options = optimset('Algorithm','sqp');
 
 
-%% 基于相位裕度的优化
-start = [0.8, 405.4322];
-lb = [0.00001; 0.00001];
-ub = [inf; inf];
-% options = optimset('Algorithm','interior-point');
-options = optimset('Algorithm','sqp');
+
 [X, fval, exitflag] = fmincon(@(x)GetPmCost(x, T)...
-    , start, [], [], [], [], lb, ub, @(x)nlconpm(x, T, wfr, kgr, Mre, wcmax), options);
+    , start, [], [], [], [], lb, ub, @(x)nlcon(x, T, wfr, kgr, Mre, wcmax), options);
 
 x = X;
 kg = 20 * log10(GetGm(x, T));
