@@ -1,5 +1,3 @@
-clc, clear
-close all
 
 %% 还需要修改谐振峰约束
 
@@ -60,8 +58,8 @@ margin(G_P);
 grid on
 
 
-e = 1.5;
-T = 3;
+e = 2.8;
+T = 11;
 f1 = 113;
 f2 = 113;
 
@@ -73,8 +71,8 @@ trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
 % bode(G);
 
 
-fre = 7 * 2 * pi;
-alpha = 3;
+fre = 5 * 2 * pi;
+alpha = 5;
 tau = 1 / (sqrt(alpha) * fre);
 T = alpha * tau;
 G_later = tf([tau, 1], [T, 1]);
@@ -87,11 +85,11 @@ taum = 0.67;
 taue = 0.0035;
 G = tf(K, [taum * taue taum + taue 1 0]);
 % K = tf(164375.2706 * conv([0.0035 1], [0.67, 1]), 434 * [0.0014, 1.3187, 457.7607]);
-% G_later = 1;
+G_later = G_later * 1.5;
 figurename('开环');
-margin(G * P * G_later * 1.5);
+margin(G * P * G_later * trap);
 grid on
 
 figurename('闭环');
-bode(G * P * G_later/ (1 + G * P * G_later));
+bode(G * P * G_later * trap / (1 + G * P * G_later * trap));
 grid on

@@ -20,7 +20,7 @@ else
 end
 
 phi_n_min = -130 - phi;
-phi_n_max = -128 - phi;
+phi_n_max = -125 - phi;
 tic
 % 得到迟后环节计算 
 start = [wc_r / 2, 3];
@@ -43,18 +43,16 @@ count = 50;
 K = linspace(1, 5, count);
 Wc = zeros(count, 1);
 Pm = zeros(count, 1);
-Phi = zeros(count, 1);
 for i = 1 : count
     [Gm, pm, Wgm, Wpm] = margin(K(i) * G_later * P * G);
     Wc(i) = Wpm;
     Pm(i) = pm;
-    if pm < 50 || pm > 55
+    if Pm < 50
         Pm(i) = 0;
     end
-    if Wpm > wc_r || Wpm < (wc_r - 50)
+    if Wc > wc_r | Wc < (wc_r - 50)
         Wc(i) = 0;
     end
-    [~, Phi(i)] = bode((K(i) * G_later * P * G) / (1 + K(i) * G_later * P * G), para.dt);
 end
 
 % 计算增益K
