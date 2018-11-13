@@ -37,10 +37,7 @@ if strcmp(option.type, 'transform') == 1
     end
 elseif strcmp(option.type, 'discrete') == 1
     %% ÅÐ¶Ï´©Ô½ÆµÂÊ
-    ncount = data.fre;
-    for i = 1 : ncount
-        
-    end
+    ncount = 
 end
 end
 
