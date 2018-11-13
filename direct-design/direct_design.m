@@ -7,7 +7,7 @@ K = 434;
 taum = 0.67;
 taue = 0.0035;
 
-T = 0.0014 / 2;
+T = 0.0014 / 1.8;
 kgr = 5;
 Mre = 6;
 wcmax = 550;
@@ -45,7 +45,7 @@ omegan = x(2);
 xi = x(1);
 % G = tf(omegan * omegan, conv([1, 2 * xi * omegan, omegan * omegan], [T, 1]));
 % bode(G);
-% grid on
+grid on
 
 %% 开环对象
 a = omegan * omegan * conv([taue, 1], [taum, 1]);
