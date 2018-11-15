@@ -1,7 +1,7 @@
 clc, clear
 close all
 
-fre_start = 100;
+fre_start = 1;
 fre_end = 150;
 
 fre_array = fre_start : 1 : fre_end;
@@ -10,7 +10,7 @@ turntable_bode.fre = fre_array * 2 * pi;
 turntable_bode.mag = zeros(length(fre_array), 1);
 turntable_bode.phi = zeros(length(fre_array), 1);
 Type = 1; %% sine
-bTf = 1;  %% 无摩擦
+bTf = 0;  %% 0无摩擦  1有摩擦
 i = 1;
 %% Sweep
 for fre = fre_array
@@ -21,12 +21,12 @@ for fre = fre_array
     Tsim = t_off;
     sim('Turntable_sweep.slx',Tsim);
 
-    figure(1)
-    subplot 211
-    plot(in_out(2000:18000, 1), in_out(2000:18000, 2), 'r-');
-    hold on
-    grid on
-    plot(in_out(2000:18000, 1), in_out(2000:18000, 3), 'b-');
+%     figure(1)
+%     subplot 211
+%     plot(in_out(2000:18000, 1), in_out(2000:18000, 2), 'r-');
+%     hold on
+%     grid on
+%     plot(in_out(2000:18000, 1), in_out(2000:18000, 3), 'b-');
 %     
     % FFT
     y = fft(in_out(2000:18000, 2));
@@ -37,22 +37,25 @@ for fre = fre_array
     f = n * fs / N;    %频率序列
     Mag=abs(y);
     Mag1 = abs(y1);
-    subplot 212
-    plot(f(1: fix(N / 2)),Mag(1: fix(N / 2)) * 2 / N, 'r-');
-    hold on
-    grid on
-    plot(f(1: fix(N / 2)),Mag1(1: fix(N / 2)) * 2 / N, 'b-');
+%     subplot 212
+%     plot(f(1: fix(N / 2)),Mag(1: fix(N / 2)) * 2 / N, 'r-');
+%     hold on
+%     grid on
+%     plot(f(1: fix(N / 2)),Mag1(1: fix(N / 2)) * 2 / N, 'b-');
     
-    num = fre * N / (n * fs);
-    
-    turntable_bode.mag(i) = 20 * (log10(max(Mag1(2 : end))) - log10(max(Mag(2 : end))));
-    num = find(Mag1 == max(Mag1(2 : end)));
-    num = num(1);
-    ang = angle(y1(num));
+%     num = fre * N / (n * fs);
+    n_f = find(Mag == max(Mag));
+    n_f = n_f(1);
+%     n_f = fre * N / fs;
+    turntable_bode.mag(i) = 20 * (log10(Mag1(n_f)) - log10(Mag(n_f)));
+%     turntable_bode.mag(i) = 20 * (log10(max(Mag1(2 : end))) - log10(max(Mag(2 : end))));
+%     num = find(Mag1 == max(Mag1(2 : end)));
+%     num = num(1);
+    ang = angle(y1(n_f));
     if(ang < 0)
         ang = ang + 2 * pi;
     end
-    ang1 = angle(y(num));
+    ang1 = angle(y(n_f));
     if(ang1 < 0)
         ang1 = ang1 + 2 * pi;
     end
@@ -67,6 +70,7 @@ grid on
 figure(2);
 semilogx(turntable_bode.fre, turntable_bode.phi, 'r*-');
 grid on
+
 
 %% 标称对象
 % figure(4);
