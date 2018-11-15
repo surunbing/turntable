@@ -10,8 +10,7 @@ turntable_bode.fre = fre_array * 2 * pi;
 turntable_bode.mag = zeros(length(fre_array), 1);
 turntable_bode.phi = zeros(length(fre_array), 1);
 Type = 1; %% sine
-bTf = 1;  %% 0无摩擦  1有摩擦
-bFt = 0;  %% 0 有力矩波动  1 无力矩波动
+bTf = 0;  %% 0无摩擦  1有摩擦
 i = 1;
 %% Sweep
 for fre = fre_array
@@ -65,17 +64,16 @@ for fre = fre_array
 %     close all;
     i;
 end
-h1 = figurename('mag');
+hi = figurename('mag');
 semilogx(turntable_bode.fre, turntable_bode.mag, 'r*-');
-hold on
 grid on
-h2 = figurename('phi');
+h2 = figurename(;phi');
 semilogx(turntable_bode.fre, turntable_bode.phi, 'r*-');
-hold on
 grid on
 
 
 %% 标称对象
+figure(4);
 K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;
@@ -89,10 +87,9 @@ for i = 1 : length(turntable_bode.fre)
 end
 figure(h1);
 semilogx(turntable_bode.fre, Mag, 'bo-');
-grid on
 figure(h2);
-semilogx(turntable_bode.fre, Phi, 'bo-');
-grid on
+semilogx(turntable_bode.fre, Phi, 'r*-');
+
 
 % 
 % figure(5)
