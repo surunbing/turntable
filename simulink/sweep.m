@@ -2,16 +2,18 @@ clc, clear
 close all
 
 fre_start = 1;
-fre_end = 150;
+fre_end = 100;
 
 fre_array = fre_start : 1 : fre_end;
 
 turntable_bode.fre = fre_array * 2 * pi;
 turntable_bode.mag = zeros(length(fre_array), 1);
 turntable_bode.phi = zeros(length(fre_array), 1);
+turntable_bode.magc = zeros(length(fre_array), 1);
+turntable_bode.phic = zeros(length(fre_array), 1);
 Type = 1; %% sine
 bTf = 1;  %% 0无摩擦  1有摩擦
-bFt = 0;  %% 0 有力矩波动  1 无力矩波动
+bFt = 1;  %% 0 有力矩波动  1 无力矩波动
 i = 1;
 %% Sweep
 for fre = fre_array
@@ -22,6 +24,8 @@ for fre = fre_array
     Tsim = t_off;
     sim('Turntable_sweep.slx',Tsim);
 
+    turntable_bode.magc(i) = 20 * log10(mag);
+    turntable_bode.phic(i) = 0;
 %     figure(1)
 %     subplot 211
 %     plot(in_out(2000:18000, 1), in_out(2000:18000, 2), 'r-');
@@ -90,9 +94,35 @@ end
 figure(h1);
 semilogx(turntable_bode.fre, Mag, 'bo-');
 grid on
+hold on
 figure(h2);
 semilogx(turntable_bode.fre, Phi, 'bo-');
 grid on
+hold on
+% data = frd(mag .* exp(1j * phi * pi / 180), turntable_bode.fre);
+np = 3;
+nz = 0;
+iodelay = 0;
+% sys = tfest(data,np,nz,iodelay);
+mag = 10 .^ (turntable_bode.mag / 20);
+phi = turntable_bode.phi;
+data2 = frd(mag .* exp(1j * phi * pi / 180), turntable_bode.fre);
+sys2 = tfest(data2,np,nz,iodelay);
+G = tf(sys2.Numerator, sys2.Denominator);
+[mag, phi] = bode(G, turntable_bode.fre);
+Mag = zeros(length(turntable_bode.fre), 1);
+Phi = zeros(length(turntable_bode.fre), 1);
+for i = 1 : length(turntable_bode.fre)
+    Mag(i) = 20 * log10(mag(1, 1, i));
+    Phi(i) = phi(1, 1, i);
+end
+figure(h1);
+semilogx(turntable_bode.fre, Mag, 'yo-');
+grid on
+figure(h2);
+semilogx(turntable_bode.fre, Phi, 'yo-');
+grid on
+
 
 % 
 % figure(5)
