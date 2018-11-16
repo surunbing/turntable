@@ -3,9 +3,13 @@ function [P, G, para] = direct_design()
 
 %% 给定对象特性
 close all
-K = 434;
-taum = 0.67;
-taue = 0.0035;
+% K = 434;
+% taum = 0.67;
+% taue = 0.0035;
+
+K = 1.56 * 180 / pi;
+taue = 0.0039035;
+taum = 0.984871194396488;
 
 T = 0.0014 / 1.8;
 kgr = 5;
@@ -45,7 +49,7 @@ omegan = x(2);
 xi = x(1);
 % G = tf(omegan * omegan, conv([1, 2 * xi * omegan, omegan * omegan], [T, 1]));
 % bode(G);
-grid on
+% grid on
 
 %% 开环对象
 a = omegan * omegan * conv([taue, 1], [taum, 1]);

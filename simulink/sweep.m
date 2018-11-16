@@ -2,9 +2,9 @@ clc, clear
 close all
 
 fre_start = 1;
-fre_end = 50;
+fre_end = 25;
 
-fre_array = fre_start : 2 : fre_end;
+fre_array = fre_start : 1 : fre_end;
 
 turntable_bode.fre = fre_array * 2 * pi;
 turntable_bode.mag = zeros(length(fre_array), 1);
@@ -19,10 +19,10 @@ i = 1;
 for fre = fre_array
     
     t_off = 10;
-    mag = 5;
+    mag = 1;
     fre = fre_array(i);
     Tsim = t_off;
-    sim('Turntable_sweep.slx',Tsim);
+    sim('Turntable_close.slx',Tsim);
 
     turntable_bode.magc(i) = 20 * log10(mag);
     turntable_bode.phic(i) = 0;
@@ -78,55 +78,55 @@ semilogx(turntable_bode.fre, turntable_bode.phi, 'r*-');
 hold on
 grid on
 
-
-%% 标称对象
-K = 1.56 * 180 / pi;
-taue = 0.0039035;
-taum = 0.984871194396488;
-G = tf(K, [taue * taum, taum, 1, 0]);
-[mag, phi] = bode(G, turntable_bode.fre);
-Mag = zeros(length(turntable_bode.fre), 1);
-Phi = zeros(length(turntable_bode.fre), 1);
-for i = 1 : length(turntable_bode.fre)
-    Mag(i) = 20 * log10(mag(1, 1, i));
-    Phi(i) = phi(1, 1, i);
-end
-figure(h1);
-semilogx(turntable_bode.fre, Mag, 'bo-');
-grid on
-hold on
-figure(h2);
-semilogx(turntable_bode.fre, Phi, 'bo-');
-grid on
-hold on
-mag = 10 .^ (turntable_bode.mag / 20);
-phi = turntable_bode.phi;
-response = mag.*exp(1j*phi*pi/180);
-fr_data = idfrd(response,turntable_bode.fre,0);
-sysP1D_noise = procest(fr_data,'P2I');
-
-G = tf(sysP1D_noise.Kp, [sysP1D_noise.Tp1 * sysP1D_noise.Tp2, sysP1D_noise.Tp1 + sysP1D_noise.Tp2, 1, 0]);
-[mag, phi] = bode(G, turntable_bode.fre);
-Mag = zeros(length(turntable_bode.fre), 1);
-Phi = zeros(length(turntable_bode.fre), 1);
-for i = 1 : length(turntable_bode.fre)
-    Mag(i) = 20 * log10(mag(1, 1, i));
-    Phi(i) = phi(1, 1, i);
-end
-% Mag = 20 * log10(abs(response));
-% Phi = angle(response) / pi * 180;
-% for i = 1 : length(Phi)
-%    if Phi(i) > 0
-%        Phi(i) = Phi(i) - 360;
-%    end
-%        
+% 
+% %% 标称对象
+% K = 1.56 * 180 / pi;
+% taue = 0.0039035;
+% taum = 0.984871194396488;
+% G = tf(K, [taue * taum, taum, 1, 0]);
+% [mag, phi] = bode(G, turntable_bode.fre);
+% Mag = zeros(length(turntable_bode.fre), 1);
+% Phi = zeros(length(turntable_bode.fre), 1);
+% for i = 1 : length(turntable_bode.fre)
+%     Mag(i) = 20 * log10(mag(1, 1, i));
+%     Phi(i) = phi(1, 1, i);
 % end
-figure(h1);
-semilogx(turntable_bode.fre, Mag, 'yo-');
-grid on
-figure(h2);
-semilogx(turntable_bode.fre, Phi, 'yo-');
-grid on
+% figure(h1);
+% semilogx(turntable_bode.fre, Mag, 'bo-');
+% grid on
+% hold on
+% figure(h2);
+% semilogx(turntable_bode.fre, Phi, 'bo-');
+% grid on
+% hold on
+% mag = 10 .^ (turntable_bode.mag / 20);
+% phi = turntable_bode.phi;
+% response = mag.*exp(1j*phi*pi/180);
+% fr_data = idfrd(response,turntable_bode.fre,0);
+% sysP1D_noise = procest(fr_data,'P2I');
+% 
+% G = tf(sysP1D_noise.Kp, [sysP1D_noise.Tp1 * sysP1D_noise.Tp2, sysP1D_noise.Tp1 + sysP1D_noise.Tp2, 1, 0]);
+% [mag, phi] = bode(G, turntable_bode.fre);
+% Mag = zeros(length(turntable_bode.fre), 1);
+% Phi = zeros(length(turntable_bode.fre), 1);
+% for i = 1 : length(turntable_bode.fre)
+%     Mag(i) = 20 * log10(mag(1, 1, i));
+%     Phi(i) = phi(1, 1, i);
+% end
+% % Mag = 20 * log10(abs(response));
+% % Phi = angle(response) / pi * 180;
+% % for i = 1 : length(Phi)
+% %    if Phi(i) > 0
+% %        Phi(i) = Phi(i) - 360;
+% %    end
+% %        
+% % end
+% figure(h1);
+% semilogx(turntable_bode.fre, Mag, 'yo-');
+% grid on
+% figure(h2);
+% semilogx(turntable_bode.fre, Phi, 'yo-');
+% grid on
 
 
 % 
