@@ -19,8 +19,8 @@ else
     wc_r = wc_max;
 end
 [mag, phi] = bode(P * G, wc_r);
-phi_n_min = -130 - phi;
-phi_n_max = -126 - phi;
+phi_n_min = -121 - phi;
+phi_n_max = -118 - phi;
 
 %%计算无滞后的相频特性
 frequence = [wc_r, wc_r - 50, para.dt];
@@ -34,7 +34,7 @@ end
 tic
 % 得到迟后环节计算 
 start = [wc_r / 2, 6, 2];
-lb = [1; 1.5; 1];
+lb = [1; 1.5; 0.8];
 ub = [wc_r; 15; 5];
 % options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');
