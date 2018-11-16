@@ -2,7 +2,7 @@ clc, clear
 close all
 
 fre_start = 1;
-fre_end = 25;
+fre_end = 50;
 
 fre_array = fre_start : 1 : fre_end;
 

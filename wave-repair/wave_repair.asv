@@ -10,7 +10,7 @@ close all
 %% 不引起低频增益的损失
 
 % 首先添加之后环节, 检查此wc是否可以满足此种方法
-wc_r = 250;
+wc_r = 270;
 
 wc_max = fsolve(@(x)myfun(x, para.xi, para.omegan, para.T), 100);
 if wc_max > wc_r
@@ -19,8 +19,8 @@ else
     wc_r = wc_max;
 end
 [mag, phi] = bode(P * G, wc_r);
-phi_n_min = -121 - phi;
-phi_n_max = -118 - phi;
+phi_n_min = -123 - phi;
+phi_n_max = -120 - phi;
 
 %%计算无滞后的相频特性
 frequence = [wc_r, wc_r - 50, para.dt];
@@ -34,7 +34,7 @@ end
 tic
 % 得到迟后环节计算 
 start = [wc_r / 2, 6, 2];
-lb = [1; 1.5; 0.8];
+lb = [1; 1.5; 0.5];
 ub = [wc_r; 15; 5];
 % options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');
@@ -69,10 +69,15 @@ f1 = 88;
 trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
 K = K * trap;
 
-e = 1.5;
-T = 8;
-f1 = 88;
+e = 1.8;
+T = 15;
+f1 = 113;
 trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
+
+%% 迟后环节，增加开环增益
+
+
+
 K = K * trap;
 
 margin(K);

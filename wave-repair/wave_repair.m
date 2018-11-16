@@ -73,7 +73,16 @@ e = 1.8;
 T = 15;
 f1 = 113;
 trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
-K = K * trap;
+
+%% 迟后环节，增加开环增益
+alpha = 2;
+fre = 0.5;
+tau = 1 / sqrt(alpha) / fre;
+T = alpha * tau;
+G_later = tf([tau, 1], [T, 1]) * alpha;
+
+
+K = K * trap * G_later * G_later;
 
 margin(K);
 grid on
