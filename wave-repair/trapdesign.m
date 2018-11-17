@@ -20,7 +20,7 @@ function [trap] = trapdesign(P, G, bandwidth)
 
 %% 加入一个环节， 优化实验
 [~, ~, ~, wc] = margin(P * G);
-pm_cost = 5;
+pm_cost = 7;
 ncount = round(bandwidth / 2 / pi);
 data.fre = linspace(1, ncount, ncount) * 2 * pi;
 data.mag = zeros(ncount, 1);
@@ -33,14 +33,16 @@ end
 
 tic
 % 得到迟后环节计算 
-start = [1.1, 5, 100];
-lb = [1; 4; bandwidth * 0.5];
-ub = [5; 70; bandwidth + 10];
+start = [1.1, 5, 100, 1.1, 5, 90];
+lb = [1; 10; bandwidth * 0.5; 1; 4; bandwidth * 0.5];
+ub = [5; 70; bandwidth + 10; 5; 70; bandwidth + 10];
 % options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');
 [x, fval, exitflag] = fmincon(@(x)GetTrapcost(x, 0, data, 0, 0)...
     , start, [], [], [], [], lb, ub, @(x)nonlcon_trap(x, wc, pm_cost), options);
 toc
-trap.G = tf([1, x(1) * x(2), x(3) * x(3)], [1, x(2), x(3) * x(3)]);
+[c, ceq] = nonlcon_trap(x, wc, pm_cost);
+trap.G1 = tf([1, x(1) * x(2), x(3) * x(3)], [1, x(2), x(3) * x(3)]);
+trap.G2 = tf([1, x(4) * x(5), x(6) * x(6)], [1, x(5), x(6) * x(6)]);
 end
 
