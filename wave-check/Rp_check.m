@@ -15,7 +15,7 @@ if strcmp(option.type, 'transfer') == 1
     Rp = 20 * log10(Rp);
 elseif strcmp(option.type, 'discrete') == 1
     Rp = max(data.mag);
-    num = find(data.mag == Mag_max);
+    num = find(data.mag == Rp);
     fre = data.fre(num(1)); 
     Rp = 20 * log10(Rp);
 end

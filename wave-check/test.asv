@@ -1,0 +1,27 @@
+clc, clear
+close all
+
+%% 检查各模块是否正常工作
+ncount = 20;
+data.mag = zeros(ncount, 1);
+data.phi = zeros(ncount, 1);
+data.fre = linspace(1, 20) * 2 * pi;
+
+for i = 1 : ncount
+    data.mag(i) = 1 + 0.02 * (i - 10);
+    data.phi(i) = 2 * (i - 10);
+end
+
+bandwidth = 20 * 2 * pi;
+option.type = 'close-loop';
+
+data_check = CLIndic_check(data, bandwidth, option);
+%% 正常
+
+G = tf
+
+
+
+
+
+

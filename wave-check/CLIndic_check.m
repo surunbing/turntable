@@ -20,16 +20,16 @@ if strcmp(option.type, 'close-loop') == 1
            data_check.phi(i) = 0;
        end
        %% 计算差值
-       data.mag11_reg(i) = 1.1 - data.mag(i);
-       data.mag09_reg(i) = data.mag(i) - 0.9;
-       data.phips_reg(i) = 10 - data.phi(i);
-       data.phing_reg(i) = data.phi(i) + 10;
+       data_check.mag11_reg(i) = 1.1 - data.mag(i);
+       data_check.mag09_reg(i) = data.mag(i) - 0.9;
+       data_check.phips_reg(i) = 10 - data.phi(i);
+       data_check.phing_reg(i) = data.phi(i) + 10;
     end
 elseif strcmp(option.type, 'open-loop') == 1
     %% 由开环计算闭环
     data_close = data;
     close_complex = data.mag .* complex(cos(data.phi / 180 * pi), sin(data.phi / 180 * pi));
-    close_complex = close_complex / (1 + close_complex);
+    close_complex = close_complex ./ (1 + close_complex);
     data_close.mag = abs(close_complex);
     data_close.phi = angle(close_complex) / pi * 180;
     for i = 1 : ncount
@@ -44,10 +44,10 @@ elseif strcmp(option.type, 'open-loop') == 1
            data_check.phi(i) = 0;
        end
        %% 计算差值
-       data.mag11_reg(i) = 1.1 - data_close.mag(i);
-       data.mag09_reg(i) = data_close.mag(i) - 0.9;
-       data.phips_reg(i) = 10 - data_close.phi(i);
-       data.phing_reg(i) = data_close.phi(i) + 10;
+       data_check.mag11_reg(i) = 1.1 - data_close.mag(i);
+       data_check.mag09_reg(i) = data_close.mag(i) - 0.9;
+       data_check.phips_reg(i) = 10 - data_close.phi(i);
+       data_check.phing_reg(i) = data_close.phi(i) + 10;
     end
 end
 end

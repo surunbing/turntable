@@ -1,0 +1,14 @@
+function [c, ceq] = nonlcon(x, wc, pm_cost)
+
+%%µÃµ½
+e = x(1);
+T = x(2);
+f = x(3);
+
+complex_trap = complex(f * f - wc * wc, e * T * wc) / complex(f * f - wc * wc, T * wc);
+phi = 
+
+
+
+end
+

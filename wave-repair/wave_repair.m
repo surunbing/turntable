@@ -50,51 +50,65 @@ alpha = X(2);
 tau = 1 / (sqrt(alpha) * fre);
 T = alpha * tau;
 G_later = tf([tau, 1], [T, 1]);
+P = P * G_later * X(3);
+trap = trapdesign(P, G, 18 * 2 * pi);
 
-K = 1.56 * 180 / pi;
-taue = 0.0039035;
-taum = 0.984871194396488 * 15;
-G = tf(K, [taum * taue, taue + taum, 1, 0]);
+
+
+
+% K = 1.56 * 180 / pi;
+% taue = 0.0039035;
+% taum = 0.984871194396488 * 15;
+% G = tf(K, [taum * taue, taue + taum, 1, 0]);
 
 
 figurename('开环特性');
-K = P * G * G_later * X(3);
-
-
-%% 增加陷波环节
-e = 1.5;
-T = 15;
-f1 = 70;
-
-trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
-K = K * trap;
-
-e = 2.0;
-T = 15;
-f1 = 88;
-trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
-K = K * trap;
-
-e = 1.8;
-T = 15;
-f1 = 113;
-trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
-
-%% 迟后环节，增加开环增益
-alpha = 2;
-fre = 0.5;
-tau = 1 / sqrt(alpha) / fre;
-T = alpha * tau;
-G_later = tf([tau, 1], [T, 1]) * alpha;
-
-
-K = K * trap * G_later * G_later;
-
+K = P * trap.G * G;
 margin(K);
 grid on
 figurename('闭环特性');
 bode(K / (1 + K));
 grid on
+
+
+
+
+% %% 增加陷波环节
+% e = 1.5;
+% T = 15;
+% f1 = 70;
+% 
+% trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
+% K = K * trap;
+% 
+% e = 2.0;
+% T = 15;
+% f1 = 88;
+% trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
+% K = K * trap;
+% 
+% e = 1.8;
+% T = 15;
+% f1 = 113;
+% trap = tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
+% 
+% 
+% 
+% %% 迟后环节，增加开环增益
+% alpha = 2;
+% fre = 0.5;
+% tau = 1 / sqrt(alpha) / fre;
+% T = alpha * tau;
+% G_later = tf([tau, 1], [T, 1]) * alpha;
+% 
+% 
+% K = K * trap * G_later * G_later;
+% 
+% margin(K);
+% grid on
+% figurename('闭环特性');
+% bode(K / (1 + K));
+% grid on
 
 autoArrangeFigures;
 % close all
