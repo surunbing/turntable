@@ -31,7 +31,7 @@ elseif strcmp(option.type, 'open-loop') == 1
     close_complex = data.mag .* complex(cos(data.phi / 180 * pi), sin(data.phi / 180 * pi));
     close_complex = close_complex / (1 + close_complex);
     data_close.mag = abs(close_complex);
-    data_close.phi = angle(close_complex) / pi * 180);
+    data_close.phi = angle(close_complex) / pi * 180;
     for i = 1 : ncount
         if data_close.mag(i) > 0.9 && data_close.mag(i) < 1.1
            data_check.mag(i) = 1;

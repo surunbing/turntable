@@ -51,6 +51,12 @@ tau = 1 / (sqrt(alpha) * fre);
 T = alpha * tau;
 G_later = tf([tau, 1], [T, 1]);
 
+K = 1.56 * 180 / pi;
+taue = 0.0039035;
+taum = 0.984871194396488 * 15;
+G = tf(K, [taum * taue, taue + taum, 1, 0]);
+
+
 figurename('开环特性');
 K = P * G * G_later * X(3);
 
