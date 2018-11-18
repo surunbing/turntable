@@ -10,7 +10,7 @@ close all
 %% 不引起低频增益的损失
 
 % 首先添加之后环节, 检查此wc是否可以满足此种方法
-wc_r = 240;
+wc_r = 260;
 
 wc_max = fsolve(@(x)myfun(x, para.xi, para.omegan, para.T), 100);
 if wc_max > wc_r
@@ -66,7 +66,7 @@ trap = trapdesign(P, G, 18 * 2 * pi);
 
 
 figurename('开环特性');
-K = P * trap.G1 * G * trap.G2;
+K = P * trap.G1 * G * trap.G2 * trap.G3;
 margin(K);
 grid on
 figurename('闭环特性');

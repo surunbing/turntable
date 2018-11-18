@@ -7,12 +7,16 @@ f = x(3);
 e1 = x(4);
 T1 = x(5);
 f1 = x(6);
+e2 = x(7);
+T2 = x(8);
+f2 = x(9);
 
 frequence = data.fre;
 complex_trap = zeros(length(frequence), 1);
 for i = 1 : 1 : length(frequence)
     complex_trap(i) = complex(f * f - frequence(i) * frequence(i), e * T * frequence(i)) / complex(f * f - frequence(i) * frequence(i), T * frequence(i));
     complex_trap(i) = complex_trap(i) * complex(f1 * f1 - frequence(i) * frequence(i), e1 * T1 * frequence(i)) / complex(f1 * f1 - frequence(i) * frequence(i), T1 * frequence(i));
+    complex_trap(i) = complex_trap(i) * complex(f2 * f2 - frequence(i) * frequence(i), e2 * T2 * frequence(i)) / complex(f2 * f2 - frequence(i) * frequence(i), T2 * frequence(i));
 end
 complex_P = data.mag .* complex(cos(data.phi / 180 * pi), sin(data.phi / 180 * pi));
 complex_P = complex_P .* complex_trap;
