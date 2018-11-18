@@ -34,7 +34,7 @@ end
 tic
 % 得到迟后环节计算 
 start = [wc_r / 2, 6, 2];
-lb = [1; 1.5; 0.5];
+lb = [1; 2; 0.5];
 ub = [wc_r; 15; 5];
 % options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');
