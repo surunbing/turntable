@@ -11,31 +11,36 @@ taum = 0.984871194396488;
 
 T = 0.0014 / 2;
 kgr = 5;
-Mre = 4;
+Mre = 6;
 wcmax = 550;
 pmr = 35;
 
 %% 基于双十指标的优化
 start = [0.3, 405.4322];
 lb = [0.00001; 0.00001];
-ub = [inf; inf];
+ub = [1; inf];
 % options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');
 [X, fval, exitflag] = fmincon(@(x)GetWsCost(x, T)...
     , start, [], [], [], [], lb, ub, @(x)nlconws(x, T, pmr, kgr, Mre, wcmax), options);
 
 
+%% 基于剪切频率的优化
+wfr = 18 * 2 * pi; 
+[X, fval, exitflag] = fmincon(@(x)GetWcCost(x, T)...
+    , start, [], [], [], [], lb, ub, @(x)nlconwc(x, T, wfr, kgr, Mre, pmr), options);
+
 %% 基于相位裕度的优化
-wfr = abs(fval); 
-% wcmax = 350;
-start = [0.1, 405.4322];
-lb = [0.00001; 0.00001];
-ub = [inf; inf];
-options = optimset('Algorithm','interior-point');
-% options = optimset('Algorithm','sqp');
-[X, fval, exitflag] = fmincon(@(x)GetPmCost(x, T)...
-    , start, [], [], [], [], lb, ub, @(x)nlconpm(x, T, wfr, kgr, Mre, wcmax), options);
-[c, ceq] = nlconpm(X, T, wfr, kgr, Mre, wcmax);
+% wfr = abs(fval); 
+% % wcmax = 350;
+% start = [0.5, 405.4322];
+% lb = [0.00001; 0.00001];
+% ub = [inf; inf];
+% options = optimset('Algorithm','interior-point');
+% % options = optimset('Algorithm','sqp');
+% [X, fval, exitflag] = fmincon(@(x)GetPmCost(x, T)...
+%     , start, [], [], [], [], lb, ub, @(x)nlconpm(x, T, wfr, kgr, Mre, wcmax), options);
+% [c, ceq] = nlconpm(X, T, wfr, kgr, Mre, wcmax);
 x = X;
 kg = 20 * log10(GetGm(x, T));
 wc = GetWc(x, T);
