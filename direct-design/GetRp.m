@@ -9,16 +9,16 @@ else
     y = 1 - 2 * xi * xi;
     ar = 3 * T * T;
     br = 2 - 4 * T * T * omegan * omegan * (1 - 2 * xi * xi);
-    cr = omegan * omegan * ((T * T * omegan * omegan + 4 * xi * xi - 2);
+    cr = omegan * omegan * (T * T * omegan * omegan + 4 * xi * xi - 2);
     if br > 0 && cr >= 0
         Rp = 1;
-    elseif br > 0 && c < 0
+    elseif br > 0 && cr < 0
         if xi > 0 && xi < 1 / 2 && T * T * omegan * omegan < (1 / (2 * y))
             Rp = -1;
         elseif xi > 1 / 2 && xi < 1 / sqrt(2) && T * T * omegan * omegan < (2 * y)
             Rp = -1;
         end
-    elseif b < 0 && c > 0
+    elseif br < 0 && cr > 0
         para1 = T * T * omegan * omegan;
         para2 = (sqrt(3 * (4 * T ^ 4 * omegan ^ 4 - 1)) - 1) / (4 * para1);
         para3 = 2 * y;
@@ -27,7 +27,7 @@ else
         elseif para1 > 1 / para3 && para1 >= 1 / 2 && xi >= 1 / 2 && xi < 1 / sqrt(2) && y > para2
             Rp = -1;
         end
-    elseif b < 0 && c <= 0
+    elseif br < 0 && cr <= 0
          para1 = T * T * omegan * omegan;
          if para1 < 2 * y && para1 > 1 / (2 * y)
              Rp = -1;
