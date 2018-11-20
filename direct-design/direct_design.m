@@ -1,8 +1,6 @@
 function [P, G, para] = direct_design()
 %% 还需要修改谐振峰约束
-
 %% 给定对象特性
-close all
 % K = 434;
 % taum = 0.67;
 % taue = 0.0035;
@@ -15,12 +13,12 @@ T = 0.0014 / 1.8;
 kgr = 5;
 Mre = 6;
 wcmax = 550;
-pmr = 35;
+pmr = 30;
 
 %% 基于双十指标的优化
 start = [0.3, 405.4322];
 lb = [0.00001; 0.00001];
-ub = [1; inf];
+ub = [inf; inf];
 % options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');
 [X, fval, exitflag] = fmincon(@(x)GetWsCost(x, T)...
@@ -37,7 +35,7 @@ ub = [1; inf];
 options = optimset('Algorithm','sqp');
 [X, fval, exitflag] = fmincon(@(x)GetPmCost(x, T)...
     , start, [], [], [], [], lb, ub, @(x)nlconpm(x, T, wfr, kgr, Mre, wcmax), options);
-
+[c, ceq] = nlconpm(X, T, wfr, kgr, Mre, wcmax);
 x = X;
 kg = 20 * log10(GetGm(x, T));
 wc = GetWc(x, T);
@@ -47,9 +45,10 @@ dt = GetDt(x, T);
 
 omegan = x(2);
 xi = x(1);
-% G = tf(omegan * omegan, conv([1, 2 * xi * omegan, omegan * omegan], [T, 1]));
-% bode(G);
-% grid on
+figurename('闭环对象');
+G = tf(omegan * omegan, conv([1, 2 * xi * omegan, omegan * omegan], [T, 1]));
+bode(G);
+grid on
 
 %% 开环对象
 a = omegan * omegan * conv([taue, 1], [taum, 1]);
@@ -69,40 +68,3 @@ para.mr = Mr;
 para.xi = x(1);
 para.omegan = x(2);
 para.T = T;
-% 
-% 
-% e = 2.8;
-% T = 11;
-% f1 = 113;
-% f2 = 113;
-% 
-% trap = 1;%tf([1, e * T, f1 * f1], [1, T, f1 * f1]);
-% bode(G);
-% grid on
-% hold on
-% G = tf([1, e * T, f1 * f1], [1, T, f2 * f2]);
-% bode(G);
-% 
-% 
-% fre = 7 * 2 * pi;
-% alpha = 3;
-% tau = 1 / (sqrt(alpha) * fre);
-% T = alpha * tau;
-% G_later = tf([tau, 1], [T, 1]);
-% figurename('迟后环节');
-% bode(G_later);
-% grid on
-% 
-% K = 434;
-% taum = 0.67;
-% taue = 0.0035;
-% G = tf(K, [taum * taue taum + taue 1 0]);
-% % K = tf(164375.2706 * conv([0.0035 1], [0.67, 1]), 434 * [0.0014, 1.3187, 457.7607]);
-% G_later = G_later * 2;
-% figurename('开环');
-% margin(G * P * G_later * trap);
-% grid on
-% 
-% figurename('闭环');
-% bode(G * P * G_later * trap / (1 + G * P * G_later * trap));
-% grid on

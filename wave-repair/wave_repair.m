@@ -23,7 +23,7 @@ phi_n_min = -123 - phi;
 phi_n_max = -120 - phi;
 
 %%计算无滞后的相频特性
-frequence = [wc_r, wc_r - 50, para.dt];
+frequence = [wc_r, wc_r - 50, 114];%para.dt];
 [mag, phi] = bode(P * G, frequence);
 c_data = zeros(length(frequence), 1);
 for i = 1 : length(frequence)
@@ -55,6 +55,9 @@ figurename('陷波前');
 margin(P * G);
 grid on
 trap = trapdesign(P, G, 18 * 2 * pi);
+figurename('陷波前闭环');
+bode(P * G / (1 + P * G));
+grid on
 
 
 
