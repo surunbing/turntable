@@ -20,9 +20,9 @@ start = [0.3, 405.4322];
 lb = [0.00001; 0.00001];
 ub = [1; inf];
 % options = optimset('Algorithm','interior-point');
-options = optimset('Algorithm','sqp');
-[X, fval, exitflag] = fmincon(@(x)GetWsCost(x, T)...
-    , start, [], [], [], [], lb, ub, @(x)nlconws(x, T, pmr, kgr, Mre, wcmax), options);
+% options = optimset('Algorithm','sqp');
+% [X, fval, exitflag] = fmincon(@(x)GetWsCost(x, T)...
+%     , start, [], [], [], [], lb, ub, @(x)nlconws(x, T, pmr, kgr, Mre, wcmax), options);
 
 
 %% 基于剪切频率的优化
