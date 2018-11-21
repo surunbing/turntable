@@ -1,20 +1,19 @@
-function [model] = sweep(filename, bTf, bFt, bClose)
-
+% function [model] = sweep(filename, bTf, bFt, bClose)
 fre_start = 1;
-fre_end = 150;
+fre_end = 100;
 
 fre_array = fre_start : 2 : fre_end;
 
 turntable_bode.fre = fre_array * 2 * pi;
 turntable_bode.mag = zeros(length(fre_array), 1);
 turntable_bode.phi = zeros(length(fre_array), 1);
-turntable_bode.magc = zeros(length(fre_array), 1);
-turntable_bode.phic = zeros(length(fre_array), 1);
+% turntable_bode.magc = zeros(length(fre_array), 1);
+% turntable_bode.phic = zeros(length(fre_array), 1);
 
 Type = 1; %% sine
-% bTf = 0;  %% 0无摩擦  1有摩擦
-% bFt = 1;  %% 0 有力矩波动  1 无力矩波动
-% bClose = 1; %% 0 不闭环    1 闭环
+bTf = 1;  %% 0无摩擦  1有摩擦
+bFt = 0;  %% 0 有力矩波动  1 无力矩波动
+bClose = 1; %% 0 不闭环    1 闭环
 
 J = 1.076;
 L = 0.733240176511722;
@@ -28,7 +27,7 @@ i = 1;
 for fre = fre_array
     
     t_off = 10;
-    mag = 1;
+    mag = 5;
     fre = fre_array(i);
     Tsim = t_off;
     %% 'Turntable_close.slx'
@@ -64,7 +63,8 @@ mag = 10 .^ (turntable_bode.mag / 20);
 phi = turntable_bode.phi;
 response = mag.*exp(1j*phi*pi/180);
 fr_data = idfrd(response,turntable_bode.fre,0);
-sysP1D_noise = procest(fr_data,'P2I');
+opt = procestOptions('Focus','simulation','Display','on','SearchMethod', 'fmincon');
+sysP1D_noise = procest(fr_data,'P2I',opt);
 
 G = tf(sysP1D_noise.Kp, [sysP1D_noise.Tp1 * sysP1D_noise.Tp2, sysP1D_noise.Tp1 + sysP1D_noise.Tp2, 1, 0]);
 model.G = G;
@@ -80,4 +80,7 @@ K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;
 model.G_ideal = tf(K, [taue * taum, taue + taum, 1, 0]);
+model.turntable = turntable_bode;
+
+
 
