@@ -22,26 +22,28 @@ bode(P * G / (1 + P * G));
 grid on
 
 %% 是否需要加入能否设计出的评估
-bandwidth1 = max([bandwidth + pi, para.dt]);
-[later, fval, exitflag] = Holddonewc(P, G, para, bandwidth1, bandwidth * 2, 122);
-figurename('迟后');
-margin(P * G * later.G);
-grid on
-figurename('迟后闭环');
-bode(P * G * later.G / (1 + P * G * later.G));
-grid on
+[trap, later, bfailure, data_check] = wave_repair(P, G, para, 290, 0, bandwidth);
 
-num = 4;
-trap = trapdesign(P * later. G, G, bandwidth, num, 10);
-K = P * G * later.G;
-for i = 1 : num
-   K = K * trap.G(i); 
-end
-figurename('陷波滤波器');
-margin(K);
-grid on
-figurename('陷波滤波器闭环');
-bode(K / (1 + K));
-grid on
+% bandwidth1 = max([bandwidth + pi, para.dt]);
+% [later, fval, exitflag] = Holddonewc(P, G, para, bandwidth1, bandwidth * 2, 122);
+% figurename('迟后');
+% margin(P * G * later.G);
+% grid on
+% figurename('迟后闭环');
+% bode(P * G * later.G / (1 + P * G * later.G));
+% grid on
+% 
+% num = 4;
+% trap = trapdesign(P * later. G, G, bandwidth, num, 10);
+% K = P * G * later.G;
+% for i = 1 : num
+%    K = K * trap.G(i); 
+% end
+% figurename('陷波滤波器');
+% margin(K);
+% grid on
+% figurename('陷波滤波器闭环');
+% bode(K / (1 + K));
+% grid on
 
 autoArrangeFigures;

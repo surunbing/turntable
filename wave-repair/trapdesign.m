@@ -1,4 +1,4 @@
-function [trap] = trapdesign(P, G, bandwidth, num, pm_cost)
+function [trap, fval, exitflag] = trapdesign(P, G, bandwidth, num, pm_cost, wc)
 %   设计陷波环节
 %   如何设计 从前向后加  假设闭环相频单减，闭环幅频单调递增，找出第一个不符合的频点，检查同带宽的距离，
 %   是否能定义优化问题，寻优内容为陷波滤波器的三个参数，限定在较为窄的范围内 must have a try
@@ -8,7 +8,7 @@ function [trap] = trapdesign(P, G, bandwidth, num, pm_cost)
 %% 改善，不加先波滤波器，哪里开始不满足指标
 
 %% 加入一个环节， 优化实验
-[~, ~, ~, wc] = margin(P * G);
+%[~, ~, ~, wc] = margin(P * G);
 % pm_cost = 8;
 ncount = round(bandwidth / 2 / pi);
 data.fre = linspace(1, ncount, ncount)' * 2 * pi;
@@ -45,7 +45,7 @@ end
 options = optimset('Algorithm','sqp');
 
 [x, fval, exitflag] = fmincon(@(x)GetTrapcost(x, num, data, 0, 0)...
-    , start, [], [], [], [], lb, ub, @(x)nonlcon_trap(x, wc + 2, pm_cost, data, num), options);
+    , start, [], [], [], [], lb, ub, @(x)nonlcon_trap(x, wc, pm_cost, data, num), options);
 toc
 % [c, ceq] = nonlcon_trap(x, wc, pm_cost, data);
 trap.num = num;

@@ -10,6 +10,7 @@ for i = 1 : num
     f(i) = x(i * 3);
 end
 frequence = data.fre;
+frequence(length(frequence)) = frequence(length(frequence)) + pi;
 complex_trap = ones(length(frequence), 1);
 complex_trap_wc = 1;
 for i = 1 : num
@@ -33,7 +34,7 @@ for i = 1 : length(frequence)
     c(2 * i) = -10 - phi(i);
     c(2 * i + 1) = phi(i) - 10;
 end
-c(length(frequence) * 2 + 2) = mag(length(frequence)) - 1;
+c(length(frequence) * 2 + 2) = mag(length(frequence)) - 0.8;
 
 %% 求取xian滤波器的最小值
 x = ((T.^2.*e)/2 + f.^2 + (T.*(e.*(e.*T.^2 + 4.*f.^2)).^(1/2))./2).^(1/2);
