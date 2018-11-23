@@ -32,7 +32,7 @@ bode(P * G * later.G / (1 + P * G * later.G));
 grid on
 
 num = 4;
-trap = trapdesign(P * later. G, G, bandwidth, num, 9);
+trap = trapdesign(P * later. G, G, bandwidth, num, 10);
 K = P * G * later.G;
 for i = 1 : num
    K = K * trap.G(i); 

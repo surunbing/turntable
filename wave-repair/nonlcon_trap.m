@@ -17,7 +17,7 @@ for i = 1 : num
     complex_trap_wc = complex_trap_wc * complex(f(i) * f(i) - wc * wc, e(i) * T(i) * wc) / complex(f(i) * f(i) - wc * wc, T(i) * wc);
 end
 
-c = zeros(length(frequence) * 2 + 2, 1);
+c = zeros(length(frequence) * 2 + 2 + num, 1);
 
 phi = abs(angle(complex_trap_wc) / pi * 180);
 
@@ -33,8 +33,13 @@ for i = 1 : length(frequence)
     c(2 * i) = -10 - phi(i);
     c(2 * i + 1) = phi(i) - 10;
 end
-c(length(frequence) * 2 + 2) = mag(length(frequence)) - 1.0;
-    
+c(length(frequence) * 2 + 2) = mag(length(frequence)) - 1;
+
+%% 求取xian滤波器的最小值
+x = ((T.^2.*e)/2 + f.^2 + (T.*(e.*(e.*T.^2 + 4.*f.^2)).^(1/2))./2).^(1/2);
+complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
+phi = angle(complex_phi) / pi * 180;
+c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -20 - phi;
 ceq = 0;
 
 end
