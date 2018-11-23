@@ -2,7 +2,7 @@ function [trap, later, bfailure, data_check] = wave_repair(P, G, para, wc_up, da
 %   repair 波形，通过调整wc， 期望角的裕度， trap个数 与约束范围来调整波形到双十指标内
 ratio_max = wc_up / bandwidth;
 %% 是否需要加入能否设计出的评估
-ratio = wc_up / bandwidth * 0.85;
+ratio = wc_up / bandwidth * 0.8;
 bandwidth1 = max([bandwidth + pi, para.dt]);
 phi_margin = 122;
 phi_reg = 8;
