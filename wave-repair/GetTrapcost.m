@@ -1,22 +1,18 @@
 function [cost] = GetTrapcost(x, num, data, wc, pm_min)
 cost = 0;
 %	最小化代价函数和
-e = x(1);
-T = x(2);
-f = x(3);
-e1 = x(4);
-T1 = x(5);
-f1 = x(6);
-e2 = x(7);
-T2 = x(8);
-f2 = x(9);
-
+e = zeros(num, 1);
+T = zeros(num, 1);
+f = zeros(num, 1);
+for i = 1 : num
+    e(i) = x(i * 3 - 2);
+    T(i) = x(i * 3 - 1);
+    f(i) = x(i * 3);
+end
 frequence = data.fre;
-complex_trap = zeros(length(frequence), 1);
-for i = 1 : 1 : length(frequence)
-    complex_trap(i) = complex(f * f - frequence(i) * frequence(i), e * T * frequence(i)) / complex(f * f - frequence(i) * frequence(i), T * frequence(i));
-    complex_trap(i) = complex_trap(i) * complex(f1 * f1 - frequence(i) * frequence(i), e1 * T1 * frequence(i)) / complex(f1 * f1 - frequence(i) * frequence(i), T1 * frequence(i));
-    complex_trap(i) = complex_trap(i) * complex(f2 * f2 - frequence(i) * frequence(i), e2 * T2 * frequence(i)) / complex(f2 * f2 - frequence(i) * frequence(i), T2 * frequence(i));
+complex_trap = ones(length(frequence), 1);
+for i = 1 : num
+    complex_trap = complex_trap .* complex(f(i) * f(i) - frequence .* frequence, e(i) * T(i) * frequence) ./ complex(f(i) * f(i) - frequence .* frequence, T(i) * frequence);
 end
 complex_P = data.mag .* complex(cos(data.phi / 180 * pi), sin(data.phi / 180 * pi));
 complex_P = complex_P .* complex_trap;
@@ -25,7 +21,7 @@ mag = 20 * log10(abs(complex_c));
 phi = angle(complex_c) / pi * 180;
 
 for i = 1 : length(frequence)
-   cost = cost + mag(i) * mag(i) * 10 + phi(i) * phi(i); 
+   cost = cost + mag(i) * mag(i) * 50 + phi(i) * phi(i); 
 end
 
 end
