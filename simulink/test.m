@@ -35,7 +35,6 @@ hold on
 semilogx(model.turntable.fre, Phi_fit, 'g*-');
 grid on
 
-clear;
 frequence = linspace(1, 75, 75) * 2 * pi;
 ET205 = load('ET205.csv');
 mag = ET205(1: 75, 1);

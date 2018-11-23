@@ -31,8 +31,8 @@ mag = 20 * log10(abs(complex_c));
 phi = angle(complex_c) / pi * 180;
 
 for i = 1 : length(frequence)
-    c(2 * i) = -10 - phi(i);
-    c(2 * i + 1) = phi(i) - 10;
+    c(2 * i) = -9.5 - phi(i);
+    c(2 * i + 1) = phi(i) - 9.5;
 end
 c(length(frequence) * 2 + 2) = mag(length(frequence)) - 0.8;
 
@@ -40,7 +40,7 @@ c(length(frequence) * 2 + 2) = mag(length(frequence)) - 0.8;
 x = ((T.^2.*e)/2 + f.^2 + (T.*(e.*(e.*T.^2 + 4.*f.^2)).^(1/2))./2).^(1/2);
 complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
 phi = angle(complex_phi) / pi * 180;
-c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -20 - phi;
+c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -15 - phi;
 ceq = 0;
 
 end

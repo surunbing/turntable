@@ -2,7 +2,7 @@
 fre_start = 1;
 fre_end = 100;
 
-fre_array = fre_start : 2 : fre_end;
+fre_array = fre_start : 1 : fre_end;
 
 turntable_bode.fre = fre_array * 2 * pi;
 turntable_bode.mag = zeros(length(fre_array), 1);
@@ -11,9 +11,12 @@ turntable_bode.phi = zeros(length(fre_array), 1);
 % turntable_bode.phic = zeros(length(fre_array), 1);
 
 Type = 1; %% sine
-bTf = 1;  %% 0无摩擦  1有摩擦
-bFt = 0;  %% 0 有力矩波动  1 无力矩波动
+bTf = 0;  %% 0无摩擦  1有摩擦
+bFt = 1;  %% 0 有力矩波动  1 无力矩波动
 bClose = 1; %% 0 不闭环    1 闭环
+
+Rfre = 30 * 2 * pi;
+Rp = 2;
 
 J = 1.076;
 L = 0.733240176511722;

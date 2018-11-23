@@ -7,6 +7,7 @@ bandwidth1 = max([bandwidth + pi, para.dt]);
 phi_margin = 122;
 phi_reg = 8;
 num = 1;
+num_max = 4;
 
 flag_add = 1; % 1: ratio, 2: phi_reg
 bfailure = 1;
@@ -16,22 +17,22 @@ while 1
    phi_diff = Pm - 45;
    phi_reg = min(phi_diff, phi_reg);      
    [trap, fval, exitflag] = trapdesign(P * later. G, G, bandwidth, num, phi_reg, Wpm);
-   if exitflag == 1
+   if exitflag == 1 || exitflag == 2
        bfailure = 1;
        break;
        %% 检查效果，找到更好的解
         %% 维持现在的参数， 修改约束使得性能更好
    elseif exitflag == 0 || exitflag == -2
-       if (ratio < ratio_max || phi_reg < phi_diff) && num <= 3
+       if (ratio < ratio_max || phi_reg < phi_diff) && num <= num_max
            if flag_add == 1
-               ratio = min(ratio * 1.05, ratio_max);
+               ratio = min(ratio * 1.025, ratio_max);
                flag_add = 2;
            elseif flag_add == 2
                phi_reg = min(phi_reg + 0.5, phi_diff);
                flag_add = 1;
            end
-       elseif (ratio >= ratio_max && phi_reg >= phi_diff) && num <= 3
-           num = min(num + 1, 3);
+       elseif (ratio >= ratio_max && phi_reg >= phi_diff) && num <= num_max
+           num = min(num + 1, num_max);
            ratio = wc_up / bandwidth * 0.85;
            phi_reg = 8;
            flag_add = 1;
