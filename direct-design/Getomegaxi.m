@@ -4,7 +4,7 @@ function [P, G, para, exitflag] = Getomegaxi(bandwidth, num1, T, K, taum, taue, 
 
 % T = 0.0014;
 kgr = 5;
-Mre = 4;
+Mre = 6;
 % wcmax = 550;
 pmr = 35;
 

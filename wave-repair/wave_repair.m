@@ -8,15 +8,17 @@ phi_margin = 122;
 phi_reg = 8;
 num = 1;
 num_max = 4;
+%% 衡量约束的量
+phi_creg = 7;
 
 flag_add = 1; % 1: ratio, 2: phi_reg
 bfailure = 1;
 while 1
    [later, fval, exitflag] = Holddonewc(P, G, para, bandwidth1, bandwidth * ratio, phi_margin);
    [Gm, Pm, Wgm, Wpm] = margin(P * G * later.G);
-   phi_diff = Pm - 45;
+   phi_diff = Pm - 51;
    phi_reg = min(phi_diff, phi_reg);      
-   [trap, fval, exitflag] = trapdesign(P * later. G, G, bandwidth, num, phi_reg, Wpm);
+   [trap, fval, exitflag] = trapdesign(P * later. G, G, bandwidth, num, phi_reg, Wpm, phi_creg);
    if exitflag == 1 || exitflag == 2
        bfailure = 1;
        break;
@@ -32,11 +34,11 @@ while 1
                flag_add = 1;
            end
        elseif (ratio >= ratio_max && phi_reg >= phi_diff) && num <= num_max
-           num = min(num + 1, num_max);
+           num = num + 1; %min(num + 1, num_max);
            ratio = wc_up / bandwidth * 0.85;
            phi_reg = 8;
            flag_add = 1;
-       else 
+       elseif num >  num_max
            bfailure = -1;
            break;
        end      

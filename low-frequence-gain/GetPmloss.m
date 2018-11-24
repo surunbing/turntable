@@ -1,7 +1,7 @@
 function [LowGain] = GetPmloss(LowGain, wc)
 %   获取剪切频率处的相位损失
 LowGain.Pmloss = 0;
-for i = 1 : count
+for i = 1 : LowGain.count
     alpha = LowGain.alpha(i);
     fre = LowGain.fre(i);
     tau = 1 / (sqrt(alpha) * fre);
