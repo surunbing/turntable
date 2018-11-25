@@ -1,9 +1,9 @@
 function [c, ceq] = nonlcon(x, wc, phi_n_min, phi_n_max, c_data, frequence)
 
 %%µÃµ½
-fre = x(1);
-alpha = x(2);
-K = x(3);
+fre = abs(x(1));
+alpha = abs(x(2));
+K = abs(x(3));
 tau = 1 / (sqrt(alpha) * fre);
 w_up = 1 / tau;
 c(1) = w_up - wc;

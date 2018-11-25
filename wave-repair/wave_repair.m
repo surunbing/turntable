@@ -7,7 +7,7 @@ bandwidth1 = max([bandwidth + pi, para.dt]);
 phi_margin = 122;
 phi_reg = 8;
 num = 1;
-num_max = 3;
+% num_max = 3;
 
 flag_add = 1; % 1: ratio, 2: phi_reg
 bfailure = 1;
