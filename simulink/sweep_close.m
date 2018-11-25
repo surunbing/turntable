@@ -9,7 +9,7 @@ circle_num = 30;
 % fre_array = fre_start: fre_step: fre_end;
 % fre_array(1) = 0.1;
 
-fre_array = logspace(-1, 2);
+fre_array = linspace(1, 50, 50);
 
 turntable_bode.fre = fre_array * 2 * pi;
 turntable_bode.mag = zeros(length(fre_array), 1);
@@ -19,14 +19,12 @@ i = 1;
 %% Sweep
 for fre = fre_array
 
-    if(fre > 5)
-        circle_num = 100;
-    end
-    
-    t_off = 1 / fre * circle_num;
+    t_off = 10;
+    mag = 5;
+    fre = fre_array(i);
+    Tsim = t_off;
     mag = 1;
 %     fre = 5;
-    Tsim = t_off;
     sim('Turntable_sweep_close.slx',Tsim);
 
 %     figure(1)
@@ -37,12 +35,19 @@ for fre = fre_array
 %     plot(in_out(:, 1), in_out(:, 3), 'b-');
     
     % FFT
-    y = fft(in_out(:, 2));
-    y1 = fft(in_out(:, 3));
+    
+    y = fft(in_out(2000:18000, 2));
+    y1 = fft(in_out(2000:18000, 3));
     fs = 2000;       %%采样频率
-    n =0: 1: length(in_out) - 1;
+    
+%     n =0: 1: length(in_out) - 1;
+%     N = length(in_out) - 4000;
+%     y = fft(in_out(:, 2));
+%     y1 = fft(in_out(:, 3));
+    fs = 2000;       %%采样频率
+%     n =0: 1: length(in_out) - 1;
     N = length(in_out);
-    f = n * fs / N;    %频率序列
+%     f = n * fs / N;    %频率序列
     Mag=abs(y);
     Mag1 = abs(y1);
 %     subplot 212
@@ -50,11 +55,12 @@ for fre = fre_array
 %     hold on
 %     grid on
 %     plot(f(1: N / 2),Mag1(1: N / 2) * 2 / N, 'b-');
-    
-    turntable_bode.mag(i) = 20 * (log10(max(Mag1(2 : end))) - log10(max(Mag(2 : end))));
-    num = find(Mag1 == max(Mag1(2 : end)));
-    num = num(1);
-    turntable_bode.phi(i) = angle(y1(num)) - angle(y(num));
+    n_f = find(Mag == max(Mag));
+    n_f = n_f(1);
+    turntable_bode.mag(i) = 20 * (log10(Mag1(n_f)) - log10(Mag(n_f)));
+%     num = find(Mag1 == max(Mag1(2 : end)));
+%     num = num(1);
+    turntable_bode.phi(i) = angle(y1(n_f)) - angle(y(n_f));
     i = i + 1;    
 %     close all;
     i;
@@ -63,7 +69,8 @@ figure(3);
 semilogx(turntable_bode.fre, turntable_bode.mag, 'r*-');
 grid on
 figure(2);
-semilogx(turntable_bode.fre, turntable_bode.phi, 'r*-');
+semilogx(turntable_bode.fre, turntable_bode.phi * 180 / pi, 'r*-');
+grid on
 
 
 %% 标称对象
