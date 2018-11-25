@@ -4,7 +4,7 @@ close all
 nRp = 15;
 nCon = 25;
 nCRp = 20;
-ratio = 3;
+ratio = 2.2;
 
 bandwidth = 10 * 2 * pi;
 

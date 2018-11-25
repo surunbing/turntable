@@ -7,17 +7,21 @@ data_check.mag11_reg = zeros(ncount, 1);
 data_check.mag09_reg = zeros(ncount, 1);
 data_check.phips_reg = zeros(ncount, 1);
 data_check.phing_reg = zeros(ncount, 1);
+data_check.bmag = 1;
+data_check.bphi = 1;
 if strcmp(option.type, 'close-loop') == 1
     for i = 1 : ncount
        if data.mag(i) > 0.9 && data.mag(i) < 1.1
            data_check.mag(i) = 1;
        else
            data_check.mag(i) = 0;
+           data_check.bmag = 0;
        end
-       if abs(data.phi(i)) < 10
+       if abs(data.phi(i)) < 8
            data_check.phi(i) = 1;
        else
            data_check.phi(i) = 0;
+           data_check.bphi = 0;
        end
        %% 计算差值
        data_check.mag11_reg(i) = 1.1 - data.mag(i);
@@ -37,11 +41,13 @@ elseif strcmp(option.type, 'open-loop') == 1
            data_check.mag(i) = 1;
        else
            data_check.mag(i) = 0;
+           data_check.bmag = 0;
        end
-       if abs(data_close.phi(i)) < 10
+       if abs(data_close.phi(i)) < 9
            data_check.phi(i) = 1;
        else
            data_check.phi(i) = 0;
+           data_check.bphi = 0;
        end
        %% 计算差值
        data_check.mag11_reg(i) = 1.1 - data_close.mag(i);

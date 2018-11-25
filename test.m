@@ -9,7 +9,7 @@ K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;
 
-bandwidth = 18 * 2 * pi;
+bandwidth = 20 * 2 * pi;
 wc_max = 650;
 [P, G, para] = direct_design(bandwidth, wc_max, K, taum, taue);
 
@@ -28,7 +28,7 @@ wc_max = bandwidth * 2.1;
 phi_creg = 9;
 mag_creg = 0.8;
 num_max = 3;
-flag_add = 2; % 1: mag, 2: phi
+flag_add = 1; % 1: mag, 2: phi
 bfailure_pre = 0;
 trap_pre = 0;
 later_pre = 0;
@@ -65,16 +65,28 @@ while 1
     end
 end
 
-K = P * G * later_pre.G * Glow;
+K = P * later_pre.G * Glow;
 for i = 1 : trap_pre.num
     K = K * trap_pre.G(i);
 end
 figurename('ÏÝ²¨ÂË²¨Æ÷');
-margin(K);
+margin(K* G);
 grid on
 figurename('ÏÝ²¨ÂË²¨Æ÷±Õ»·');
-bode(K / (1 + K));
+bode(K * G / (1 + K * G));
 grid on
+
+%% Ë³À¡
+if mag_creg > 0.8 || phi_creg > 9
+    option.type = 'transfer-function';
+    [forward, exitflag] = design_forward(K, G, 0, 0, 0, 0, 0.7, bandwidth, option);
+    figurename('Ë³À¡');
+    bode((K * G + G * forward.G)/ (1 + K * G));
+    grid on
+end
+
+
+
 
 
 % Design_Lowgain
