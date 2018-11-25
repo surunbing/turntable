@@ -98,4 +98,25 @@ plot(t, out, 'b');
 hold on
 plot(t, out1, 'g');
 
+% a = omegan * omegan * conv([taue, 1], [taum, 1]);
+% b = K * [T, 2 * T * xi * omegan + 1, omegan * (T * omegan + 2 * xi)];
+T = para.T;
+omegan = para.omegan;
+xi = para.xi;
+a = conv([taue, 1], [taum, 1]);
+b = [T, 2 * T * xi * omegan + 1, omegan * (T * omegan + 2 * xi)];
+k = omegan * omegan / K_model;
+TSp = 0.0005;
+[dNumd,dDend] = c2dm(a, b, TSp, 'tustin');
+
+% later
+a = later_pre.G.Numerator{1, 1};
+b = later_pre.G.Denominator{1, 1};
+[dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
+
+% trap
+for i = trap_pre.count
+    
+end
+
 autoArrangeFigures;
