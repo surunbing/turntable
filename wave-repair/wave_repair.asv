@@ -1,4 +1,4 @@
-function [trap, later, bfailure, data_check, num] = wave_repair(P, G, para, wc_up, data, bandwidth, phi_creg, mag_creg, num_max)
+function [trap, later, bfailure, data_check, n] = wave_repair(P, G, para, wc_up, data, bandwidth, phi_creg, mag_creg, num_max)
 %   repair 波形，通过调整wc， 期望角的裕度， trap个数 与约束范围来调整波形到双十指标内
 ratio_max = wc_up / bandwidth;
 %% 是否需要加入能否设计出的评估

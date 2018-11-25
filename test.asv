@@ -9,7 +9,7 @@ K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;
 
-bandwidth = 10 * 2 * pi;
+bandwidth = 19 * 2 * pi;
 wc_max = 690;
 [P, G, para] = direct_design(bandwidth, wc_max, K, taum, taue);
 
@@ -23,35 +23,14 @@ grid on
 
 Design_Lowgain
 
-wc_max = bandwidth * 2.7;
+wc_max = 270;
 %% 衡量约束的量
 phi_creg = 9;
-mag_creg = 0.8;
-num_max = 3;
-flag_add = 2; % 1: mag, 2: phi
-bfailure_pre = 1;
+mag_creg = 0.9;
 %% 是否需要加入能否设计出的评估
 while 1
-    [trap, later, bfailure, data_check, num] = wave_repair(P * Glow, G, para, wc_max, 0, bandwidth, phi_creg, mag_creg, num_max);
-    if bfailure == -1 && bfailure_pre == 1
-        break;
-    end
-    bfailure_pre = bfailure;
-    if bfailure == 1
-        %% 性能调优，力图做到更好的数值指标
-         num_max = min(2, num + 1);
-         if flag_add == 1
-            mag_creg = mag_creg / 1.05;
-            flag_add = 2;
-         elseif flag_add == 2
-            phi_creg = phi_creg / 1.05;
-            flag_add = 1;
-         end
-    else 
-        %% 放宽要求，为了前馈和前置滤波器做准备，其中相频优先保证
-         
-    end
-end
+[trap, later, bfailure, data_check] = wave_repair(P * Glow, G, para, wc_max, 0, bandwidth, phi_creg, mag_creg);
+
 
 K = P * G * later.G * Glow;
 for i = 1 : trap.num

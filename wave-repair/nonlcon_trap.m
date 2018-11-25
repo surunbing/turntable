@@ -1,4 +1,4 @@
-function [c, ceq] = nonlcon_trap(x, wc, pm_cost, data, num, phi_reg)
+function [c, ceq] = nonlcon_trap(x, wc, pm_cost, data, num, phi_reg, mag_reg)
 
 %%得到
 e = zeros(num, 1);
@@ -34,13 +34,13 @@ for i = 1 : length(frequence)
     c(2 * i) = -phi_reg - phi(i);
     c(2 * i + 1) = phi(i) - phi_reg;
 end
-c(length(frequence) * 2 + 2) = mag(length(frequence)) - 0.8;
+c(length(frequence) * 2 + 2) = mag(length(frequence)) - mag_reg;
 
 %% 求取xian滤波器的最小值
 x = ((T.^2.*e)/2 + f.^2 + (T.*(e.*(e.*T.^2 + 4.*f.^2)).^(1/2))./2).^(1/2);
 complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
 phi = angle(complex_phi) / pi * 180;
-c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -15 - phi;
+c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -18 - phi;
 ceq = 0;
 
 end
