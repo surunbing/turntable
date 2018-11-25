@@ -9,7 +9,7 @@ K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;
 
-bandwidth = 20 * 2 * pi;
+bandwidth = 10 * 2 * pi;
 wc_max = 650;
 [P, G, para] = direct_design(bandwidth, wc_max, K, taum, taue);
 
@@ -85,19 +85,17 @@ if mag_creg > 0.8 || phi_creg > 9
     grid on
 end
 
-
-
-
-
-% Design_Lowgain
-% 
-% figurename('低频增益');
-% K = K * Glow;
-% margin(K);
-% grid on
-% figurename('低频闭环');
-% bode(K / (1 + K));
-% grid on
-
+%% 检查阶跃特性
+t = 0 : 0.0005 : 10;
+u = ones(length(t), 1) * 3;
+out = lsim((K * G + G * forward.G)/ (1 + K * G), u, t);
+out1 = lsim((K * G)/ (1 + K * G), u, t);
+figurename('阶跃');
+plot(t, u, 'r');
+hold on
+grid on
+plot(t, out, 'b');
+hold on
+plot(t, out1, 'g');
 
 autoArrangeFigures;
