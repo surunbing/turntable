@@ -34,7 +34,7 @@ for i = 1 : length(frequence)
     c(2 * i) = -phi_reg - phi(i);
     c(2 * i + 1) = phi(i) - phi_reg;
 end
-c(length(frequence) * 2 + 2) = mag(length(frequence)) - 0.7;
+c(length(frequence) * 2 + 2) = mag(length(frequence)) - 0.8;
 
 %% 求取xian滤波器的最小值
 x = ((T.^2.*e)/2 + f.^2 + (T.*(e.*(e.*T.^2 + 4.*f.^2)).^(1/2))./2).^(1/2);
