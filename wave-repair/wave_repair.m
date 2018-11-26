@@ -36,10 +36,13 @@ while 1
            ratio = wc_up / bandwidth * 0.85;
            phi_reg = 8;
            flag_add = 1;
-       elseif num >  num_max
-           bfailure = -1;
-           break;
        end      
+       if num > num_max
+           num = num_max;
+           bfailure = -1;
+
+           break;
+       end
    end   
 end
 data_check = 0;

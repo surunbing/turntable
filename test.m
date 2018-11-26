@@ -15,7 +15,9 @@ K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;
 
-bandwidth = 20 * 2 * pi;
+K_model = K;
+
+bandwidth = 10 * 2 * pi;
 wc_max = 690;
 [P, G, para] = direct_design(bandwidth, wc_max, K, taum, taue);
 
@@ -29,12 +31,12 @@ grid on
 
 Design_Lowgain
 
-wc_max = bandwidth * 2.8;
+wc_max = bandwidth * 3.5;
 %% 衡量约束的量
-phi_creg = 5;
-mag_creg = 0.45;
-philim = 5;
-maglim = 0.05;
+phi_creg = 8;
+mag_creg = 0.8;
+philim = 8;
+maglim = 0.8;
 num_max = 3;
 flag_add = 1; % 1: mag, 2: phi
 bfailure_pre = 0;
@@ -123,8 +125,15 @@ plot(t, out1, 'g');
 % [dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
 % 
 % % trap
-% for i = trap_pre.count
-%     
+% for i = trap_pre.num
+%     a = [1, trap_pre.e(i) * trap_pre.T(i), trap_pre.f(i) * trap_pre.f(i)];
+%     b = [1, trap_pre.T(i), trap_pre.f(i) * trap_pre.f(i)];
+%     [dNumt,dDent] = c2dm(a, b, TSp, 'tustin');
 % end
+% % forward
+% a = [taum, 1];
+% b = [taue, 1];
+% [dNumf, dDenf] = c2dm(a, 1, TSp, 'tustin');
+% [dNumf, dDenf] = c2dm(b, 1, TSp, 'tustin');
 
 autoArrangeFigures;
