@@ -1,6 +1,12 @@
 clc, clear;
 close all
 
+% 添加路径
+projectPath = pwd;
+addpath(genpath(projectPath)); % Add project folder and subfolders to path
+rmpath(genpath([projectPath,'/.git/'])); % remove git from matlab path
+savepath;
+
 % K = 434;
 % taum = 0.67;
 % taue = 0.0035;
@@ -9,8 +15,8 @@ K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;
 
-bandwidth = 10 * 2 * pi;
-wc_max = 650;
+bandwidth = 20 * 2 * pi;
+wc_max = 690;
 [P, G, para] = direct_design(bandwidth, wc_max, K, taum, taue);
 
 figurename('直接设计开环');
@@ -23,10 +29,12 @@ grid on
 
 Design_Lowgain
 
-wc_max = bandwidth * 2.1;
+wc_max = bandwidth * 2.8;
 %% 衡量约束的量
-phi_creg = 9;
-mag_creg = 0.8;
+phi_creg = 5;
+mag_creg = 0.45;
+philim = 5;
+maglim = 0.05;
 num_max = 3;
 flag_add = 1; % 1: mag, 2: phi
 bfailure_pre = 0;
@@ -77,9 +85,9 @@ bode(K * G / (1 + K * G));
 grid on
 
 %% 顺馈
-if mag_creg > 0.8 || phi_creg > 9
+if mag_creg > 20 * log10(1 + maglim)  || phi_creg > philim
     option.type = 'transfer-function';
-    [forward, exitflag] = design_forward(K, G, 0, 0, 0, 0, 0.7, bandwidth, option);
+    [forward, exitflag] = design_forward(K, G, 0, 0, 0, 0, 0.7, bandwidth, maglim, philim,option);
     figurename('顺馈');
     bode((K * G + G * forward.G)/ (1 + K * G));
     grid on
@@ -100,23 +108,23 @@ plot(t, out1, 'g');
 
 % a = omegan * omegan * conv([taue, 1], [taum, 1]);
 % b = K * [T, 2 * T * xi * omegan + 1, omegan * (T * omegan + 2 * xi)];
-T = para.T;
-omegan = para.omegan;
-xi = para.xi;
-a = conv([taue, 1], [taum, 1]);
-b = [T, 2 * T * xi * omegan + 1, omegan * (T * omegan + 2 * xi)];
-k = omegan * omegan / K_model;
-TSp = 0.0005;
-[dNumd,dDend] = c2dm(a, b, TSp, 'tustin');
-
-% later
-a = later_pre.G.Numerator{1, 1};
-b = later_pre.G.Denominator{1, 1};
-[dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
-
-% trap
-for i = trap_pre.count
-    
-end
+% T = para.T;
+% omegan = para.omegan;
+% xi = para.xi;
+% a = conv([taue, 1], [taum, 1]);
+% b = [T, 2 * T * xi * omegan + 1, omegan * (T * omegan + 2 * xi)];
+% k = omegan * omegan / K_model;
+% TSp = 0.0005;
+% [dNumd,dDend] = c2dm(a, b, TSp, 'tustin');
+% 
+% % later
+% a = later_pre.G.Numerator{1, 1};
+% b = later_pre.G.Denominator{1, 1};
+% [dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
+% 
+% % trap
+% for i = trap_pre.count
+%     
+% end
 
 autoArrangeFigures;

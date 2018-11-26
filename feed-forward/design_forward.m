@@ -1,4 +1,4 @@
-function [forward, exitflag] = design_forward(P, G, data, K, taum, taue, gain_max, bandwidth, option)
+function [forward, exitflag] = design_forward(P, G, data, K, taum, taue, gain_max, bandwidth, maglim, philim, option)
 %   给出前馈环节的增益
 
 forward.G = 1;
@@ -9,7 +9,7 @@ kmin = 0;
 k_pre = 0.5 * (kmax + kmin);
 if strcmp(option.type, 'transfer-function')
     GC = (P * G + 1 / G * G * gain_max) / (1 + P * G);
-    data_check = CL_check(GC, bandwidth);
+    data_check = CL_check(GC, bandwidth, maglim, philim);
     if data_check.bmag ~= 1 || data_check.bphi ~= 1
         exitflag = 0;
     else
@@ -17,7 +17,7 @@ if strcmp(option.type, 'transfer-function')
         while 1
             k = 0.5 * (kmax + kmin);
             GC = (P * G + 1 / G * G * k) / (1 + P * G);
-            data_check = CL_check(GC, bandwidth);
+            data_check = CL_check(GC, bandwidth, maglim, philim);
             if data_check.bmag ~= 1 || data_check.bphi ~= 1
                 kmin = k;
                 kmax = kmax;
@@ -41,7 +41,7 @@ exitflag = 1;
 end
 
 
-function data_check = CL_check(GC, bandwidth)
+function data_check = CL_check(GC, bandwidth, maglim, philim)
 ncount = round(bandwidth / 2 / pi);
 frequence = linspace(1, ncount, ncount) * 2 * pi;
 data.mag = zeros(ncount, 1);
@@ -53,6 +53,6 @@ for i = 1 : ncount
     data.phi(i) = phi(1, 1, i);
 end
 option.type = 'close-loop';
-data_check = CLIndic_check(data, bandwidth, option);
+data_check = CLIndic_check(data, bandwidth, maglim, philim, option);
 end
 
