@@ -136,8 +136,7 @@ end
 a = [taum, 1];
 b = [taue, 1];
 a_aux = [1 / (para_aux1 * 2 * pi), 1];
-b_aux = [1 / (para_aux2 * 2 * pi), 1];
-[dNumf, dDenf] = c2dm(a, a_aux, TSp, 'tustin');
-[dNumf, dDenf] = c2dm(b, b_aux, TSp, 'tustin');
+[dNumf, dDenf] = c2dm(a, 1, TSp, 'tustin');
+[dNumf, dDenf] = c2dm(b, 1, TSp, 'tustin');
 
 autoArrangeFigures;

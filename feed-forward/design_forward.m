@@ -1,4 +1,4 @@
-function [forward, exitflag] = design_forward(P, G, data, K, taum, taue, gain_max, bandwidth, maglim, philim, option)
+function [forward, exitflag] = design_forward(P, G, data, K, taum, taue, gain_max, bandwidth, maglim, philim, para_aux1, para_aux2, option)
 %   给出前馈环节的增益
 
 forward.G = 1;
@@ -7,8 +7,9 @@ exitflag = 1;
 kmax = gain_max;
 kmin = 0;
 k_pre = 0.5 * (kmax + kmin);
+G_auxiliary = tf(1, conv([1 / (para_aux1 * 2 * pi), 1], [1 / (para_aux2 * 2 * pi), 1]));
 if strcmp(option.type, 'transfer-function')
-    GC = (P * G + 1 / G * G * gain_max) / (1 + P * G);
+    GC = (P * G + 1 / G * G_auxiliary * G * gain_max) / (1 + P * G);
     data_check = CL_check(GC, bandwidth, maglim, philim);
     if data_check.bmag ~= 1 || data_check.bphi ~= 1
         exitflag = 0;
@@ -16,7 +17,7 @@ if strcmp(option.type, 'transfer-function')
         %% 开始设计 二分法
         while 1
             k = 0.5 * (kmax + kmin);
-            GC = (P * G + 1 / G * G * k) / (1 + P * G);
+            GC = (P * G + 1 / G * G_auxiliary * G * k) / (1 + P * G);
             data_check = CL_check(GC, bandwidth, maglim, philim);
             if data_check.bmag ~= 1 || data_check.bphi ~= 1
                 kmin = k;

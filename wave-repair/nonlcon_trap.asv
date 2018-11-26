@@ -38,13 +38,10 @@ c(length(frequence) * 2 + 2) = mag(length(frequence)) - mag_reg;
 
 %% 求取xian滤波器的最小值
 x = ((T.^2.*e)/2 + f.^2 + (T.*(e.*(e.*T.^2 + 4.*f.^2)).^(1/2))./2).^(1/2);
-complex_phi = ones(length(x), 1);
-for i = 1 : num
-    complex_phi = complex_phi .* complex(f(i) * f(i) - x .* x, e(i) * T(i) * x) ./ complex(f(i) * f(i) - x .* x, T(i) * x);
-end
-% complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
-phi = angle(complex_phi) ./ pi * 180;
-c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -50 - phi;
+
+complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
+phi = angle(complex_phi) / pi * 180;
+c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -18 - phi;
 ceq = 0;
 
 end

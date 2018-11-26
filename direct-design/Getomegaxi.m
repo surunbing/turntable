@@ -21,9 +21,9 @@ if strcmp(option.type, 'double-ten')
 elseif strcmp(option.type, 'wc')
     %% 基于剪切频率的优化
     wfr = bandwidth + 10; 
-    start = [0.8, 405.4322];
-    lb = [0.707; 0.00001];
-    ub = [1.5; inf];
+    start = [0.3, 405.4322];
+    lb = [0.00001; 0.00001];
+    ub = [1; inf];
     options = optimset('Algorithm','sqp');
     [X, fval, exitflag] = fmincon(@(x)GetWcCost(x, T)...
         , start, [], [], [], [], lb, ub, @(x)nlconwc(x, T, wfr, kgr, Mre, pmr), options);
