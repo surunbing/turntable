@@ -22,10 +22,12 @@ LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 
-
 Glow = GetlowgainG(LowGain);
 figurename('³Ùºó»·½Ú');
 bode(Glow);
 grid on
 
-gain = 20 * log10(27)
+for i = 1 : LowGain.count
+    tau = 1 / (sqrt(LowGain.alpha(i)) * LowGain.fre(i));
+    LowGain.G(i) = tf([tau, 1], [LowGain.alpha(i) * tau, 1]);
+end
