@@ -17,7 +17,7 @@ taum = 0.984871194396488;
 
 K_model = K;
 
-bandwidth = 18 * 2 * pi;
+bandwidth = 3 * 2 * pi;
 wc_max = 650;
 [P, G, para] = direct_design(bandwidth, wc_max, K, taum, taue);
 
@@ -31,7 +31,7 @@ grid on
 
 Design_Lowgain
 
-wc_max = bandwidth * 2.5;
+wc_max = bandwidth * 2.2;
 %% 衡量约束的量
 phi_creg = 8;
 mag_creg = 0.8;

@@ -21,7 +21,7 @@ phi_n_min = -phi_dist - phi;
 phi_n_max = -phi_dist + 3 - phi;
 
 %%计算无滞后的相频特性
-frequence = [wc_r, wc_r - 50, data];%para.dt];
+frequence = [wc_r, wc_r * 0.7, data];%para.dt];
 [mag, phi] = bode(P * G, frequence);
 c_data = zeros(length(frequence), 1);
 for i = 1 : length(frequence)
@@ -31,7 +31,7 @@ end
 tic
 % 得到迟后环节计算 
 start = [wc_r / 2, 6, 2];
-lb = [1; 1.5; 0.5];
+lb = [0.001; 0.5; 0.5];
 ub = [wc_r; 15; 5];
 % options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');
