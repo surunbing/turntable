@@ -52,6 +52,9 @@ data.fre = frequence;
 for i = 1 : ncount
     data.mag(i) = mag(1, 1, i);
     data.phi(i) = phi(1, 1, i);
+    if data.phi(i) > 180
+        data.phi(i) = data.phi(i) - 360;
+    end
 end
 option.type = 'close-loop';
 data_check = CLIndic_check(data, bandwidth, maglim, philim, option);

@@ -18,9 +18,9 @@ LOW_PMLOSS_MAX = 1;
 %% 如果低频增益影响相位裕度过大
 %% 调整频带, 减小最高频带限制
 
-LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
-LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
-LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
+LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 5, 250);
+LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 5, 250);
+LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 5, 250);
 
 Glow = GetlowgainG(LowGain);
 figurename('迟后环节');
