@@ -5,9 +5,9 @@ e = zeros(num, 1);
 T = zeros(num, 1);
 f = zeros(num, 1);
 for i = 1 : num
-    e(i) = x(i * 3 - 2);
-    T(i) = x(i * 3 - 1);
-    f(i) = x(i * 3);
+    e(i) = abs(x(i * 3 - 2));
+    T(i) = abs(x(i * 3 - 1));
+    f(i) = abs(x(i * 3));
 end
 frequence = data.fre;
 frequence(length(frequence)) = frequence(length(frequence)) + pi;

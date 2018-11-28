@@ -10,7 +10,7 @@ num = 1;
 % num_max = 3;
 
 flag_add = 1; % 1: ratio, 2: phi_reg
-bfailure = 1;
+bfailure = 0;
 while 1
    [later, fval, exitflag] = Holddonewc(P, G, para, bandwidth1, bandwidth * ratio, phi_margin);
    [Gm, Pm, Wgm, Wpm] = margin(P * G * later.G);
