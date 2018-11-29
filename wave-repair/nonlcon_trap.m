@@ -44,7 +44,7 @@ for i = 1 : num
 end
 % complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
 phi = angle(complex_phi) ./ pi * 180;
-c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -50 - phi;
+c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -40 - phi;
 ceq = 0;
 
 end

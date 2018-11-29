@@ -1,6 +1,6 @@
 function [P, G, para] = direct_design(bandwidth, wc_max, K, taum, taue)
 %% 考虑处理omegan的特征频率.
-T = 0.0014 * 3;
+T = 0.0014;
 Tmax = 0.0014 / 1.6;
 flag = -1;
 div = 1.05;
