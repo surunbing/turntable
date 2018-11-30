@@ -1,17 +1,12 @@
 clc, clear
 close all
 
-% 添加路径
-projectPath = pwd;
-addpath(genpath(projectPath)); % Add project folder and subfolders to path
-rmpath(genpath([projectPath,'/.git/'])); % remove git from matlab path
-savepath;
+nRp = 15;
+nCon = 25;
+nCRp = 20;
+ratio = 2.5;
 
-bforward = 0;
-
-ratio = 3;
-
-bandwidth = 3 * 2 * pi;
+bandwidth = 15 * 2 * pi;
 
 %% Object
 K = 493;%1.56 * 180 / pi;
@@ -122,7 +117,7 @@ para_aux1 = 500;
 para_aux2 = 500;
 if mag_creg > 20 * log10(1 + maglim)  || phi_creg > philim
     option.type = 'transfer-function';
-    [forward, exitflag, bforward] = design_forward(K, G, 0, 0, 0, 0, 0.7, bandwidth, maglim, philim, para_aux1, para_aux2, option);
+    [forward, exitflag] = design_forward(K, G, 0, 0, 0, 0, 0.7, bandwidth, maglim, philim, para_aux1, para_aux2, option);
     figurename('顺馈');
     bode((K * G + G * forward.G)/ (1 + K * G));
     grid on
@@ -130,26 +125,24 @@ end
 
 
 %% 检查阶跃特性
-% t = 0 : 0.0005 : 10;
-% u = ones(length(t), 1) * 3;
-% out = lsim((K * G + G * forward.G)/ (1 + K * G), u, t);
-% out1 = lsim((K * G)/ (1 + K * G), u, t);
-% figurename('阶跃');
-% plot(t, u, 'r');
-% hold on
-% grid on
-% plot(t, out, 'b');
-% hold on
-% plot(t, out1, 'g');
+t = 0 : 0.0005 : 10;
+u = ones(length(t), 1) * 3;
+out = lsim((K * G + G * forward.G)/ (1 + K * G), u, t);
+out1 = lsim((K * G)/ (1 + K * G), u, t);
+figurename('阶跃');
+plot(t, u, 'r');
+hold on
+grid on
+plot(t, out, 'b');
+hold on
+plot(t, out1, 'g');
 
 %% 输出controller
 TSp = 0.0005;
 % 惯性环节
 [dNumd,dDend] = c2dm(1, Inertial.Denominator{1,1}, TSp, 'tustin');
 fid = fopen('controller.txt', 'wt+');
-fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 惯性\n',dNumd(1),dNumd(2),0, 0, 0);
-%补充相位
-
+fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 直接\n',dNumd(1),dNumd(2),dNumd(3));
 
 % later
 a = later_pre.G.Numerator{1, 1};
@@ -164,17 +157,15 @@ for i = 1 : trap_pre.num
     fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 陷波\n',-dDent(2),-dDent(3),dNumt(1),dNumt(2),dNumt(3));
 end
 % forward
-if bforward == 1
-    a = [taum, 1];
-    b = [taue, 1];
-    a_aux = [1 / (para_aux1 * 2 * pi), 1];
-    b_aux = [1 / (para_aux2 * 2 * pi), 1];
-    [dNumf, dDenf] = c2dm(a, a_aux, TSp, 'tustin');
-    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
-    [dNumf, dDenf] = c2dm(b, b_aux, TSp, 'tustin');
-    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
-    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈增益\n',forward.K / k,0,0,0,0);
-end
+a = [taum, 1];
+b = [taue, 1];
+a_aux = [1 / (para_aux1 * 2 * pi), 1];
+b_aux = [1 / (para_aux2 * 2 * pi), 1];
+[dNumf, dDenf] = c2dm(a, a_aux, TSp, 'tustin');
+fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
+[dNumf, dDenf] = c2dm(b, b_aux, TSp, 'tustin');
+fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
+fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈增益\n',forward.K / k,0,0,0,0);
 
 %% 迟后
 for i = 1 : LowGain.count
