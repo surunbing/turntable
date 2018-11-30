@@ -1,18 +1,23 @@
-function [P, G, para] = direct_design(bandwidth, wc_max, K, taum, taue)
+function [P, G, para] = direct_design()
+
+global parameter
+
 %% 考虑处理omegan的特征频率.
-T = 0.0014;
-Tmax = 0.0014 / 1.6;
+T = parameter.T;
+Tmax = parameter.Tmax;
+wc_max = parameter.wc_max;
+div = parameter.Tdiv;
+bandwidth = parameter.bandwidth;
 flag = -1;
-div = 1.05;
 while flag ~= 9
     option.type = 'wc';
-    [P, G, para, flag] = Getomegaxi(bandwidth, 0, T, K, taum, taue, option);
+    [P, G, para, flag] = Getomegaxi(bandwidth, 0, T, parameter.K, parameter.taum, parameter.taue, option);
     if flag == 1
         if para.wc < wc_max
             %% 检查是否符合要求
-            if T > Tmax && para.pm <= 45
+            if T > Tmax && para.pm <= parameter.pmmax
                 flag = 9;
-            elseif T > Tmax && para.pm > 45
+            elseif T > Tmax && para.pm > parameter.pmmax
                 flag = -1;
                 T = max(T / div, Tmax);
             elseif T <= Tmax
