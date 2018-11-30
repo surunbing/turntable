@@ -1,5 +1,5 @@
 bandwidth = 18; % 带宽设置, hz 请设置整数倍
-ratio = 3;
+ratio = 2.5;
 
 global parameter
 
@@ -32,9 +32,9 @@ parameter.pmmax = 45;
 %% 波形整型的相关参数
 parameter.phi_creg = 8;   % 闭环整形相位目标
 parameter.mag_creg = 0.8; % 闭环整形幅值目标, db
-parameter.maglim = 0.45;  % 闭环最终幅值 db
-parameter.philim = 5;     % 闭环最终相位
-parameter.num_max = 3;    % 整型最大非线性环节数量
+parameter.maglim = 0.7;  % 闭环最终幅值 db
+parameter.philim = 8;     % 闭环最终相位
+parameter.num_max = 4;    % 整型最大非线性环节数量
 parameter.rdiv = 1.05;    % 指标优化或放开的系数
 parameter.start_ratio = parameter.ratio * 0.8;
 parameter.phimarginmin = 47.5;  % 相位裕度最小值

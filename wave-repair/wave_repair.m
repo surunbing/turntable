@@ -5,7 +5,7 @@ bandwidth = parameter.bandwidth;
 ratio_max = parameter.ratio;
 %% 是否需要加入能否设计出的评估
 ratio = parameter.start_ratio;
-bandwidth1 = max([parameter.bandwidth + pi, para.dt]);
+bandwidth1 = parameter.bandwidth + pi; %max([parameter.bandwidth + pi, para.dt]);
 phi_margin = parameter.phi_margin;
 phi_reg = parameter.phi_reg;
 num_max = parameter.num_max;
