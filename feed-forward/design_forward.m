@@ -1,15 +1,19 @@
-function [forward, exitflag] = design_forward(P, G, data, K, taum, taue, gain_max, bandwidth, maglim, philim, para_aux1, para_aux2, option)
+function [forward, exitflag] = design_forward(P, G, option)
 %   给出前馈环节的增益
+global parameter
 
 forward.G = 1;
 forward.K = 0;
 exitflag = 1;
-kmax = gain_max;
+maglim = parameter.maglim;
+philim = parameter.philim;
+kmax = parameter.forwardKmax;
+bandwidth = parameter.bandwidth;
 kmin = 0;
 k_pre = 0.5 * (kmax + kmin);
-G_auxiliary = tf(1, conv([1 / (para_aux1 * 2 * pi), 1], [1 / (para_aux2 * 2 * pi), 1]));
+G_auxiliary = tf(1, conv([1 / (parameter.para_aux1 * 2 * pi), 1], [1 / (parameter.para_aux2 * 2 * pi), 1]));
 if strcmp(option.type, 'transfer-function')
-    GC = (P * G + 1 / G * G_auxiliary * G * gain_max) / (1 + P * G);
+    GC = (P * G + 1 / G * G_auxiliary * G * parameter.forwardKmax) / (1 + P * G);
     data_check = CL_check(GC, bandwidth, maglim, philim);
     if data_check.bmag ~= 1 || data_check.bphi ~= 1
         exitflag = 0;
@@ -57,6 +61,6 @@ for i = 1 : ncount
     end
 end
 option.type = 'close-loop';
-data_check = CLIndic_check(data, bandwidth, maglim, philim, option);
+data_check = CLIndic_check(data, bandwidth, 10 ^ (maglim / 20) - 1, philim, option);
 end
 

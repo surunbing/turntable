@@ -120,11 +120,14 @@ hold on
 grid on
 
 %% 顺馈
-para_aux1 = 1500;
-para_aux2 = 1500;
-if mag_creg > 20 * log10(1 + maglim)  || phi_creg > philim
+K_model = parameter.K;
+taum = parameter.taum;
+taue = parameter.taue;
+bforward = 0;
+if mag_creg > parameter.maglim  || phi_creg > parameter.philim
+    bforward = 1;
     option.type = 'transfer-function';
-    [forward, exitflag] = design_forward(K, G, 0, 0, 0, 0, 0.7, bandwidth, maglim, philim, para_aux1, para_aux2, option);
+    [forward, exitflag] = design_forward(K, G, option);
     figurename('顺馈');
     G1 = tf(K_model, [taum * taue, taum + taue, 1, 0]);
     bode((K * G + G * forward.G)/ (1 + K * G));
@@ -165,56 +168,48 @@ if mag_creg > 20 * log10(1 + maglim)  || phi_creg > philim
     
 end
 
-e = 0.95;
-T = 5;
-f = 19 * pi * 2;
-trap = tf([1, e * T, f * f], [1, T, f * f]);
-bode(trap);
-grid on
+T = para.T;
+omegan = para.omegan;
+xi = para.xi;
+a = conv([taue, 1], [taum, 1]);
+b = [T, 2 * T * xi * omegan + 1, omegan * (T * omegan + 2 * xi)];
+k = omegan * omegan / K_model;
+TSp = 0.0005;
+[dNumd,dDend] = c2dm(a, b, TSp, 'tustin');
+fid = fopen('controller.txt', 'wt+');
+fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 直接增益\n',k,0,0,0,0);
+fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 直接\n',-dDend(2),-dDend(3),dNumd(1),dNumd(2),dNumd(3));
 
-% a = omegan * omegan * conv([taue, 1], [taum, 1]);
-% b = K * [T, 2 * T * xi * omegan + 1, omegan * (T * omegan + 2 * xi)];
-% T = para.T;
-% omegan = para.omegan;
-% xi = para.xi;
-% a = conv([taue, 1], [taum, 1]);
-% b = [T, 2 * T * xi * omegan + 1, omegan * (T * omegan + 2 * xi)];
-% k = omegan * omegan / K_model;
-% TSp = 0.0005;
-% [dNumd,dDend] = c2dm(a, b, TSp, 'tustin');
-% fid = fopen('controller.txt', 'wt+');
-% fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 直接增益\n',k,0,0,0,0);
-% fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 直接\n',-dDend(2),-dDend(3),dNumd(1),dNumd(2),dNumd(3));
-% 
-% % later
-% a = later_pre.G.Numerator{1, 1};
-% b = later_pre.G.Denominator{1, 1};
-% [dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
-% fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 迟后\n', -dDenl(2),dNuml(1),dNuml(2), 0, 0);
-% % trap
-% for i = 1 : trap_pre.num
-%     a = [1, trap_pre.e(i) * trap_pre.T(i), trap_pre.f(i) * trap_pre.f(i)];
-%     b = [1, trap_pre.T(i), trap_pre.f(i) * trap_pre.f(i)];
-%     [dNumt,dDent] = c2dm(a, b, TSp, 'tustin');
-%     fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 陷波\n',-dDent(2),-dDent(3),dNumt(1),dNumt(2),dNumt(3));
-% end
-% a = [taum, 1];
-% b = [taue, 1];
-% a_aux = [1 / (para_aux1 * 2 * pi), 1];
-% b_aux = [1 / (para_aux2 * 2 * pi), 1];
-% [dNumf, dDenf] = c2dm(a, a_aux, TSp, 'tustin');
-% fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
-% [dNumf, dDenf] = c2dm(b, b_aux, TSp, 'tustin');
-% fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
-% fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈增益\n',forward.K / K_model,0,0,0,0);
-% 
-% %% 迟后
-% for i = 1 : LowGain.count
-%     tau = 1 / (sqrt(LowGain.alpha(i)) * LowGain.fre(i));
-%     [dNuml,dDenl] = c2dm([tau, 1], [LowGain.alpha(i) * tau, 1], TSp, 'tustin');
-%     fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 低频迟后\n',-dDenl(2),dNuml(1),dNuml(2), 0, 0);
-% end
-% fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 低频增益\n',LowGain.K,0,0,0,0);
-% 
-% fclose(fid);
+% later
+a = later_pre.G.Numerator{1, 1};
+b = later_pre.G.Denominator{1, 1};
+[dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
+fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 迟后\n', -dDenl(2),dNuml(1),dNuml(2), 0, 0);
+% trap
+for i = 1 : trap_pre.num
+    a = [1, trap_pre.e(i) * trap_pre.T(i), trap_pre.f(i) * trap_pre.f(i)];
+    b = [1, trap_pre.T(i), trap_pre.f(i) * trap_pre.f(i)];
+    [dNumt,dDent] = c2dm(a, b, TSp, 'tustin');
+    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 陷波\n',-dDent(2),-dDent(3),dNumt(1),dNumt(2),dNumt(3));
+end
+if bforward == 1
+    a = [taum, 1];
+    b = [taue, 1];
+    a_aux = [1 / (parameter.para_aux1 * 2 * pi), 1];
+    b_aux = [1 / (parameter.para_aux2 * 2 * pi), 1];
+    [dNumf, dDenf] = c2dm(a, a_aux, TSp, 'tustin');
+    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
+    [dNumf, dDenf] = c2dm(b, b_aux, TSp, 'tustin');
+    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
+    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈增益\n',forward.K / K_model,0,0,0,0);
+end
+%% 迟后
+for i = 1 : LowGain.count
+    tau = 1 / (sqrt(LowGain.alpha(i)) * LowGain.fre(i));
+    [dNuml,dDenl] = c2dm([tau, 1], [LowGain.alpha(i) * tau, 1], TSp, 'tustin');
+    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 低频迟后\n',-dDenl(2),dNuml(1),dNuml(2), 0, 0);
+end
+fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 低频增益\n',LowGain.K,0,0,0,0);
+
+fclose(fid);
 autoArrangeFigures;
