@@ -4,12 +4,10 @@ function [trap, fval, exitflag] = trapdesign(P, G, bandwidth, num, pm_cost, wc, 
 %   是否能定义优化问题，寻优内容为陷波滤波器的三个参数，限定在较为窄的范围内 must have a try
 %   如果是添加两个陷波滤波器，怎么考虑
 %   指标函数如何添加
-
+global parameter 
 %% 改善，不加先波滤波器，哪里开始不满足指标
 
 %% 加入一个环节， 优化实验
-%[~, ~, ~, wc] = margin(P * G);
-% pm_cost = 8;
 ncount = round(bandwidth / 2 / pi);
 data.fre = linspace(1, ncount, ncount)' * 2 * pi;
 data.mag = zeros(ncount, 1);
@@ -34,11 +32,11 @@ lb = zeros(num * 3, 1);
 ub = zeros(num * 3, 1);
 for i = 1 : num
     lb(i * 3 - 2) = 1;
-    lb(i * 3 - 1) = 3;
-    lb(i * 3) = bandwidth * 0.2;
+    lb(i * 3 - 1) = parameter.trapTmin;
+    lb(i * 3) = parameter.trapfremin;
     ub(i * 3 - 2) = 5;
     ub(i * 3 - 1)= 20;
-    ub(i * 3) = bandwidth + 10;
+    ub(i * 3) = parameter.trapfremax;
 end
 
 % options = optimset('Algorithm','interior-point');

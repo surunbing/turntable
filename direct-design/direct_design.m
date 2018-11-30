@@ -11,7 +11,7 @@ bandwidth = parameter.bandwidth;
 flag = -1;
 while flag ~= 9
     option.type = 'wc';
-    [P, G, para, flag] = Getomegaxi(bandwidth, 0, T, parameter.K, parameter.taum, parameter.taue, option);
+    [P, G, para, flag] = Getomegaxi(bandwidth, 0, T, option);
     if flag == 1
         if para.wc < wc_max
             %% 检查是否符合要求

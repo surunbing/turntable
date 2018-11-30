@@ -24,15 +24,13 @@ grid on
 Design_Lowgain
 
 %% 衡量约束的量
-phi_creg = parameter.phi_creg;
-mag_creg = parameter.mag_creg;
 flag_add = 1; % 1: mag, 2: phi
 bfailure_pre = 0;
 trap_pre = 0;
 later_pre = 0;
 %% 是否需要加入能否设计出的评估
 while 1
-    [trap, later, bfailure, data_check, num] = wave_repair(P, G, para, phi_creg, mag_creg);
+    [trap, later, bfailure, data_check, num] = wave_repair(P, G, para, wc_max, 0, bandwidth, phi_creg, mag_creg, num_max);
     if bfailure == -1 && bfailure_pre == 1
         break;
     end
@@ -45,19 +43,19 @@ while 1
             num_max = min(3, num + 1);
         end
         if flag_add == 1
-            mag_creg = mag_creg / parameter.rdiv;
+            mag_creg = mag_creg / 1.05;
             flag_add = 2;
         elseif flag_add == 2
-            phi_creg = phi_creg / parameter.rdiv;
+            phi_creg = phi_creg / 1.05;
             flag_add = 1;
         end
     else 
         %% 放宽要求，为了前馈和前置滤波器做准备，其中相频优先保证
          if flag_add == 1
-            mag_creg = mag_creg * parameter.rdiv;
+            mag_creg = mag_creg * 1.05;
             flag_add = 2;
         elseif flag_add == 2
-            phi_creg = phi_creg * parameter.rdiv;
+            phi_creg = phi_creg * 1.05;
             flag_add = 1;
         end
     end
