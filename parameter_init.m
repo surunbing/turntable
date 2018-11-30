@@ -48,7 +48,7 @@ parameter.later_phi = 3;     % 迟后环节相位搜寻约束系数
 parameter.laterKmin = 0.5;    % 迟后搜索增益最小
 parameter.laterfremin = 0.001;    % 迟后搜索中心频率最小
 
-parameter.trapTmin = 3;
+parameter.trapTmin = 6;
 parameter.trapfremin = parameter.bandwidth * 0.2;       % 最小宽度
 parameter.trapfremax = parameter.bandwidth + 3 * pi;    % 非线性环节优化 最大频率
 parameter.trapohimin = 40;  % 非线性最小相位

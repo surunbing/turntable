@@ -58,7 +58,7 @@ P = advance.P * Inertial;
 K = 493;%1.56 * 180 / pi;
 taue = 0.0004;%0.00396;% 0.0039035;
 taum = 2.05;%0.09947;%0.984871194396488;
-G = tf(K, [taue * taum, taum, 1, 0]);
+G = tf(K, [taue * taum, taum + taue, 1, 0]);
 
 phi_creg = parameter.phi_creg;
 mag_creg = parameter.mag_creg;
@@ -120,8 +120,7 @@ if mag_creg > parameter.maglim  || phi_creg > parameter.philim
     option.type = 'transfer-function';
     [forward, exitflag] = design_forward(P, G, option);
     figurename('Ë³À¡');
-    G1 = tf(K_model, [taum * taue, taum + taue, 1, 0]);
-    bode((P * G + G * forward.G)/ (1 + K * G));
+    bode((P * G + G * forward.G)/ (1 + P * G));
     grid on 
 end
 

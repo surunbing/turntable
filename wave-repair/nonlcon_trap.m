@@ -10,7 +10,7 @@ for i = 1 : num
     f(i) = abs(x(i * 3));
 end
 frequence = data.fre;
-frequence(length(frequence)) = frequence(length(frequence)) + pi;
+% frequence(length(frequence)) = frequence(length(frequence)) + pi;
 complex_trap = ones(length(frequence), 1);
 complex_trap_wc = 1;
 for i = 1 : num
@@ -18,7 +18,7 @@ for i = 1 : num
     complex_trap_wc = complex_trap_wc * complex(f(i) * f(i) - wc * wc, e(i) * T(i) * wc) / complex(f(i) * f(i) - wc * wc, T(i) * wc);
 end
 
-c = zeros(length(frequence) * 2 + 2 + num, 1);
+c = zeros(length(frequence) * 4 + 1 + num, 1);
 
 phi = abs(angle(complex_trap_wc) / pi * 180);
 
@@ -31,10 +31,12 @@ mag = 20 * log10(abs(complex_c));
 phi = angle(complex_c) / pi * 180;
 
 for i = 1 : length(frequence)
-    c(2 * i) = -phi_reg - phi(i);
-    c(2 * i + 1) = phi(i) - phi_reg;
+    c(4 * i - 2) = -phi_reg - phi(i);
+    c(4 * i + 1) = phi(i) - phi_reg;
+    c(4 * i) = mag(i) - mag_reg;
+    c(4 * i + 1) = - mag_reg - mag(i);
 end
-c(length(frequence) * 2 + 2) = mag(length(frequence)) - mag_reg;
+% c(length(frequence) * 4 + 2) = mag(length(frequence)) - mag_reg;
 
 %% 求取xian滤波器的最小值
 x = ((T.^2.*e)/2 + f.^2 + (T.*(e.*(e.*T.^2 + 4.*f.^2)).^(1/2))./2).^(1/2);
@@ -44,8 +46,7 @@ for i = 1 : num
 end
 % complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
 phi = angle(complex_phi) ./ pi * 180;
-c(length(frequence) * 2 + 3 : length(frequence) * 2 + 2 + num) = -40 - phi;
+c(length(frequence) * 4 + 2 : length(frequence) * 4 + 1 + num) = -40 - phi;
 ceq = 0;
 
 end
-
