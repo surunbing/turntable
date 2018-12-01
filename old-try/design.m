@@ -21,7 +21,7 @@ phi_advance_margin = parameter.phi_advance_margin;
 K = parameter.K;%1.56 * 180 / pi;
 taue = parameter.taue;%0.00396;% 0.0039035;
 taum = parameter.taum;%0.09947;%0.984871194396488;
-G = tf(K, [taue * taum, taum, 1, 0]);
+G = tf(K, [taue * taum, taum + taue, 1, 0]);
 %% 加入惯性环节
 T = 1 / (bandwidth / 2 / pi) / parameter.Tratio; 
 Inertial = tf(1, [T, 1]);
