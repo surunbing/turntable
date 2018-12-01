@@ -58,3 +58,8 @@ parameter.para_aux1 = 500;
 parameter.para_aux2 = 500;
 parameter.forwardKmax = 0.7;
 
+
+parameter.tradphi = 135;
+parameter.phi_advance = 30;
+parameter.phi_advance_margin = 0;
+parameter.Tratio = 12;

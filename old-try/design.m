@@ -12,23 +12,23 @@ global parameter
 
 bforward = 0;
 
-ratio = 2.5;
-
-bandwidth = 18 * 2 * pi;
+ratio = parameter.ratio;
+bandwidth = parameter.bandwidth;
+phi_advance = parameter.phi_advance;
+phi_advance_margin = parameter.phi_advance_margin;
 
 %% Object
-K = 493;%1.56 * 180 / pi;
-taue = 0.0004;%0.00396;% 0.0039035;
-taum = 2.05;%0.09947;%0.984871194396488;
+K = parameter.K;%1.56 * 180 / pi;
+taue = parameter.taue;%0.00396;% 0.0039035;
+taum = parameter.taum;%0.09947;%0.984871194396488;
 G = tf(K, [taue * taum, taum, 1, 0]);
 %% 加入惯性环节
-T = 1 / (bandwidth / 2 / pi) / 15; 
+T = 1 / (bandwidth / 2 / pi) / parameter.Tratio; 
 Inertial = tf(1, [T, 1]);
-G = G * Inertial;
 
 %% 给定频率点
 fre = logspace(-1, 2.3) * 2 * pi;  %% 1 - 100
-[mag, phi] = bode(G, fre);
+[mag, phi] = bode(G * Inertial, fre);
 
 data.fre = fre;
 data.mag = zeros(length(fre), 1);
@@ -40,25 +40,19 @@ for i = 1:length(fre)
 end
 
 %% 补相位
-phi_advance = 30;
-phi_advance_margin = 0;
+
 advance = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth);
 
-G_P = G * advance.P;
+P = advance.P * Inertial;
 
 figurename('前向通道');
-margin(G_P);
+margin(P * G);
 grid on;
 figurename('前向通道闭环');
-bode(G_P / (1 + G_P));
+bode(P * G / (1 + P * G));
 grid on
 
 Design_Lowgain;
-P = advance.P * Inertial;
-K = 493;%1.56 * 180 / pi;
-taue = 0.0004;%0.00396;% 0.0039035;
-taum = 2.05;%0.09947;%0.984871194396488;
-G = tf(K, [taue * taum, taum + taue, 1, 0]);
 
 phi_creg = parameter.phi_creg;
 mag_creg = parameter.mag_creg;
@@ -132,7 +126,15 @@ TSp = 0.0005;
 fid = fopen('controller.txt', 'wt+');
 fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 惯性\n',-dDend(2), dNumd(1),dNumd(2), 0, 0);
 %补充相位
-
+for i = 1 : advance.count + 1
+    a = advance.G(i).Numerator{1, 1};
+    b = advance.G(i).Denominator{1, 1};
+    [dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
+    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 超前\n', -dDenl(2),dNuml(1),dNuml(2), 0, 0);
+    figurename('chaoqian');
+    bode(advance.G(i));
+    grid on
+end
 
 % later
 a = later_pre.G.Numerator{1, 1};
