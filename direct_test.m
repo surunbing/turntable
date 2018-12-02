@@ -84,32 +84,33 @@ if mag_creg > parameter.maglim  || phi_creg > parameter.philim
 end
 
 
-fid = fopen('C:\Users\Momenta\Documents\毕业设计\CSDA_FANGXUN\turntable\controller.txt', 'wt+');
+fid = fopen('C:\Users\Momenta\Documents\毕业设计\CSDA_FANGXUN\turntable\controller1.txt', 'wt+');
 %% 指令预处理
-fprintf(fid, '[DOF_%d]', nDOF);
-fprintf(fid, '// %d-%d 为指令预处理环节，不用时，第1个参数为，其它为0', nZLYCLStart, nZLYCLEnd);
+fprintf(fid, '[DOF_%d]\n', nDOF);
+fprintf(fid, '// %d-%d 为指令预处理环节，不用时，第1个参数为，其它为0 \n', nZLYCLStart, nZLYCLEnd);
 for i = nZLYCLStart : 1 : nZLYCLEnd
-    fprintf(fid, 'Link_%02d=%lf, %lf, %lf, %lf, %lf,\n', i, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f, \n', i, 1.0, 0.0, 0.0, 0.0, 0.0);
 end
 
-fprintf(fid, '// %d-%d 为顺馈环节，link6为增益 不用时全部参数必须为0', nQKStart, nQKEnd);
+fprintf(fid, '// %d-%d 为顺馈环节，link%d为增益 不用时全部参数必须为0\n', nQKStart, nQKEnd, nQKEnd);
 if bforward == 1
     a = [taum, 1];
     b = [taue, 1];
     a_aux = [1 / (parameter.para_aux1 * 2 * pi), 1];
     b_aux = [1 / (parameter.para_aux2 * 2 * pi), 1];
     [dNumf, dDenf] = c2dm(a, a_aux, TSp, 'tustin');
-    fprintf(fid, 'Link_%02d=%lf, %lf, %lf, %lf, %lf,\n', nQKStart, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
-    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
+    fprintf(fid, 'Link_%02d=%.l2f,%.12f,%.12f, %.12f,%.12f,\n', nQKStart, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
     [dNumf, dDenf] = c2dm(b, b_aux, TSp, 'tustin');
-    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈\n', -dDenf(2),dNumf(1),dNumf(2), 0, 0);
-    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 前馈增益\n',forward.K / K_model,0,0,0,0);
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKStart + 1, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKEnd, forward.K / K_model, 0, 0, 0, 0);
 else
     for i = nQKStart : 1 : nQKEnd
-        fprintf(fid, 'Link_%02d=%lf, %lf, %lf, %lf, %lf,\n', i, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', i, 1.0, 0.0, 0.0, 0.0, 0.0);
     end
 end
 
+fprintf(fid, '// %d-%d 为串联校正环节，link%d为增益 不用时全部参数必须为0\n', nJZStart, nJZEnd, nJZEnd);
+num = 0;
 
 T = para.T;
 omegan = para.omegan;
@@ -119,29 +120,39 @@ b = [T, 2 * T * xi * omegan + 1, omegan * (T * omegan + 2 * xi)];
 k = omegan * omegan / K_model;
 TSp = 0.0005;
 [dNumd,dDend] = c2dm(a, b, TSp, 'tustin');
-fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 直接增益\n',k,0,0,0,0);
-fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 直接\n',-dDend(2),-dDend(3),dNumd(1),dNumd(2),dNumd(3));
+fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nJZStart + num, -dDend(2),-dDend(3),dNumd(1),dNumd(2),dNumd(3));
+num = num + 1;
 
 % later
 a = later_pre.G.Numerator{1, 1};
 b = later_pre.G.Denominator{1, 1};
 [dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
-fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 迟后\n', -dDenl(2),dNuml(1),dNuml(2), 0, 0);
+fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nJZStart + num, -dDenl(2),dNuml(1),dNuml(2), 0, 0);
+num = num + 1;
 % trap
 for i = 1 : trap_pre.num
     a = [1, trap_pre.e(i) * trap_pre.T(i), trap_pre.f(i) * trap_pre.f(i)];
     b = [1, trap_pre.T(i), trap_pre.f(i) * trap_pre.f(i)];
     [dNumt,dDent] = c2dm(a, b, TSp, 'tustin');
-    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 陷波\n',-dDent(2),-dDent(3),dNumt(1),dNumt(2),dNumt(3));
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nJZStart + num + i - 1, -dDent(2),-dDent(3),dNumt(1),dNumt(2),dNumt(3));
 end
+num = num + trap_pre.num;
 
 %% 迟后
 for i = 1 : LowGain.count
     tau = 1 / (sqrt(LowGain.alpha(i)) * LowGain.fre(i));
     [dNuml,dDenl] = c2dm([tau, 1], [LowGain.alpha(i) * tau, 1], TSp, 'tustin');
-    fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 低频迟后\n',-dDenl(2),dNuml(1),dNuml(2), 0, 0);
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nJZStart + num + i - 1, -dDenl(2),dNuml(1),dNuml(2), 0, 0);
 end
-fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 低频增益\n',LowGain.K,0,0,0,0);
+num = num + LowGain.count;
+fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n',nJZStart + num, LowGain.K, 0, 0, 0, 0);
+num = num + 1;
+fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n',nJZStart + num, k, 0, 0, 0, 0);
+num = num + 1;
+for i = num + nJZStart : 1 : nJZEnd
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n',i, 1, 0, 0, 0, 0);
+end
+
 
 fclose(fid);
 autoArrangeFigures;

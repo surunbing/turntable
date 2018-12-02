@@ -1,13 +1,13 @@
-% bandwidth = 6; % 带宽设置, hz 请设置整数倍
-% ratio = 3;
+bandwidth = 6; % 带宽设置, hz 请设置整数倍
+ratio = 3;
 
 global parameter
 
 %% 模型参数
 
-% K = 496.7296;
-% taue = 0.0019;
-% taum = 2.0624;
+K = 496.7296;
+taue = 0.0019;
+taum = 2.0624;
 
 % K = 434;
 % taum = 0.67;
@@ -16,6 +16,15 @@ global parameter
 % K = 1.56 * 180 / pi;
 % taue = 0.0039035;
 % taum = 0.984871194396488;
+
+nZLYCLStart = 0;
+nZLYCLEnd = 3;
+nQKStart = 4;
+nQKEnd = 6;
+nJZStart = 7;
+nJZEnd = 29;
+nDOF = 0;
+
 
 parameter.K = K;
 parameter.taum = taum;
