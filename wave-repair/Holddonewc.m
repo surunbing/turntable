@@ -22,7 +22,7 @@ end
 tic
 % 得到迟后环节计算 
 start = [wc_r / 2, 6, 2];
-lb = [parameter.laterfremin; 0.5; parameter.laterKmin];
+lb = [parameter.laterfremin; 0.1; parameter.laterKmin];
 ub = [wc_r; 15; 5];
 % options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');

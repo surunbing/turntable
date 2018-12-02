@@ -1,14 +1,14 @@
-clc, clear
-close all
+% clc, clear
+% close all
 
 % 添加路径
-projectPath = pwd;
-addpath(genpath(projectPath)); % Add project folder and subfolders to path
-rmpath(genpath([projectPath,'/.git/'])); % remove git from matlab path
-savepath;
-
-parameter_init;
-global parameter
+% projectPath = pwd;
+% addpath(genpath(projectPath)); % Add project folder and subfolders to path
+% rmpath(genpath([projectPath,'/.git/'])); % remove git from matlab path
+% savepath;
+% 
+% parameter_init;
+% global parameter
 
 bforward = 0;
 
@@ -123,7 +123,7 @@ end
 TSp = 0.0005;
 % 惯性环节
 [dNumd,dDend] = c2dm(1, Inertial.Denominator{1,1}, TSp, 'tustin');
-fid = fopen('controller.txt', 'wt+');
+fid = fopen('C:\Users\Momenta\Documents\毕业设计\CSDA_FANGXUN\turntable\controller.txt', 'wt+');
 fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 惯性\n',-dDend(2), dNumd(1),dNumd(2), 0, 0);
 %补充相位
 for i = 1 : advance.count + 1
@@ -131,9 +131,6 @@ for i = 1 : advance.count + 1
     b = advance.G(i).Denominator{1, 1};
     [dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
     fprintf(fid, '%.12f, %.12f, %.12f, %.12f, %.12f, 超前\n', -dDenl(2),dNuml(1),dNuml(2), 0, 0);
-    figurename('chaoqian');
-    bode(advance.G(i));
-    grid on
 end
 
 % later

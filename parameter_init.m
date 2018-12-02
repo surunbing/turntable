@@ -1,9 +1,13 @@
-bandwidth = 18; % 带宽设置, hz 请设置整数倍
-ratio = 2.5;
+% bandwidth = 6; % 带宽设置, hz 请设置整数倍
+% ratio = 3;
 
 global parameter
 
 %% 模型参数
+
+% K = 496.7296;
+% taue = 0.0019;
+% taum = 2.0624;
 
 % K = 434;
 % taum = 0.67;
@@ -13,9 +17,9 @@ global parameter
 % taue = 0.0039035;
 % taum = 0.984871194396488;
 
-parameter.K = 496.7296;
-parameter.taum = 2.0624;
-parameter.taue = 0.0019;
+parameter.K = K;
+parameter.taum = taum;
+parameter.taue = taue;
 
 parameter.bandwidth = bandwidth * 2 * pi;
 parameter.ratio = ratio;        % 选择穿越频率倍数
