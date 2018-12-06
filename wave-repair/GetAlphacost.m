@@ -1,5 +1,5 @@
 function [cost] = GetAlphacost(x, c_data, frequence)
-%	最小化宽度
+%	最小化闭环双十带宽处的相角
 % alpha = x(2);
 % cost = alpha;
 fre = abs(x(1));

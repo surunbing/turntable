@@ -30,6 +30,7 @@ for i = 1 : num
 end
 
 %% 获得约束
+% 增益 宽度 中心频率  修改约束可得到不同的闭环特性：平滑或指标较高
 lb = zeros(num * 3, 1);
 ub = zeros(num * 3, 1);
 for i = 1 : num

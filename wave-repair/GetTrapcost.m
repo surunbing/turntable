@@ -1,6 +1,6 @@
 function [cost] = GetTrapcost(x, num, data, wc, pm_min)
 cost = 0;
-%	最小化代价函数和
+%	最小化代价函数和非线性环节代价函数
 e = zeros(num, 1);
 T = zeros(num, 1);
 f = zeros(num, 1);
