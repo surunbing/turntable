@@ -1,4 +1,4 @@
-function [c, ceq] = nonlcon_trap(x, wc, pm_cost, data, num, phi_reg, mag_reg)
+function [c, ceq] = nonlcon_trap(x, wc, pm_cost, data, num, phi_reg, mag_reg, phi_margin)
 
 %%µÃµ½
 e = zeros(num, 1);
@@ -46,7 +46,7 @@ for i = 1 : num
 end
 % complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
 phi = angle(complex_phi) ./ pi * 180;
-c(length(frequence) * 4 + 2 : length(frequence) * 4 + 1 + num) = -40 - phi;
+c(length(frequence) * 4 + 2 : length(frequence) * 4 + 1 + num) = -phi_margin - phi;
 ceq = 0;
 
 end
