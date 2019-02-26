@@ -62,7 +62,7 @@ trap_pre = 0;
 later_pre = 0;
 %% 是否需要加入能否设计出的评估
 while 1
-    [trap, later, bfailure, data_check, num] = wave_repair(P, G, 0, phi_creg, mag_creg);
+    [trap, later, ~, bfailure, data_check, num] = wave_repair(P, G, 0, phi_creg, mag_creg);
     if bfailure == -1 && bfailure_pre == 1
         break;
     end

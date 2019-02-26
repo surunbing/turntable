@@ -26,7 +26,7 @@ trap_pre = 0;
 later_pre = 0;
 %% 是否需要加入能否设计出的评估
 while 1
-    [trap, later, bfailure, data_check, num] = wave_repair(P, G, para, phi_creg, mag_creg);
+    [trap, later, G_Inertial, bfailure, data_check, num] = wave_repair(P, G, para, phi_creg, mag_creg);
     if bfailure == -1 && bfailure_pre == 1
         break;
     end
@@ -57,7 +57,7 @@ while 1
     end
 end
 
-K = P * later_pre.G * Glow;
+K = P * later_pre.G * Glow * G_Inertial;
 for i = 1 : trap_pre.num
     K = K * trap_pre.G(i);
 end
