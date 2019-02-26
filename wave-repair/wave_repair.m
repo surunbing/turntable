@@ -33,8 +33,14 @@ end
 
 flag_add = 1; % 1: ratio, 2: phi_reg
 bfailure = 0;
+later_pre = 1;
 while 1
    [later, fval, exitflag] = Holddonewc(P, G, bandwidth1, bandwidth * ratio, phi_margin);
+   if exitflag ~= -2
+       later_pre = later;
+   else
+       later = later_pre;
+   end
    [Gm, Pm, Wgm, Wpm] = margin(P * G * later.G * G_Inertial);
    phi_diff = Pm - parameter.phimarginmin;
    phi_reg = min(phi_diff, phi_reg);   
