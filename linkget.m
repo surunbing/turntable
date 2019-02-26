@@ -13,4 +13,10 @@ else
     bflag_tradition = 1;
     tradition_design;
 end
-    
+%     
+% e = 0.92;
+% T = 20;
+% f = 10 * 2 * pi;
+% trap = tf([1 e * T f * f], [1, T f * f]);
+% bode(trap);
+% grid on

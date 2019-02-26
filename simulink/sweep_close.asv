@@ -1,9 +1,6 @@
 filename = 'Turntable_close.slx';
-load('controller.mat');
-numerator = cell2mat(controller.Numerator);
-denominator = cell2mat(controller.Denominator);
 fre_start = 1;
-fre_end = 100;
+fre_end = 50;
 
 fre_array = fre_start : 1 : fre_end;
 
@@ -33,7 +30,7 @@ i = 1;
 for fre = fre_array
     
     t_off = 10;
-    mag = 0.5;
+    mag = 3;
     fre = fre_array(i);
     Tsim = t_off;
     %% 'Turntable_close.slx'
@@ -68,10 +65,13 @@ end
 figurename('close bode');
 subplot 211;
 semilogx(turntable_bode.fre, turntable_bode.mag, 'r*-');
+hold on
 grid on
 
 subplot 212;
-semilogx(turntable_bode.fre, turntable_bode.phi, 'r*-');
+semilogx(frequence, Phi_real, 'r*-');
+hold on
+semilogx(frequence, Phi_fit, 'g*-');
 grid on
 
 autoArrangeFigures;
