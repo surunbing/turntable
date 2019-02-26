@@ -38,5 +38,6 @@ while flag ~= 9
         end
     end
 end
+% P = P * tf(1, [1 / (100 * 2 * pi), 1]);
 end
 

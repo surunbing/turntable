@@ -101,6 +101,9 @@ end
 figurename('陷波滤波器');
 margin(P * G);
 grid on
+hold on
+margin(P * G / Glow);
+
 figurename('陷波滤波器闭环');
 bode(P * G / (1 + P * G));
 grid on
@@ -119,7 +122,7 @@ if mag_creg > parameter.maglim  || phi_creg > parameter.philim
 end
 
 TSp = 0.0005;
-fid = fopen('C:\Users\Momenta\Documents\毕业设计\CSDA_FANGXUN\turntable\controller.txt', 'wt+');
+fid = fopen(outputfile, 'wt+');
 %% 指令预处理
 fprintf(fid, '[DOF_%d]\n', nDOF);
 fprintf(fid, '// %d-%d 为指令预处理环节，不用时，第1个参数为，其它为0 \n', nZLYCLStart, nZLYCLEnd);

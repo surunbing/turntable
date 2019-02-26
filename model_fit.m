@@ -48,6 +48,7 @@ hold on
 semilogx(frequence, Phi_fit, 'g*-');
 grid on
 
+ 
 K = sysP1D_noise.Kp;
 taue = sysP1D_noise.Tp1;
 taum = sysP1D_noise.Tp2;

@@ -17,8 +17,10 @@ while 1
    [later, fval, exitflag] = Holddonewc(P, G, bandwidth1, bandwidth * ratio, phi_margin);
    [Gm, Pm, Wgm, Wpm] = margin(P * G * later.G);
    phi_diff = Pm - parameter.phimarginmin;
-   phi_reg = min(phi_diff, phi_reg);      
-   [trap, fval, exitflag] = trapdesign(P * later. G, G, bandwidth, num, phi_reg, Wpm, phi_creg, mag_creg);
+   phi_reg = min(phi_diff, phi_reg);   
+   [~, phi_marginreg] = bode(P * G * later.G, bandwidth);
+   phi_marginreg = min(45, 175 - abs(phi_marginreg));
+   [trap, fval, exitflag] = trapdesign(P * later.G, G, bandwidth, num, phi_reg, Wpm, phi_creg, mag_creg, phi_marginreg);
    if exitflag == 1 || exitflag == 2
        bfailure = 1;
        break;

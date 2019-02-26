@@ -1,13 +1,15 @@
-bandwidth = 6; % 带宽设置, hz 请设置整数倍
-ratio = 3;
+%bandwidth = 15; % 带宽设置, hz 请设置整数倍
+%ratio = 3;
 
 global parameter
 
 %% 模型参数
-
-K = 496.7296;
-taue = 0.0019;
-taum = 2.0624;
+%K = 1.096105440623064e+02;
+%taue = 0.002143513958299;
+%taum = 0.190856829212321;
+% K = 496.7296;
+% taue = 0.0019;
+% taum = 2.0624;
 
 % K = 434;
 % taum = 0.67;
@@ -17,14 +19,15 @@ taum = 2.0624;
 % taue = 0.0039035;
 % taum = 0.984871194396488;
 
-nZLYCLStart = 0;
-nZLYCLEnd = 3;
-nQKStart = 4;
-nQKEnd = 6;
-nJZStart = 7;
-nJZEnd = 29;
-nDOF = 0;
-
+% nZLYCLStart = 0;
+% nZLYCLEnd = 3;
+% nQKStart = 4;
+% nQKEnd = 6;
+% nJZStart = 7;
+% nJZEnd = 29;
+% nDOF = 0;
+% 
+% outputfile = 'C:\Users\Momenta\Documents\毕业设计\助手\CSDA_FANGXUN\turntable/controller5.txt';
 
 parameter.K = K;
 parameter.taum = taum;
