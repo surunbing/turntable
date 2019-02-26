@@ -21,8 +21,8 @@ LOW_PMLOSS_MAX = 1;
 LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
-LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
-LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
+% LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
+% LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 
 Glow = GetlowgainG(LowGain);
 figurename('³Ùºó»·½Ú');

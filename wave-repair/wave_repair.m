@@ -22,7 +22,7 @@ else
     [~, phi_Inertial_cost] = bode(G_Inertial, bandwidth * ratio);
     %计算补充相角的超前环节
     phi_Inertial_cost = abs(phi_Inertial_cost);
-    m = sin((phi_Inertial_cost) / 180 * pi);
+    m = sin((phi_Inertial_cost + 3) / 180 * pi);
     alpha = (1 - m) / (1 + m);
     tau = 1 / (sqrt(alpha) * bandwidth * ratio);
     T = alpha * tau;
@@ -39,7 +39,7 @@ while 1
    phi_diff = Pm - parameter.phimarginmin;
    phi_reg = min(phi_diff, phi_reg);   
    [~, phi_marginreg] = bode(P * G * later.G * G_Inertial, bandwidth);
-   phi_marginreg = min(40, 177 - abs(phi_marginreg)); %  需要修改
+   phi_marginreg = min(42, 177 - abs(phi_marginreg)); %  需要修改
    [trap, fval, exitflag] = trapdesign(P * later.G * G_Inertial, G, bandwidth, num, phi_reg, Wpm, phi_creg, mag_creg, phi_marginreg);
    if exitflag == 1 || exitflag == 2
        bfailure = 1;
