@@ -1,7 +1,7 @@
 filename = 'Turntable_close.slx';
-load('controller5.mat');
-numerator = cell2mat(controller5.Numerator);
-denominator = cell2mat(controller5.Denominator);
+load('controller_nolow_075.mat');
+numerator = cell2mat(controller_nolow_075.Numerator);
+denominator = cell2mat(controller_nolow_075.Denominator);
 fre_start = 1;
 fre_end = 100;
 
@@ -99,5 +99,11 @@ autoArrangeFigures;
 % model.G_ideal = tf(K, [taue * taum, taue + taum, 1, 0]);
 % model.turntable = turntable_bode;
 
+e = 0.3;
+T = 500;
+f = 150 * 2 * pi;
+trap = tf([1 e * T f * f] / 4.0272, [1 T f * f / 4]);
+bode(trap);
+grid on
 
 
