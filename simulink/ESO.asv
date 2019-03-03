@@ -64,7 +64,7 @@ b1 = 1 / taum;
 b0 = K / (taue * taum);
 
 %% ÇÐ±ÈÑ©·ò
-global para z1 z2 z3 z4 num z11 z22 z33 z44 cmd cmd_pre;
+global para z1 z2 z3 z4 num z11 z22 z33 z44 c'm;
 para.beta4 = 0.2756 * wq ^ 4;
 para.beta1 = 0.9528 * wq - b1 - b2;
 para.beta2 = 1.4539 * wq * wq - b2 * para.beta1 - b1 * para.beta1 - b1 * b2;
@@ -82,16 +82,13 @@ z22 = 0;
 z33 = 0;
 z44 = 0;
 
-cmd = 0;
-cmd_pre = 0;
-
 %End of mdlInitializeSizes
 		      
 %==============================================================
 % Update the discrete states
 %==============================================================
 function sys = mdlUpdates(t,x,u)
-global para z1 z2 z3 z4 num z11 z22 z33 z44 cmd cmd_pre;
+global para z1 z2 z3 z4 num z11 z22 z33 z44;
 beta0 = para.beta1;
 beta1 = para.beta2;
 beta2 = para.beta3;
@@ -101,14 +98,9 @@ h = para.t;
 
 num = num + 1;
 
-cmd_pre = cmd;
-cmd = u(3);
 uu = u(1);
 y = u(2);
 
-if(t > 1.0 && abs(cmd - cmd_pre) == 0.0)
-    sys = x;
-else
 dx = zeros(4, 1);
 e = z11 - y;
 dx(1) = z22 - beta0 * e;
@@ -138,19 +130,13 @@ x(2) = z2;
 x(3) = z3;
 x(4) = z4;
 sys = x;
-end
 %End of mdlUpdate.
 
 %==============================================================
 % Calculate outputs
 %==============================================================
 function sys = mdlOutputs(t,x,u)
-global para z1 z2 z3 z4 num z11 z22 z33 z44 cmd cmd_pre;
-if(t > 1.0 && abs(cmd - cmd_pre) == 0.0)
-    sys = zeros(4, 1);
-else
 sys = x;
-end
 
  
 % End of mdlOutputs.

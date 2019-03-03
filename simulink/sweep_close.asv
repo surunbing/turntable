@@ -1,7 +1,7 @@
 filename = 'Turntable_close.slx';
 load('controller1.mat');
-numerator = cell2mat(controller1.Numerator);
-denominator = cell2mat(controller1.Denominator);
+numerator = cell2mat(controller8.Numerator);
+denominator = cell2mat(controller8.Denominator);
 fre_start = 1;
 fre_end = 100;
 
