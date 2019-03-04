@@ -14,8 +14,8 @@ taue = parameter.taue;
 if strcmp(option.type, 'double-ten')
     %% 基于双十指标的优化
     wcmax = num1;
-    start = [0.3, 405.4322];
-    lb = [0.25; 0.00001];
+    start = [0.7, 405.4322];
+    lb = [0.65; 0.00001];
     ub = [parameter.dampmax; inf];
 %     options = optimset('Algorithm','interior-point');
     options = optimset('Algorithm','sqp');
@@ -24,8 +24,8 @@ if strcmp(option.type, 'double-ten')
 elseif strcmp(option.type, 'wc')
     %% 基于剪切频率的优化
     wfr = bandwidth + 3 * pi; 
-    start = [0.35, 405.4322];
-    lb = [0.3; 0.00001];
+    start = [0.7, 405.4322];
+    lb = [0.65; 0.00001];
     ub = [parameter.dampmax; inf];
     options = optimset('Algorithm','sqp');
     [X, fval, exitflag] = fmincon(@(x)GetWcCost(x, T)...
@@ -34,8 +34,8 @@ elseif strcmp(option.type, 'margin-phase')
     %% 基于相位裕度的优化
     wfr = bandwidth + pi;
     wcmax = num1;
-    start = [0.35, 405.4322];
-    lb = [0.3; 0.00001];
+    start = [0.7, 405.4322];
+    lb = [0.65; 0.00001];
     ub = [parameter.dampmax; inf];
 %     options = optimset('Algorithm','interior-point');
     options = optimset('Algorithm','sqp');
