@@ -45,7 +45,7 @@ while 1
    phi_diff = Pm - parameter.phimarginmin;
    phi_reg = min(phi_diff, phi_reg);   
    [~, phi_marginreg] = bode(P * G * later.G * G_Inertial, bandwidth);
-   phi_marginreg = min(30, 177 - abs(phi_marginreg)); %  需要修改
+   phi_marginreg = min(40, 177 - abs(phi_marginreg)); %  需要修改
    [trap, fval, exitflag] = trapdesign(P * later.G * G_Inertial, G, bandwidth, num, phi_reg, Wpm, phi_creg, mag_creg, phi_marginreg);
    if exitflag == 1 || exitflag == 2
        bfailure = 1;
