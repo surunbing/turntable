@@ -46,18 +46,19 @@ while 1
    phi_reg = min(phi_diff, phi_reg);   
    [~, phi_marginreg] = bode(P * G * later.G * G_Inertial, bandwidth);
    %% 生成下限的界限
-   phi_limit_fre = linspace(1, 50, 20) * 2 * pi;
+   phi_limit_fre = linspace(1, 50, 50) * 2 * pi;
    [~, phi_limit] = bode(P * G * later.G * G_Inertial, phi_limit_fre);
-   phi_limit = reshape(phi_limit, [1, 20]);
+   phi_limit = phi_limit(1, 1, :);
    p = polyfit(phi_limit_fre, phi_limit, 5);
-%    figurename('对比绘图');
-%    plot(phi_limit_fre, phi_limit, 'r*-');
-%    hold on 
-%    grid on
-%    plot(phi_limit_fre, polyval(p, phi_limit_fre), 'b*-');
+   figurename('对比绘图');
+   plot(phi_limit_fre, phi_limit, 'r*-');
+   hold on 
+   grid on
+   plot(phi_limit_fre, ployval(p, phi_limit_fre), 'b*-');
+
    
-%    phi_marginreg = min(40, 177 - abs(phi_marginreg)); %  需要修改
-   phi_marginreg = p;
+   
+   phi_marginreg = min(40, 177 - abs(phi_marginreg)); %  需要修改
    [trap, fval, exitflag] = trapdesign(P * later.G * G_Inertial, G, bandwidth, num, phi_reg, Wpm, phi_creg, mag_creg, phi_marginreg);
    if exitflag == 1 || exitflag == 2
        bfailure = 1;

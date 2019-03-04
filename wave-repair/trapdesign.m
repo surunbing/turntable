@@ -41,7 +41,7 @@ for i = 1 : num
     ub(i * 3) = parameter.trapfremax;
 end
 
-% options = optimset('Algorithm','interior-point');
+%  options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');
 
 [x, fval, exitflag] = fmincon(@(x)GetTrapcost(x, num, data, 0, 0)...
