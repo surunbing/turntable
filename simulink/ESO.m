@@ -109,9 +109,7 @@ cmd = u(3);
 uu = u(1);
 y = u(2);
 
-if(abs(cmd_pre - cmd) <= 0.01 && t > 0.0)
-    sys = x;
-else
+
     dx = zeros(4, 1);
     e = z11 - y;
     dx(1) = z22 - beta0 * e;
@@ -141,19 +139,13 @@ else
     x(3) = z3;
     x(4) = z4;
     sys = x;
-end
 %End of mdlUpdate.
 
 %==============================================================
 % Calculate outputs
 %==============================================================
 function sys = mdlOutputs(t,x,u)
-global cmd_pre cmd;
-if(abs(cmd_pre - cmd) <= 0.01 && t > 1.0)
-    sys = zeros(4, 1);
-else
-    sys = x;
-end
+sys = x;
 
  
 % End of mdlOutputs.
