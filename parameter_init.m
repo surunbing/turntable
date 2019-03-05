@@ -1,5 +1,5 @@
 bandwidth = 15; % 带宽设置, hz 请设置整数倍
-ratio = 3.0;
+ratio = 2.0;
 
 global parameter
 
@@ -54,10 +54,10 @@ parameter.philim = 8;     % 闭环最终相位
 parameter.num_max = 3;    % 整型最大非线性环节数量
 parameter.rdiv = 1.05;    % 指标优化或放开的系数
 parameter.start_ratio = parameter.ratio * 0.8;
-parameter.phimarginmin = 49.5;  % 相位裕度最小值
+parameter.phimarginmin = 46.5;  % 相位裕度最小值
 
 parameter.phi_margin = 122;  %闭环整形为了使用险波环节, 需要给出优化的相位裕度    这个数值可以寻优 但经过实验，效果不大
-parameter.phi_reg = 8;       % 非线性环节期望损失的相角
+parameter.phi_reg = 11;       % 非线性环节期望损失的相角
 parameter.ratiodiv = 1.025;   % 剪切频率搜寻尺度   采用* 
 parameter.phidiv = 0.5;      % 相位搜寻尺度 0.5 度  采用+
 

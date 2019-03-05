@@ -62,7 +62,7 @@ trap_pre = 0;
 later_pre = 0;
 %% 是否需要加入能否设计出的评估
 while 1
-    [trap, later, ~, bfailure, data_check, num] = wave_repair(P, G, 0, phi_creg, mag_creg);
+    [trap, later, ~, bfailure, data_check, num] = wave_repair(P * Glow, G, 0, phi_creg, mag_creg);
     if bfailure == -1 && bfailure_pre == 1
         break;
     end
@@ -101,8 +101,6 @@ end
 figurename('陷波滤波器');
 margin(P * G);
 grid on
-hold on
-margin(P * G / Glow);
 
 figurename('陷波滤波器闭环');
 bode(P * G / (1 + P * G));

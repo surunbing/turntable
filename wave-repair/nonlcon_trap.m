@@ -46,7 +46,7 @@ for i = 1 : num
 end
 % complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
 phi = angle(complex_phi) ./ pi * 180;
-c(length(frequence) * 4 + 2 : length(frequence) * 4 + 1 + num) = - 160 - polyval(phi_margin, x) - phi;
+c(length(frequence) * 4 + 2 : length(frequence) * 4 + 1 + num) = - 165 - polyval(phi_margin, x) - phi;
 ceq = 0;
 
 end

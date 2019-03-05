@@ -9,7 +9,7 @@ bandwidth1 = parameter.bandwidth + pi; %max([parameter.bandwidth + pi, para.dt])
 phi_margin = parameter.phi_margin;
 phi_reg = parameter.phi_reg;
 num_max = parameter.num_max;
-num = 1;
+num = 2;
 
 if bflag_tradition == 1
     G_Inertial = 1;
