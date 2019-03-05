@@ -14,11 +14,12 @@ data.fre = [data.fre; data.fre(length(data.fre)) + pi];
 ncount = ncount + 1;
 data.mag = zeros(ncount, 1);
 data.phi = zeros(ncount, 1);
-data_out = translate_data(P, G);
-[mag, phi] = bode_get(data_out, data.fre);
-data.mag = mag;
-data.phi = phi;
 
+[mag, phi] = bode(P * G, data.fre);
+for i = 1 : ncount
+    data.mag(i) = mag(1, 1, i);
+    data.phi(i) = phi(1, 1, i);
+end
 
 %% »ñµÃstart point
 start = zeros(num * 3, 1);

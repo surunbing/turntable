@@ -117,8 +117,7 @@ subplot 211
 plot(data_out.fre, 20 * log10(abs(complex_open ./ (1 + complex_open))), 'r-');
 grid on
 subplot 212
-plot(data_out.fre, angle(abs(complex_open ./ (1 + complex_open))) / pi * 180, 'r-');
-grid on
+
 
 K_model = parameter.K;
 taum = parameter.taum;

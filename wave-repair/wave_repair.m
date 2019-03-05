@@ -41,10 +41,13 @@ while 1
    else
        later = later_pre;
    end
-   [Gm, Pm, Wgm, Wpm] = margin(P * G * later.G * G_Inertial);
+   data_out = translate_data(G, P * later.G * G_Inertial);
+   [Gm, Pm, Wgm, Wpm] = margin_get(data_out);
+%    [Gm, Pm, Wgm, Wpm] = margin(P * G * later.G * G_Inertial);
    phi_diff = Pm - parameter.phimarginmin;
-   phi_reg = min(phi_diff, phi_reg);   
-   [~, phi_marginreg] = bode(P * G * later.G * G_Inertial, bandwidth);
+   phi_reg = min(phi_diff, phi_reg);  
+   [~, phi_marginreg] = bode_get(data_out, bandwidth);
+%    [~, phi_marginreg] = bode(P * G * later.G * G_Inertial, bandwidth);
    %% 生成下限的界限
    phi_limit_fre = linspace(1, 50, 20) * 2 * pi;
    [~, phi_limit] = bode(P * G * later.G * G_Inertial, phi_limit_fre);
