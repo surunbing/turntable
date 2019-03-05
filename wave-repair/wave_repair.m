@@ -50,13 +50,6 @@ while 1
    [~, phi_limit] = bode(P * G * later.G * G_Inertial, phi_limit_fre);
    phi_limit = reshape(phi_limit, [1, 20]);
    p = polyfit(phi_limit_fre, phi_limit, 5);
-%    figurename('对比绘图');
-%    plot(phi_limit_fre, phi_limit, 'r*-');
-%    hold on 
-%    grid on
-%    plot(phi_limit_fre, polyval(p, phi_limit_fre), 'b*-');
-   
-%    phi_marginreg = min(40, 177 - abs(phi_marginreg)); %  需要修改
    phi_marginreg = p;
    [trap, fval, exitflag] = trapdesign(P * later.G * G_Inertial, G, bandwidth, num, phi_reg, Wpm, phi_creg, mag_creg, phi_marginreg);
    if exitflag == 1 || exitflag == 2
