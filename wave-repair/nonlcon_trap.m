@@ -34,7 +34,7 @@ for i = 1 : length(frequence)
     c(4 * i - 2) = -phi_reg - phi(i);
     c(4 * i + 1) = phi(i) - phi_reg;
     c(4 * i) = mag(i) - mag_reg;
-    c(4 * i + 1) = - mag_reg - mag(i);
+    c(4 * i + 1) = - 0.44 - mag(i);
 end
 % c(length(frequence) * 4 + 2) = mag(length(frequence)) - mag_reg;
 
@@ -46,7 +46,7 @@ for i = 1 : num
 end
 % complex_phi = complex(f .* f - x .* x, e .* T .* x) ./ complex(f .* f - x .* x, T .* x);
 phi = angle(complex_phi) ./ pi * 180;
-c(length(frequence) * 4 + 2 : length(frequence) * 4 + 1 + num) = - 165 - polyval(phi_margin, x) - phi;
+c(length(frequence) * 4 + 2 : length(frequence) * 4 + 1 + num) = - 160 - polyval(phi_margin, x) - phi;
 ceq = 0;
 
 end

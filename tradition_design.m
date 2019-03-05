@@ -60,35 +60,49 @@ flag_add = 1; % 1: mag, 2: phi
 bfailure_pre = 0;
 trap_pre = 0;
 later_pre = 0;
+bSearch_up = 1;
+
+mag_creg_up = mag_creg;
+mag_creg_lb = 0.001;
+phi_creg_up = phi_creg;
+phi_creg_lb = 0.001;
+
+mag_creg_pre = 0;
+phi_creg_pre = 0;
+
+k_search = 0;
 %% 是否需要加入能否设计出的评估
 while 1
     [trap, later, ~, bfailure, data_check, num] = wave_repair(P * Glow, G, 0, phi_creg, mag_creg);
-    if bfailure == -1 && bfailure_pre == 1
-        break;
+    k_search = [k_search, phi_creg];
+    mag_creg_pre = mag_creg;
+    phi_creg_pre = phi_creg;
+    trap_pre = trap;
+    later_pre = later;
+    %% 找可以的上限 二分法边界
+    if bfailure ~= 1 && bSearch_up == 1
+        mag_creg = mag_creg * 1.5;
+        phi_creg = phi_creg * 1.5;
+    elseif bfailure == 1 && bSearch_up == 1
+        bSearch_up = 0; %% 转入二分查找
+        mag_creg_up = mag_creg;
+        phi_creg_up = phi_creg;
+        mag_creg = (mag_creg_up + mag_creg_lb) / 2;
+        phi_creg = (phi_creg_up + phi_creg_lb) / 2;
+        continue;
     end
-    bfailure_pre = bfailure;
-    if bfailure == 1
-        trap_pre = trap;
-        later_pre = later;
-        %% 性能调优，力图做到更好的数值指标
-        if num <= 2
-            num_max = min(3, num + 1);
-        end
-        if flag_add == 1
-            mag_creg = mag_creg / parameter.rdiv;
-            flag_add = 2;
-        elseif flag_add == 2
-            phi_creg = phi_creg / parameter.rdiv;
-            flag_add = 1;
-        end
-    else 
-        %% 放宽要求，为了前馈和前置滤波器做准备，其中相频优先保证
-         if flag_add == 1
-            mag_creg = mag_creg * parameter.rdiv;
-            flag_add = 2;
-        elseif flag_add == 2
-            phi_creg = phi_creg * parameter.rdiv;
-            flag_add = 1;
+    if bSearch_up == 0 && bfailure ~= 1
+        mag_creg_lb = mag_creg;
+        phi_creg_lb = phi_creg;
+        mag_creg = (mag_creg_up + mag_creg_lb) / 2;
+        phi_creg = (phi_creg_up + phi_creg_lb) / 2;
+    elseif bSearch_up == 0 && bfailure == 1
+        mag_creg_up = mag_creg;
+        phi_creg_up = phi_creg;
+        mag_creg = (mag_creg_up + mag_creg_lb) / 2;
+        phi_creg = (phi_creg_up + phi_creg_lb) / 2;
+        if abs(mag_creg_pre - mag_creg) < 0.1 && abs(phi_creg_pre - phi_creg) < 0.1
+            break;
         end
     end
 end
