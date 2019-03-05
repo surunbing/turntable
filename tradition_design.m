@@ -1,15 +1,3 @@
-% clc, clear
-% close all
-
-% Ìí¼ÓÂ·¾¶
-% projectPath = pwd;
-% addpath(genpath(projectPath)); % Add project folder and subfolders to path
-% rmpath(genpath([projectPath,'/.git/'])); % remove git from matlab path
-% savepath;
-% 
-% parameter_init;
-% global parameter
-
 bforward = 0;
 
 ratio = parameter.ratio;
