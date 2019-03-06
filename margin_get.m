@@ -3,6 +3,6 @@ function [Gm, Pm, Wgm, Wpm] = margin_get(data)
 Wgm = interp1(data.phi, data.fre, -180);
 Gm = interp1(data.fre, data.mag, Wgm);
 Wpm = interp1(data.mag, data.fre, 0);
-Pm = interp1(data.fre, data.phi, Wpm);
+Pm = 180 - abs(interp1(data.fre, data.phi, Wpm));
 end
 

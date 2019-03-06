@@ -6,7 +6,7 @@ global parameter
 %% 检查波形，加入陷波滤波器提高增益
 %% 加入迟后环节可以引起频带以内较高的部分有一定的谐振，闭环时由陷波滤波器引起的幅频损失可以到允许范围内
 %% 不引起低频增益的损失
-data_out = translate_data(data, P);
+data_out = translate_data(G, P);
 [~, phi] = bode_get(data_out, wc_r);
 phi_n_min = -phi_dist - phi;
 phi_n_max = -phi_dist + parameter.later_phi - phi;
@@ -14,9 +14,10 @@ phi_n_max = -phi_dist + parameter.later_phi - phi;
 %%计算无滞后的相频特性
 frequence = [wc_r, wc_r * 0.7, data];%para.dt];
 [mag, phi] = bode_get(data_out, frequence);
+mag = 10 .^ (mag / 20);
 c_data = zeros(length(frequence), 1);
 for i = 1 : length(frequence)
-    c_data(i) = mag(1, 1, i) * complex(cos(phi(1, 1, i) / 180 * pi), sin(phi(1, 1, i) / 180 * pi));
+    c_data(i) = mag(i) * complex(cos(phi(i) / 180 * pi), sin(phi(i) / 180 * pi));
 end
 
 tic

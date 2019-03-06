@@ -14,9 +14,9 @@ data.fre = [data.fre; data.fre(length(data.fre)) + pi];
 ncount = ncount + 1;
 data.mag = zeros(ncount, 1);
 data.phi = zeros(ncount, 1);
-data_out = translate_data(P, G);
+data_out = translate_data(G, P);
 [mag, phi] = bode_get(data_out, data.fre);
-data.mag = mag;
+data.mag = 10 .^ (mag / 20);
 data.phi = phi;
 
 
@@ -37,12 +37,12 @@ for i = 1 : num
     lb(i * 3 - 1) = parameter.trapTmin;
     lb(i * 3) = parameter.trapfremin;
     ub(i * 3 - 2) = 5;
-    ub(i * 3 - 1)= 20;
+    ub(i * 3 - 1)= 50;
     ub(i * 3) = parameter.trapfremax;
 end
 
 %  options = optimset('Algorithm','interior-point');
-options = optimset('Algorithm','sqp');
+options = optimset('Algorithm','sqp', 'MaxFunEvals', 2500);
 
 [x, fval, exitflag] = fmincon(@(x)GetTrapcost(x, num, data, 0, 0)...
     , start, [], [], [], [], lb, ub, @(x)nonlcon_trap(x, wc, pm_cost, data, num, phi_reg, mag_reg, phi_margin), options);

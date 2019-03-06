@@ -9,7 +9,7 @@ if fre_through > 380
     fre_through = 380;
     ratio = fre_through / bandwidth;
 end
-fre_error = abs(data.fre - fre_through * ones(1, length(data.fre)));
+fre_error = abs(data.fre - fre_through * ones(length(data.fre), 1));
 fre = min(fre_error);
 num = find(fre_error == fre);
 advance.fre = data.fre(num);

@@ -1,6 +1,6 @@
-% filename = 'C:\Users\Momenta\Documents\毕业设计\CSDA_FANGXUN\turntable\sweep\ET205主轴3Vsweep.csv';
-% nlength = 100;
-% type = 1;
+filename = 'ET205主轴3Vsweep-test.csv';
+nlength = 75;
+type = 0;
 % frequence = linspace(1, nlength, nlength) * 2 * pi;
 if isempty(strfind(filename, '.csv')) == 0 
     ET = load(filename);

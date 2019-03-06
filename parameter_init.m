@@ -1,16 +1,16 @@
-bandwidth = 15; % 带宽设置, hz 请设置整数倍
-ratio = 5.0;
+bandwidth = 5; % 带宽设置, hz 请设置整数倍
+ratio = 2.0;
 
 global parameter
 
 %% 模型参数
-K = 1.096105440623064e+02;
-taue = 0.002143513958299;
-taum = 0.190856829212321;
+% K = 1.096105440623064e+02;
+% taue = 0.002143513958299;
+% taum = 0.190856829212321;
 
-% K = 496.7296;
-% taue = 0.0019;
-% taum = 2.0624;
+K = 496.7296;    %% ET205A
+taue = 0.0019;
+taum = 2.0624;
 
 % K = 434;
 % taum = 0.67;
@@ -51,7 +51,7 @@ parameter.phi_creg = 8;   % 闭环整形相位目标
 parameter.mag_creg = 0.8; % 闭环整形幅值目标, db
 parameter.maglim = 0.7;  % 闭环最终幅值 db
 parameter.philim = 8;     % 闭环最终相位
-parameter.num_max = 3;    % 整型最大非线性环节数量
+parameter.num_max = 5;    % 整型最大非线性环节数量
 parameter.rdiv = 1.05;    % 指标优化或放开的系数
 parameter.start_ratio = parameter.ratio * 0.8;
 parameter.phimarginmin = 46.5;  % 相位裕度最小值
@@ -65,9 +65,9 @@ parameter.later_phi = 3;     % 迟后环节相位搜寻约束系数
 parameter.laterKmin = 0.5;    % 迟后搜索增益最小
 parameter.laterfremin = 0.001;    % 迟后搜索中心频率最小
 
-parameter.trapTmin = 6;
-parameter.trapfremin = parameter.bandwidth * 0.2;       % 最小宽度
-parameter.trapfremax = parameter.bandwidth + 3 * pi;    % 非线性环节优化 最大频率
+parameter.trapTmin = 1.9;
+parameter.trapfremin = parameter.bandwidth * 0.1;       % 最小中心频率
+parameter.trapfremax = parameter.bandwidth + 5 * pi;    % 非线性环节优化 最大频率
 parameter.trapohimin = 40;  % 非线性最小相位
 
 %% 前馈环节

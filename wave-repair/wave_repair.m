@@ -50,7 +50,9 @@ while 1
 %    [~, phi_marginreg] = bode(P * G * later.G * G_Inertial, bandwidth);
    %% 生成下限的界限
    phi_limit_fre = linspace(1, 50, 20) * 2 * pi;
-   [~, phi_limit] = bode(P * G * later.G * G_Inertial, phi_limit_fre);
+   data_out = translate_data(G, P * later.G * G_Inertial);
+   [~, phi_limit] = bode_get(data_out, phi_limit_fre);
+%    [~, phi_limit] = bode(P * G * later.G * G_Inertial, phi_limit_fre);
    phi_limit = reshape(phi_limit, [1, 20]);
    p = polyfit(phi_limit_fre, phi_limit, 5);
    phi_marginreg = p;
