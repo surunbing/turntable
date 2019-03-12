@@ -55,7 +55,7 @@ t = 0.0005;
 ts  = [t 0];       % sample time: [period, offset]
 x0 =[0;0;0;0];
 
-wq = 150 * 2 * pi;
+wq = 100 * 2 * pi;
 K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;

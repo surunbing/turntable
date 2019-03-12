@@ -33,3 +33,6 @@ for i = 1 : LowGain.count
     tau = 1 / (sqrt(LowGain.alpha(i)) * LowGain.fre(i));
     LowGain.G(i) = tf([tau, 1], [LowGain.alpha(i) * tau, 1]);
 end
+
+tau = 1 / (sqrt(10 * 0.5));
+G_later = tf([tau, 1], [10 * tau, 1]);

@@ -54,8 +54,8 @@ semilogx(dataG.fre, dataG.phi + phi, 'r-');
 grid on
 Design_Lowgain;
 
-phi_creg = parameter.phi_creg - 0.98;
-mag_creg = parameter.mag_creg - 0.098;
+phi_creg = parameter.phi_creg;
+mag_creg = parameter.mag_creg;
 trap_pre = 0;
 later_pre = 0;
 bSearch_up = 1;

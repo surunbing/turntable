@@ -1,7 +1,7 @@
 filename = 'Turntable_close.slx';
-load('controller10.mat');
-numerator = cell2mat(controller10.Numerator);
-denominator = cell2mat(controller10.Denominator);
+load('controller.mat');
+numerator = cell2mat(controller.Numerator);
+denominator = cell2mat(controller.Denominator);
 fre_start = 1;
 fre_end = 100;
 
@@ -93,17 +93,28 @@ autoArrangeFigures;
 %     model.taum = sysP1D_noise.Tp1;
 %     model.taue = sysP1D_noise.Tp2;
 % end
-% K = 1.56 * 180 / pi;
-% taue = 0.0039035;
-% taum = 0.984871194396488;
-% model.G_ideal = tf(K, [taue * taum, taue + taum, 1, 0]);
+K = 1.56 * 180 / pi;
+taue = 0.0039035;
+taum = 0.984871194396488;
+G = tf(K, [taue * taum, taue + taum, 1, 0]);
 % model.turntable = turntable_bode;
-
-e = 0.3;
-T = 500;
-f = 150 * 2 * pi;
-trap = tf([1 e * T f * f] / 4.0272, [1 T f * f / 4]);
+%%
+close all
+e = 0.1;
+T = 10;
+f = 20 * 2 * pi;
+f1 = 10 * 2 * pi;
+trap = tf([1 e * T f * f] , [1 T f1 * f1]);
 bode(trap);
 grid on
 
-
+%%
+close all
+tau = 1 / (sqrt(4 * 0.001 * 2 * pi));
+G_later1 = tf([tau, 1], [4 * tau, 1]);
+tau = 1 / (sqrt(1.5 * 0.2 * 2 * pi));
+G_later2 = tf([tau, 1], [1.5 * tau, 1]) * 1.5;
+tau = 1 / (sqrt(1.5 * 1 * 2 * pi));
+G_later3 = tf([tau, 1], [1.5 * tau, 1]) * 1.5;
+bode(controller_tra_nolow * G);
+grid on
