@@ -11,22 +11,22 @@ function [sys,x0,str,ts] = ESO(t,x,u,flag)
 % potentially including estimated disturbance states.
 
 switch flag
- case 0
-  [sys,x0,str,ts] = mdlInitializeSizes; % Initialization
-  
- case 2
-  sys = mdlUpdates(t,x,u); % Update discrete states
-  
- case 3
-  sys = mdlOutputs(t,x,u); % Calculate outputs
- 
-
-
- case {1,4,9} % Unused flags
-  sys = [];
-  
- otherwise
-  error(['unhandled flag = ',num2str(flag)]); % Error handling
+    case 0
+        [sys,x0,str,ts] = mdlInitializeSizes; % Initialization
+        
+    case 2
+        sys = mdlUpdates(t,x,u); % Update discrete states
+        
+    case 3
+        sys = mdlOutputs(t,x,u); % Calculate outputs
+        
+        
+        
+    case {1,4,9} % Unused flags
+        sys = [];
+        
+    otherwise
+        error(['unhandled flag = ',num2str(flag)]); % Error handling
 end
 % End of dsfunc.
 
@@ -36,7 +36,7 @@ end
 
 function [sys,x0,str,ts] = mdlInitializeSizes
 
-% Call simsizes for a sizes structure, fill it in, and convert it 
+% Call simsizes for a sizes structure, fill it in, and convert it
 % to a sizes array.
 
 sizes = simsizes;
@@ -46,7 +46,7 @@ sizes.NumOutputs     = 4;
 sizes.NumInputs      = 3;
 sizes.DirFeedthrough = 1; % Matrix D is non-empty.
 sizes.NumSampleTimes = 1;
-sys = simsizes(sizes);  
+sys = simsizes(sizes);
 % Initialize the discrete states.
 str = [];             % Set str to an empty matrix.
 
@@ -87,7 +87,7 @@ y_pre = 0;
 cmd = 0;
 
 %End of mdlInitializeSizes
-		      
+
 %==============================================================
 % Update the discrete states
 %==============================================================
@@ -109,36 +109,35 @@ cmd = u(3);
 uu = u(1);
 y = u(2);
 
+dx = zeros(4, 1);
+e = z11 - y;
+dx(1) = z22 - beta0 * e;
+dx(2) = z33 - beta1 * e;
+dx(3) = z44 - beta2 * e + b0 * uu - (1.015361202246130 + 2.561803509670808e+02) * z33 - (1.015361202246130 * 2.561803509670808e+02) * z22;
+dx(4) = - beta3 * e;
 
-    dx = zeros(4, 1);
-    e = z11 - y;
-    dx(1) = z22 - beta0 * e;
-    dx(2) = z33 - beta1 * e;
-    dx(3) = z44 - beta2 * e + b0 * uu - (1.015361202246130 + 2.561803509670808e+02) * z33 - (1.015361202246130 * 2.561803509670808e+02) * z22;
-    dx(4) = - beta3 * e;
+z1 = (z1 + z11 + h * dx(1)) / 2;
+z2 = (z2 + z22 + h * dx(2)) / 2;
+z3 = (z3 + z33 + h * dx(3)) / 2;
+z4 = (z4 + z44 + h * dx(4)) / 2;
 
-    z1 = (z1 + z11 + h * dx(1)) / 2;
-    z2 = (z2 + z22 + h * dx(2)) / 2;
-    z3 = (z3 + z33 + h * dx(3)) / 2;
-    z4 = (z4 + z44 + h * dx(4)) / 2;
+dxy = zeros(4, 1);
+e = z1 - y;
+dxy(1) = z2 - beta0 * e;
+dxy(2) = z3 - beta1 * e;
+dxy(3) = z4 - beta2 * e + b0 * uu - (1.015361202246130 + 2.561803509670808e+02) * z3 - (1.015361202246130 * 2.561803509670808e+02) * z2;
+dxy(4) = - beta3 * e;
 
-    dxy = zeros(4, 1);
-    e = z1 - y;
-    dxy(1) = z2 - beta0 * e;
-    dxy(2) = z3 - beta1 * e;
-    dxy(3) = z4 - beta2 * e + b0 * uu - (1.015361202246130 + 2.561803509670808e+02) * z3 - (1.015361202246130 * 2.561803509670808e+02) * z2;
-    dxy(4) = - beta3 * e;
+z11 = z1 + h * dxy(1);
+z22 = z2 + h * dxy(2);
+z33 = z3 + h * dxy(3);
+z44 = z4 + h * dxy(4);
 
-    z11 = z1 + h * dxy(1);
-    z22 = z2 + h * dxy(2);
-    z33 = z3 + h * dxy(3);
-    z44 = z4 + h * dxy(4);
-
-    x(1) = z1;
-    x(2) = z2;
-    x(3) = z3;
-    x(4) = z4;
-    sys = x;
+x(1) = z1;
+x(2) = z2;
+x(3) = z3;
+x(4) = z4;
+sys = x;
 %End of mdlUpdate.
 
 %==============================================================
@@ -147,5 +146,5 @@ y = u(2);
 function sys = mdlOutputs(t,x,u)
 sys = x;
 
- 
+
 % End of mdlOutputs.
