@@ -7,10 +7,12 @@ phi_advance_margin = parameter.phi_advance_margin;
 
 %% Object
 %% 加载数据
-ET205 = load('ET205主轴3Vsweep-test.csv');
-data.fre = ET205(:, 1) * 2 * pi;
-data.mag = 20 .* log10(ET205(:, 2));
-data.phi = ET205(:, 3);
+% ET205 = load('ET205主轴3Vsweep-test.csv');
+G_model = tf(K, [taue * taum taue + taum 1 0]);
+data.fre = linspace(1, 70, 70)' * 2 * pi;
+[mag, phi] = bode(G_model, data.fre);
+data.mag = 20 .* log10(reshape(mag, [70, 1]));
+data.phi = reshape(phi, [70, 1]);
 
 dataG = data;
 complex_G = 10 .^ (data.mag / 20) .* complex(cos(data.phi / 180  * pi), sin(data.phi / 180  * pi));

@@ -28,7 +28,7 @@ ub = [wc_r * 2; 15; 5];
 % options = optimset('Algorithm','interior-point');
 options = optimset('Algorithm','sqp');
 [X, fval, exitflag] = fmincon(@(x)GetAlphacost(x, c_data, frequence)...
-    , start, [], [], [], [], lb, ub, @(x)nonlcon(x,  , phi_n_min, phi_n_max, c_data, frequence), options);
+    , start, [], [], [], [], lb, ub, @(x)nonlcon(x,  wc_r, phi_n_min, phi_n_max, c_data, frequence), options);
 toc
 
 % [c, ceq] = nonlcon(X, wc_r - 20, phi_n_min, phi_n_max, c_data, frequence);

@@ -55,7 +55,7 @@ t = 0.0005;
 ts  = [t 0];       % sample time: [period, offset]
 x0 =[0;0;0;0];
 
-wq = 100 * 2 * pi;
+wq = 150 * 2 * pi;
 K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;
@@ -136,7 +136,7 @@ z44 = z4 + h * dxy(4);
 x(1) = z1;
 x(2) = z2;
 x(3) = z3;
-x(4) = z4;
+x(4) = z4 / para.gain;
 sys = x;
 %End of mdlUpdate.
 

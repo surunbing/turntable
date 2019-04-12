@@ -24,15 +24,13 @@ LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 % LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 % LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 
-Glow = GetlowgainG(LowGain);
-figurename('迟后环节');
-bode(Glow);
-grid on
+Glow = 1;%GetlowgainG(LowGain);
+LowGain.count = 0;
+% figurename('迟后环节');
+% bode(Glow);
+% grid on
 
 for i = 1 : LowGain.count
     tau = 1 / (sqrt(LowGain.alpha(i)) * LowGain.fre(i));
     LowGain.G(i) = tf([tau, 1], [LowGain.alpha(i) * tau, 1]);
 end
-
-tau = 1 / (sqrt(10 * 0.5));
-G_later = tf([tau, 1], [10 * tau, 1]);
