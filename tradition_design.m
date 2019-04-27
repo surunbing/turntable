@@ -15,6 +15,13 @@ data.mag = 20 .* log10(reshape(mag, [70, 1]));
 data.phi = reshape(phi, [70, 1]);
 
 dataG = data;
+
+G_model = tf(K, [taue * taum * 1.4 taue + taum * 1.4 1 0]);
+data2G.fre = linspace(1, 70, 70)' * 2 * pi;
+[mag, phi] = bode(G_model, data.fre);
+data2G.mag = 20 .* log10(reshape(mag, [70, 1]));
+data2G.phi = reshape(phi, [70, 1]);
+
 complex_G = 10 .^ (data.mag / 20) .* complex(cos(data.phi / 180  * pi), sin(data.phi / 180  * pi));
 
 
@@ -29,7 +36,7 @@ grid on
 
 G = tf(K, [taue * taum, taum + taue, 1, 0]);
 %% 加入惯性环节
-T = 1 / (bandwidth / 2 / pi) / parameter.Tratio; 
+T = 1 / (bandwidth) / parameter.Tratio; 
 Inertial = tf(1, [T, 1]);
 
 %% 给定频率点
@@ -43,18 +50,23 @@ data.phi = phi + data.phi;
 advance = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth);
 
 P = advance.P * Inertial;
-
+Design_Lowgain;
 figurename('前向通道');
+bode(P * G);
+hold on
+grid on
+bode(P * G * Glow);
+
 [mag, phi] = bode(P, data.fre);
 mag = 20 * log10(reshape(mag, [length(data.fre), 1]));
 phi = reshape(phi, [length(data.fre), 1]);
 subplot 211
-semilogx(dataG.fre, dataG.mag + mag, 'r-');
+semilogx(dataG.fre, dataG.mag + mag, 'r*-');
 grid on;
 subplot 212
-semilogx(dataG.fre, dataG.phi + phi, 'r-');
+semilogx(dataG.fre, dataG.phi + phi, 'r*-');
 grid on
-Design_Lowgain;
+
 
 phi_creg = parameter.phi_creg;
 mag_creg = parameter.mag_creg;
@@ -108,36 +120,53 @@ while 1
 end
 
 
-P = P * later_pre.G * Glow;
+P_trap = P * later_pre.G * Glow;
 for i = 1 : trap_pre.num
-    P = P * trap_pre.G(i);
+    P_trap = P_trap * trap_pre.G(i);
 end
 figurename('陷波滤波器');
-data_out = translate_data(dataG, P);
+data_out = translate_data(dataG, P_trap);
+data_p = translate_data(data2G, P_trap);
 subplot 211
-semilogx(data_out.fre, data_out.mag, 'r-');
+semilogx(data_out.fre, data_out.mag, 'r*-');
 grid on
+hold on
+semilogx(data_p.fre, data_p.mag, 'b*-');
 % margin(P * G);
 subplot 212
-semilogx(data_out.fre, data_out.phi, 'r-');
+semilogx(data_out.fre, data_out.phi, 'r*-');
 grid on
+hold on
+semilogx(data_p.fre, data_p.phi, 'b*-');
 
 figurename('陷波滤波器闭环');
 %% 计算闭环
 complex_open = 10 .^ (data_out.mag / 20) .* complex(cos(data_out.phi / 180  * pi), sin(data_out.phi / 180  * pi));
+complex_openp = 10 .^ (data_p.mag / 20) .* complex(cos(data_p.phi / 180  * pi), sin(data_p.phi / 180  * pi));
 subplot 211
-mag = 20 * log10(abs(complex_open ./ (1 + complex_open)));
-semilogx(data_out.fre, mag, 'r-');
+magout = 20 * log10(abs(complex_open ./ (1 + complex_open)));
+magp = 20 * log10(abs(complex_openp ./ (1 + complex_openp)));
+semilogx(data_out.fre(1:20), magout(1:20), 'r*-');
 grid on
+hold on
+semilogx(data_p.fre(1:20), magp(1:20), 'b*-');
 subplot 212
-phi = angle(complex_open ./ (1 + complex_open)) / pi * 180;
+phiout = angle(complex_open ./ (1 + complex_open)) / pi * 180;
 for i = 1 : length(phi)
     if phi(i) > 30
         phi(i) = phi(i) - 360;
     end
 end
-semilogx(data_out.fre, phi, 'r-');
+phip = angle(complex_openp ./ (1 + complex_openp)) / pi * 180;
+for i = 1 : length(phi)
+    if phip(i) > 30
+        phip(i) = phip(i) - 360;
+    end
+end
+semilogx(data_out.fre(1:20), phiout(1:20), 'r*-');
 grid on
+hold on
+semilogx(data_p.fre(1:20), phip(1:20), 'b*-');
 
 K_model = parameter.K;
 taum = parameter.taum;
@@ -147,9 +176,9 @@ G = tf(K, [taue * taum, taue + taum, 1, 0]);
 if mag_creg > parameter.maglim  || phi_creg > parameter.philim
     bforward = 1;
     option.type = 'transfer-function';
-    [forward, exitflag] = design_forward(P, G, option);
+    [forward, exitflag] = design_forward(P_trap, G, option);
     figurename('顺馈');
-    bode((P * G + G * forward.G)/ (1 + P * G));
+    bode((P_trap * G + G * forward.G)/ (1 + P_trap * G));
     grid on 
     %% 绘出离散的图
     [mag, phi] = bode(forward.G, data_out.fre);
@@ -159,11 +188,15 @@ if mag_creg > parameter.maglim  || phi_creg > parameter.philim
     complex_close = (complex_open + complex_G .* complex_forward) ./ (1 + complex_open);
     figurename('顺馈离散');
     subplot 211
-    semilogx(data_out.fre, 20 * log10(abs(complex_close)), 'r-');
+    semilogx(data_out.fre(1:20), 20 * log10(abs(complex_close(1:20))), 'r*-');
     grid on
+    hold on
+    semilogx(data_out.fre(1:20), magout(1:20), 'b*-');
     subplot 212
-    semilogx(data_out.fre, angle(complex_close) / pi * 180, 'r-');
+    semilogx(data_out.fre(1:20), angle(complex_close(1:20)) / pi * 180, 'r*-');
     grid on
+    hold on
+    semilogx(data_out.fre(1:20), phiout(1:20), 'b*-');
 end
 
 TSp = 0.0005;

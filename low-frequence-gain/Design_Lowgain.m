@@ -24,8 +24,9 @@ LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 % LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 % LowGain = GetNewgain(LowGain, LOW_FRE_MIN, LOW_FRE_MAX, 3, 250);
 
-Glow = 1;%GetlowgainG(LowGain);
-LowGain.count = 0;
+Glow = GetlowgainG(LowGain);
+% Glow = 1;
+% LowGain.count = 0;
 % figurename('³Ùºó»·½Ú');
 % bode(Glow);
 % grid on

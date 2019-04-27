@@ -1,11 +1,12 @@
+close all
 filename = 'Turntable_close_step_2017b.slx';
 load('controller_10_3_nolow.mat');
 numerator = cell2mat(P.Numerator);
 denominator = cell2mat(P.Denominator);
 fre_start = 1;
-fre_end = 15;
+fre_end = 70;
 
-fre_array = fre_start : 1 : fre_end;
+fre_array = fre_start : 2 : fre_end;
 
 turntable_bode.fre = fre_array * 2 * pi;
 turntable_bode.mag = zeros(length(fre_array), 1);
@@ -28,6 +29,12 @@ Kt = 24.812626200641272;
 Kv = 0.12;
 Kps = 1.077250780790937e+02;
 
+K = 1.56 * 180 / pi;
+taue = 0.0039035;
+taum = 0.984871194396488;
+
+K_forward = 0.3;
+
 i = 1;
 %% Sweep
 for fre = fre_array
@@ -46,7 +53,7 @@ for fre = fre_array
     y = fft(in_out(2000:18000, 2));
     y1 = fft(in_out(2000:18000, 3));
     fs = 2000;       %%采样频率
-    n =0: 1: length(in_out) - 1;
+    n =0: 1: (length(in_out)- 4000) - 1;
     N = length(in_out) - 4000;
     f = n * fs / N;    %频率序列
     Mag=abs(y);
@@ -93,9 +100,7 @@ autoArrangeFigures;
 %     model.taum = sysP1D_noise.Tp1;
 %     model.taue = sysP1D_noise.Tp2;
 % end
-% K = 1.56 * 180 / pi;
-% taue = 0.0039035;
-% taum = 0.984871194396488;
+
 % G = tf(K, [taue * taum, taue + taum, 1, 0]);
 % % model.turntable = turntable_bode;
 % %%

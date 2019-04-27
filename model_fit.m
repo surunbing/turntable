@@ -1,5 +1,5 @@
-filename = 'ET205主轴3Vsweep-test.csv';
-nlength = 75;
+filename = 'ET5300422.csv';
+nlength = 19;
 type = 0;
 % frequence = linspace(1, nlength, nlength) * 2 * pi;
 if isempty(strfind(filename, '.csv')) == 0 
@@ -37,17 +37,18 @@ for i = 1 : length(frequence)
 end
 figurename('对象对比2');
 subplot 211;
-semilogx(frequence, Mag_real, 'r*-');
+semilogx(frequence, Mag_real, 'ro-');
 hold on
-semilogx(frequence, Mag_fit, 'g*-');
+semilogx(frequence, Mag_fit, 'b*-');
 grid on
+legend('实际', '拟合');
 
 subplot 212;
-semilogx(frequence, Phi_real, 'r*-');
+semilogx(frequence, Phi_real, 'ro-');
 hold on
-semilogx(frequence, Phi_fit, 'g*-');
+semilogx(frequence, Phi_fit, 'b*-');
 grid on
-
+legend('实际', '拟合');
  
 K = sysP1D_noise.Kp;
 taue = sysP1D_noise.Tp1;
