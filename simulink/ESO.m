@@ -65,10 +65,14 @@ b0 = K / (taue * taum);
 
 %% ÇĞ±ÈÑ©·ò
 global para z1 z2 z3 z4 num z11 z22 z33 z44 y_pre cmd_pre cmd;
-para.beta4 = 0.2756 * wq ^ 4;
-para.beta1 = 0.9528 * wq - b1 - b2;
-para.beta2 = 1.4539 * wq * wq - b2 * para.beta1 - b1 * para.beta1 - b1 * b2;
-para.beta3 = 0.7426 * wq ^ 3 - b2 * para.beta2 - b1 * para.beta2 - b1 * b2 * para.beta1;
+% para.beta4 = 0.2756 * wq ^ 4;
+% para.beta1 = 0.9528 * wq - b1 - b2;
+% para.beta2 = 1.4539 * wq * wq - b2 * para.beta1 - b1 * para.beta1 - b1 * b2;
+% para.beta3 = 0.7426 * wq ^ 3 - b2 * para.beta2 - b1 * para.beta2 - b1 * b2 * para.beta1;
+para.beta4 = 1 * wq ^ 4;
+para.beta1 = 4 * wq - b1 - b2;
+para.beta2 = 6 * wq * wq - b2 * para.beta1 - b1 * para.beta1 - b1 * b2;
+para.beta3 = 4 * wq ^ 3 - b2 * para.beta2 - b1 * para.beta2 - b1 * b2 * para.beta1;
 para.gain = b0;
 para.t = t;
 z1 = 0;

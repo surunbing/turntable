@@ -40,7 +40,8 @@ if strcmp(option.type, 'transfer-function')
 elseif strcmp(option.type, 'discrete')
     
 end
-forward.G = 1 / G * k;
+k = 0.3;
+forward.G = 1 / G * k * G_auxiliary;
 forward.K = k;
 exitflag = 1;
 end

@@ -177,8 +177,22 @@ end
 
 fprintf(fid, '// %d-%d 为顺馈环节，link%d为增益 不用时全部参数必须为0\n', nQKStart, nQKEnd, nQKEnd);
 if bforward == 1
+    taue = 0.0017;
+    taum = 2.1965;
+    K = 355;
+    figurename('bode');
+    bode(tf(K, [taue * taum, taue + taum, 1, 0]));
+    hold on
+    grid on
+    taue = 0.4;
+    taum = 78;
+    K = 42;
+    bode(tf(K, [taue * taum, taue + taum, 1, 0]));
     a = [taum, 1];
     b = [taue, 1];
+    parameter.para_aux1 = 300;
+    parameter.para_aux2 = 300;
+    TSp = 0.0005;
     a_aux = [1 / (parameter.para_aux1 * 2 * pi), 1];
     b_aux = [1 / (parameter.para_aux2 * 2 * pi), 1];
     [dNumf, dDenf] = c2dm(a, a_aux, TSp, 'tustin');

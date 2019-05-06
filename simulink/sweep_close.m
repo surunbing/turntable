@@ -3,9 +3,9 @@ load('controller_10_3_nolow.mat');
 numerator = cell2mat(P.Numerator);
 denominator = cell2mat(P.Denominator);
 fre_start = 1;
-fre_end = 15;
+fre_end = 60;
 
-fre_array = fre_start : 1 : fre_end;
+fre_array = fre_start : 2 : fre_end;
 
 turntable_bode.fre = fre_array * 2 * pi;
 turntable_bode.mag = zeros(length(fre_array), 1);
@@ -28,12 +28,18 @@ Kt = 24.812626200641272;
 Kv = 0.12;
 Kps = 1.077250780790937e+02;
 
+K_forward = 0.3;
+K = 1.56 * 180 / pi;
+taue = 0.0039035;
+taum = 0.984871194396488;
+
+
 i = 1;
 %% Sweep
 for fre = fre_array
     
     t_off = 10;
-    mag = 0.5;
+    mag = 0.1;
     fre = fre_array(i);
     Tsim = t_off;
     %% 'Turntable_close.slx'

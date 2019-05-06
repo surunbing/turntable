@@ -1,5 +1,5 @@
-filename = 'ET205主轴3Vsweep-test.csv';
-nlength = 75;
+filename = 'ET20504162.csv';
+nlength = 19;
 type = 0;
 % frequence = linspace(1, nlength, nlength) * 2 * pi;
 if isempty(strfind(filename, '.csv')) == 0 
@@ -41,6 +41,7 @@ semilogx(frequence, Mag_real, 'r*-');
 hold on
 semilogx(frequence, Mag_fit, 'g*-');
 grid on
+legend('实际', '拟合');
 
 subplot 212;
 semilogx(frequence, Phi_real, 'r*-');

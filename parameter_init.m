@@ -71,8 +71,8 @@ parameter.trapfremax = parameter.bandwidth + 3 * pi;    % ·ÇÏßĞÔ»·½ÚÓÅ»¯ ×î´óÆµÂ
 parameter.trapohimin = 40;  % ·ÇÏßĞÔ×îĞ¡ÏàÎ»
 
 %% Ç°À¡»·½Ú
-parameter.para_aux1 = 1000;
-parameter.para_aux2 = 1000;
+parameter.para_aux1 = 200;
+parameter.para_aux2 = 200;
 parameter.forwardKmax = 0.7;
 
 
