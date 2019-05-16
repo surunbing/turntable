@@ -16,7 +16,7 @@ data.phi = reshape(phi, [70, 1]);
 
 dataG = data;
 
-G_model = tf(K, [taue * taum * 1.4 taue + taum * 1.4 1 0]);
+G_model = tf(K, [taue * taum * 1 taue + taum * 1 1 0]);
 data2G.fre = linspace(1, 70, 70)' * 2 * pi;
 [mag, phi] = bode(G_model, data.fre);
 data2G.mag = 20 .* log10(reshape(mag, [70, 1]));
