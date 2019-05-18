@@ -39,6 +39,8 @@ parameter.K = K;
 parameter.taum = taum;
 parameter.taue = taue;
 
+parameter.Ts = 0.0005;
+
 parameter.bandwidth = bandwidth * 2 * pi;
 parameter.ratio = ratio;        % 选择穿越频率倍数
 parameter.wc_max = 650;     % 直接设计的时候最大带宽限制，请勿修改
@@ -56,10 +58,10 @@ parameter.phi_creg = 8;   % 闭环整形相位目标
 parameter.mag_creg = 0.8; % 闭环整形幅值目标, db
 parameter.maglim = 0.7;  % 闭环最终幅值 db
 parameter.philim = 8;     % 闭环最终相位
-parameter.num_max = 4;    % 整型最大非线性环节数量
+parameter.num_max = 3;    % 整型最大非线性环节数量
 parameter.rdiv = 1.05;    % 指标优化或放开的系数
 parameter.start_ratio = parameter.ratio * 0.8;
-parameter.phimarginmin = 42;  % 相位裕度最小值
+parameter.phimarginmin = 45;  % 相位裕度最小值
 
 parameter.phi_margin = 122;  %闭环整形为了使用险波环节, 需要给出优化的相位裕度    这个数值可以寻优 但经过实验，效果不大
 parameter.phi_reg = 11;       % 非线性环节期望损失的相角
@@ -72,7 +74,7 @@ parameter.laterfremin = 0.001;    % 迟后搜索中心频率最小
 
 parameter.trapTmin = 5;
 parameter.trapfremin = parameter.bandwidth * 0.2;       % 最小中心频率
-parameter.trapfremax = parameter.bandwidth + 10 * pi;    % 非线性环节优化 最大频率
+parameter.trapfremax = parameter.bandwidth + 3 * pi;    % 非线性环节优化 最大频率
 parameter.trapohimin = 40;  % 非线性最小相位
 
 %% 前馈环节

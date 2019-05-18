@@ -172,11 +172,11 @@ K_model = parameter.K;
 taum = parameter.taum;
 taue = parameter.taue;
 bforward = 0;
-G = tf(K, [taue * taum, taue + taum, 1, 0]);
+% G = tf(K, [taue * taum, taue + taum, 1, 0]);
 if mag_creg > parameter.maglim  || phi_creg > parameter.philim
     bforward = 1;
     option.type = 'transfer-function';
-    [forward, exitflag] = design_forward(P_trap, G, option);
+    [forward, exitflag] = design_forward(P_trap, option);
     figurename('Ë³À¡');
     bode((P_trap * G + G * forward.G)/ (1 + P_trap * G));
     grid on 
