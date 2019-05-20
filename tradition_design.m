@@ -197,7 +197,43 @@ if mag_creg > parameter.maglim  || phi_creg > parameter.philim
     grid on
     hold on
     semilogx(data_out.fre(1:20), phiout(1:20), 'b*-');
+    
+    nocunt = round(bandwidth / 2 / pi);
+    data.fre = data_out.fre(1:nocunt);
+    data.mag = abs(complex_close(1:nocunt));
+    data.phi = angle(complex_close(1:nocunt)) / pi * 180;
+    
+    data_out.fre = data_out.fre(1:20);
+    data_out.mag = abs(complex_close(1:20));
+    data_out.phi = angle(complex_close(1:20)) / pi * 180;
+    
+    %% 检查前馈效果
+    [bmag, bphi] = Getbindex(data, 0.08, 8);
+    
+    if bmag ~= 1 || mphi ~=1
+        [trap] = design_instruction_preprocessing(data);
+        P_trapp = 1;
+        for i = 1 : trap.num
+            P_trapp = P_trapp * trap.G(i);
+        end
+        data.mag = 20 * log10(data.mag);
+        data_out.mag = 20 * log10(data_out.mag);
+        data_out = translate_data(data_out, P_trapp);
+        figurename('pre');
+        subplot 211
+        semilogx(data_out.fre, data_out.mag, 'b*-');
+        grid on
+        subplot 212
+        semilogx(data_out.fre, data_out.phi, 'b*-');
+        grid on
+        
+        figurename('trap');
+        bode(P_trapp);
+        grid on
+    end
 end
+
+autoArrangeFigures;
 
 TSp = 0.0005;
 fid = fopen(outputfile, 'wt+');
