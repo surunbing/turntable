@@ -7,20 +7,22 @@ phi_advance_margin = parameter.phi_advance_margin;
 
 %% Object
 %% 加载数据
-% ET205 = load('ET205主轴3Vsweep-test.csv');
-G_model = tf(K, [taue * taum taue + taum 1 0]);
-data.fre = linspace(1, 70, 70)' * 2 * pi;
-[mag, phi] = bode(G_model, data.fre);
-data.mag = 20 .* log10(reshape(mag, [70, 1]));
-data.phi = reshape(phi, [70, 1]);
+ET205 = load('middle_noeso.csv');
+% G_model = tf(K, [taue * taum taue + taum 1 0]);
+% data.fre = linspace(1, 70, 70)' * 2 * pi;
+% [mag, phi] = bode(G_model, data.fre);
+data.fre = ET205(:, 1) * 2 * pi;
+data.mag = 20 .* log10(ET205(:, 2));
+data.phi = ET205(:, 3);
 
 dataG = data;
 
 G_model = tf(K, [taue * taum * 1 taue + taum * 1 1 0]);
-data2G.fre = linspace(1, 70, 70)' * 2 * pi;
+ncount = length(data.fre);
+data2G.fre = linspace(1, ncount, ncount)' * 2 * pi;
 [mag, phi] = bode(G_model, data.fre);
-data2G.mag = 20 .* log10(reshape(mag, [70, 1]));
-data2G.phi = reshape(phi, [70, 1]);
+data2G.mag = 20 .* log10(reshape(mag, [ncount, 1]));
+data2G.phi = reshape(phi, [ncount, 1]);
 
 complex_G = 10 .^ (data.mag / 20) .* complex(cos(data.phi / 180  * pi), sin(data.phi / 180  * pi));
 
@@ -210,7 +212,7 @@ if mag_creg > parameter.maglim  || phi_creg > parameter.philim
     %% 检查前馈效果
     [bmag, bphi] = Getbindex(data, 0.08, 8);
     
-    if bmag ~= 1 || mphi ~=1
+    if bmag ~= 1 || bphi ~=1
         [trap] = design_instruction_preprocessing(data);
         P_trapp = 1;
         for i = 1 : trap.num
@@ -240,7 +242,13 @@ fid = fopen(outputfile, 'wt+');
 %% 指令预处理
 fprintf(fid, '[DOF_%d]\n', nDOF);
 fprintf(fid, '// %d-%d 为指令预处理环节，不用时，第1个参数为，其它为0 \n', nZLYCLStart, nZLYCLEnd);
-for i = nZLYCLStart : 1 : nZLYCLEnd
+for i = 1 : trap.num
+    a = [1, trap.e(i) * trap.T(i), trap.f(i) * trap.f(i)];
+    b = [1, trap.T(i), trap.f(i) * trap.f(i)];
+    [dNumt,dDent] = c2dm(a, b, TSp, 'tustin');
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', i - 1, -dDent(2),-dDent(3),dNumt(1),dNumt(2),dNumt(3));
+end
+for i = nZLYCLStart + trap.num: 1 : nZLYCLEnd
     fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f, \n', i, 1.0, 0.0, 0.0, 0.0, 0.0);
 end
 

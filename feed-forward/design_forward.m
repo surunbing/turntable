@@ -20,7 +20,7 @@ G_auxiliary = tf(1, conv([1 / (parameter.para_aux1 * 2 * pi), 1], [1 / (paramete
 G = tf(K, [taue * taum, taue + taum, 1, 0]);
 
 ts = parameter.Ts;
-forward_n = 10;
+forward_n = 15;
 G_speed = 1 / ts / forward_n / forward_n;
 G_speed_sum = 0;
 for i = 1 : forward_n

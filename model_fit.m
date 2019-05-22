@@ -1,5 +1,5 @@
-filename = 'ET5300422.csv';
-nlength = 19;
+filename = 'esosweepbanzai.csv';
+nlength = 49;
 type = 0;
 % frequence = linspace(1, nlength, nlength) * 2 * pi;
 if isempty(strfind(filename, '.csv')) == 0 
@@ -52,6 +52,7 @@ legend('Êµ¼Ê', 'ÄâºÏ');
  
 K = sysP1D_noise.Kp;
 taue = sysP1D_noise.Tp1;
+
 taum = sysP1D_noise.Tp2;
 if taue > taum
 	taue = taum;

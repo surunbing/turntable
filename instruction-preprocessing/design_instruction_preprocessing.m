@@ -1,8 +1,14 @@
 function [trap] = design_instruction_preprocessing(data)
 global parameter
 
+phi_min = min(data.phi);
+phi_min = phi_min(1);
 maglim = parameter.maglim;
-philim = parameter.philim;
+if phi_min > -10 && phi_min < -parameter.philim 
+    philim = (10 + abs(phi_min)) / 2;
+else
+    philim = parameter.philim;
+end
 
 %% 加入一个环节， 优化实验
 bandwidth = parameter.bandwidth;
@@ -15,19 +21,19 @@ for num = 1 : 3
     for i = 1 : num
        start(i * 3 - 2) = 1;
        start(i * 3 - 1)= 15;
-       start(i * 3) = first_fre - (i - 1) * 2 * pi; 
+       start(i * 3) = 50; 
     end
 
     %% 获得约束
     lb = zeros(num * 3, 1);
     ub = zeros(num * 3, 1);
     for i = 1 : num
-        lb(i * 3 - 2) = 0.5;
-        lb(i * 3 - 1) = 0.1 * parameter.trapTmin;
+        lb(i * 3 - 2) = 0.1;
+        lb(i * 3 - 1) = parameter.trapTmin;
         lb(i * 3) = parameter.trapfremin;
-        ub(i * 3 - 2) = 5;
-        ub(i * 3 - 1)= 50;
-        ub(i * 3) = parameter.trapfremax * 2;
+        ub(i * 3 - 2) = 1.01;
+        ub(i * 3 - 1)= 500;
+        ub(i * 3) = parameter.trapfremax + 200 ;
     end
 
     %  options = optimset('Algorithm','interior-point');
@@ -36,7 +42,7 @@ for num = 1 : 3
     [x, fval, exitflag] = fmincon(@(x)GetTrapcostpre(x, num, data)...
         , start, [], [], [], [], lb, ub, @(x)nonlcon_trappre(x, data, num, philim, maglim), options);
     toc
-    if exitflag ~= -1
+    if exitflag == 1 || exitflag == 2
         break;
     end
 end

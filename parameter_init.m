@@ -16,24 +16,29 @@ global parameter
 % taum = 0.67;
 % taue = 0.0035;
 
-K = 355.1054;
-taue = 0.001668255197954;
-taum = 2.196498493001917;
+% K = 355.1054;     %% ET205空载
+% taue = 0.001668255197954;
+% taum = 2.196498493001917;
 
+
+
+K = 3.491260430644539e+02;     %% ET205半载
+taue = 0.001726113287549;
+taum = 2.465408813244642;
 
 % K = 1.56 * 180 / pi;
 % taue = 0.0039035;
 % taum = 0.984871194396488;
 
-% nZLYCLStart = 0;
-% nZLYCLEnd = 3;
-% nQKStart = 4;
-% nQKEnd = 6;
-% nJZStart = 7;
-% nJZEnd = 29;
-% nDOF = 0;
-% 
-% outputfile = 'C:\Users\Momenta\Documents\毕业设计\助手\CSDA_FANGXUN\turntable/controller5.txt';
+nZLYCLStart = 0;
+nZLYCLEnd = 3;
+nQKStart = 4;
+nQKEnd = 6;
+nJZStart = 7;
+nJZEnd = 29;
+nDOF = 0;
+
+outputfile = 'C:\Users\57531\Documents\school\毕业设计\turntable/controller_noeso.txt';
 
 parameter.K = K;
 parameter.taum = taum;
@@ -84,6 +89,6 @@ parameter.forwardKmax = 0.7;
 
 
 parameter.tradphi = 135;
-parameter.phi_advance = 30;
+parameter.phi_advance = 15;
 parameter.phi_advance_margin = 0;
 parameter.Tratio = 10;
