@@ -49,7 +49,7 @@ data.mag = mag + data.mag;
 data.phi = phi + data.phi;
 
 %% ≤πœ‡Œª
-advance = FillPhase(data, ratio, phi_advance, phi_advance_margin, bandwidth);
+advance = FillPhase2(data, ratio, phi_advance, phi_advance_margin, bandwidth);
 
 P = advance.P * Inertial;
 Design_Lowgain;
