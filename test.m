@@ -2,11 +2,12 @@ clc, clear
 close all
 
 ts = 0.0005;
-forward_n = 10;
+forward_n = 15;
 G_speed = 1 / ts / forward_n / forward_n;
 G_speed_sum = 0;
+s = tf('s');
 for i = 1 : forward_n
-    G_speed_sum = G_speed_sum + tf(1, [(i - 1) * ts, 1]) - tf(1, [(i + 9) * ts, 1]);
+    G_speed_sum = G_speed_sum + exp(-(i - 1) * ts * s) - exp(-(i + forward_n - 1) * ts * s);%tf(1, [(i - 1) * ts, 1]) - tf(1, [(i + 9) * ts, 1]);
 end
 % G_speed = 1 / ts / 100 * (1 + tf(1, [ts, 1])  + tf(1, [2 * ts, 1])  + tf(1, [3 * ts, 1]) + tf(1, [4 * ts, 1]) + tf(1, [5 * ts, 1]) + tf(1, [6 * ts, 1]) + tf(1, [7 * ts, 1]) + tf(1, [8 * ts, 1]) + tf(1, [9 * ts, 1])- tf(1, [10 * ts, 1]) - tf(1, [11 * ts, 1]) -tf(1, [12 * ts, 1]) - tf(1, [13 * ts, 1]) - tf(1, [14 * ts, 1]) - tf(1, [15 * ts, 1]) - tf(1, [16 * ts, 1]) - tf(1, [17 * ts, 1]) - tf(1, [18 * ts, 1]) - tf(1, [19 * ts, 1]));
 G_speed = G_speed * G_speed_sum;
@@ -196,7 +197,8 @@ K = 355.1054;
 taue = 0.001668255197954;
 taum = 2.196498493001917;
 % G_model = tf(K, [taue * taum taue + taum 1 0]);
-G_auxiliary = tf(1, conv([1 / (500 * 2 * pi), 1], [1 / (500 * 2 * pi), 1]));
+s = tf('s');
+G_auxiliary = tf(1, conv([1 / (200 * 2 * pi), 1], [1 / (200 * 2 * pi), 1]));
 forward_app = tf(K, [taue * taum taue + taum 1]);
 forward.G = 0.5 / forward_app * G_auxiliary * G_speed;
 [mag, phi] = bode(forward.G, eso_open.fre);

@@ -1,10 +1,13 @@
 close all
+clc, clear
 filename = 'Turntable_close_step_2017b.slx';
 load('controller_10_3_nolow.mat');
 numerator = cell2mat(P.Numerator);
 denominator = cell2mat(P.Denominator);
 fre_start = 1;
-fre_end = 70;
+fre_end = 10;
+
+ts = 0.0005;
 
 fre_array = fre_start : 2 : fre_end;
 
@@ -33,7 +36,17 @@ K = 1.56 * 180 / pi;
 taue = 0.0039035;
 taum = 0.984871194396488;
 
-K_forward = 0.3;
+TSp = ts;
+a = [taum, 1];
+b = [taue, 1];
+a_aux = [1 / (50000 * 2 * pi), 1];
+b_aux = [1 / (50000 * 2 * pi), 1];
+[dNumf1, dDenf1] = c2dm(a, a_aux, TSp, 'tustin');
+[dNumf2, dDenf2] = c2dm(b, b_aux, TSp, 'tustin');
+
+[h, w] = freqz(dNumf1, dDenf1, 1000, 2000);
+
+K_forward = 0.5;
 
 i = 1;
 %% Sweep

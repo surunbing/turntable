@@ -36,4 +36,44 @@ G_close = (P * GESO_CLOSE * G) / (1 + P * GESO_CLOSE * G);
 bode(G_close);
 grid on
 
+
+ts = 0.0005;
+forward_n = 15;
+G_speed = 1 / ts / forward_n / forward_n;
+G_speed_sum = 0;
+s = tf('s');
+for i = 1 : forward_n
+    G_speed_sum = G_speed_sum + exp(-(i - 1) * ts * s) - exp(-(i + forward_n - 1) * ts * s);%tf(1, [(i - 1) * ts, 1]) - tf(1, [(i + 9) * ts, 1]);
+end
+% G_speed = 1 / ts / 100 * (1 + tf(1, [ts, 1])  + tf(1, [2 * ts, 1])  + tf(1, [3 * ts, 1]) + tf(1, [4 * ts, 1]) + tf(1, [5 * ts, 1]) + tf(1, [6 * ts, 1]) + tf(1, [7 * ts, 1]) + tf(1, [8 * ts, 1]) + tf(1, [9 * ts, 1])- tf(1, [10 * ts, 1]) - tf(1, [11 * ts, 1]) -tf(1, [12 * ts, 1]) - tf(1, [13 * ts, 1]) - tf(1, [14 * ts, 1]) - tf(1, [15 * ts, 1]) - tf(1, [16 * ts, 1]) - tf(1, [17 * ts, 1]) - tf(1, [18 * ts, 1]) - tf(1, [19 * ts, 1]));
+G_speed = G_speed * G_speed_sum;
+
+G_for = tf([taue * taum, taue + taum, 1], K);
+G_close = G * P / (1 + G * P);
+G_forward = (G * P + 0.5) / (1 + G * P);
+G_forward2 = G_for * G_speed * G;
+G_for2 = (G * P + 0.5 * G_forward2) / (1 + G * P);
+
+[mag, phi] = bode(G_for * G_speed * G * 0.5, 10 * 2 * pi);
+com = mag * complex(cos(phi / 180 * pi), sin(phi / 180 * pi));
+[mag1, phi1] = bode( G * P, 10 * 2 * pi);
+com1 = mag1 * complex(cos(phi1 / 180 * pi), sin(phi1 / 180 * pi));
+
+angle1 = angle((com + com1) / (1 + com1)) / pi * 180;
+angle2 = angle((com1) / (1 + com1)) / pi * 180;
+angle3 = angle((com1 + 0.5) / (1 + com1)) / pi * 180;
+
+angle4 = angle((com + com1)) / pi * 180;
+angle5 = angle((com1 + 0.5)) / pi * 180;
+angle6 = angle(com1) / pi * 180;
+
+figurename('qiankui');
+bode(G_forward);
+hold on
+grid on
+bode(G_close);
+bode(G_for2);
+legend('Ç°À¡','yuanshi', 'chafen');
+
+
 autoArrangeFigures;
