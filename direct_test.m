@@ -25,42 +25,95 @@ bfailure_pre = 0;
 trap_pre = 0;
 later_pre = 0;
 %% 是否需要加入能否设计出的评估
-while 1
-    [trap, later, G_Inertial, bfailure, data_check, num] = wave_repair(P, G, para, phi_creg, mag_creg);
-    if bfailure == -1 && bfailure_pre == 1
-        break;
-    end
-    bfailure_pre = bfailure;
-    if bfailure == 1
-        trap_pre = trap;
-        later_pre = later;
-        %% 性能调优，力图做到更好的数值指标
-        if num <= 2
-            num_max = min(3, num + 1);
-        end
-        if flag_add == 1
-            mag_creg = mag_creg / parameter.rdiv;
-            flag_add = 2;
-        elseif flag_add == 2
-            phi_creg = phi_creg / parameter.rdiv;
-            flag_add = 1;
-        end
-    else 
-        %% 放宽要求，为了前馈和前置滤波器做准备，其中相频优先保证
-         if flag_add == 1
-            mag_creg = mag_creg * parameter.rdiv;
-            flag_add = 2;
-        elseif flag_add == 2
-            phi_creg = phi_creg * parameter.rdiv;
-            flag_add = 1;
-        end
-    end
-end
 
-K = P * later_pre.G * Glow * G_Inertial;
+dataG.fre = linspace(1, 70, 70) * 2 * pi;
+[mag, phi] = bode(G, dataG.fre);
+dataG.mag = 20 * log10(reshape(mag, [length(dataG.fre), 1]));
+dataG.phi = reshape(phi, [length(dataG.fre), 1]);
+
+k_search = 0;
+mag_creg_up = mag_creg;
+mag_creg_lb = 0.001;
+phi_creg_up = phi_creg;
+phi_creg_lb = 0.001;
+
+mag_creg_pre = 0;
+phi_creg_pre = 0;
+bSearch_up = 1;
+
+while 1
+    [trap, later, G_Inertial, bfailure, data_check, num] = wave_repair(P * Glow, dataG, 0, phi_creg, mag_creg);
+    
+    
+    k_search = [k_search, phi_creg];
+    mag_creg_pre = mag_creg;
+    phi_creg_pre = phi_creg;
+    trap_pre = trap;
+    later_pre = later;
+    %% 找可以的上限 二分法边界
+    if bfailure ~= 1 && bSearch_up == 1
+        mag_creg = mag_creg * 1.5;
+        phi_creg = phi_creg * 1.5;
+    elseif bfailure == 1 && bSearch_up == 1
+        bSearch_up = 0; %% 转入二分查找
+        mag_creg_up = mag_creg;
+        phi_creg_up = phi_creg;
+        mag_creg = (mag_creg_up + mag_creg_lb) / 2;
+        phi_creg = (phi_creg_up + phi_creg_lb) / 2;
+        continue;
+    end
+    if bSearch_up == 0 && bfailure ~= 1
+        mag_creg_lb = mag_creg;
+        phi_creg_lb = phi_creg;
+        mag_creg = (mag_creg_up + mag_creg_lb) / 2;
+        phi_creg = (phi_creg_up + phi_creg_lb) / 2;
+    elseif bSearch_up == 0 && bfailure == 1
+        mag_creg_up = mag_creg;
+        phi_creg_up = phi_creg;
+        mag_creg = (mag_creg_up + mag_creg_lb) / 2;
+        phi_creg = (phi_creg_up + phi_creg_lb) / 2;
+        if abs(mag_creg_pre - mag_creg) < 0.1 && abs(phi_creg_pre - phi_creg) < 0.1
+            break;
+        end
+    end
+%     
+%     if bfailure == -1 && bfailure_pre == 1
+%         break;
+%     end
+%     bfailure_pre = bfailure;
+%     if bfailure == 1
+%         trap_pre = trap;
+%         later_pre = later;
+%         %% 性能调优，力图做到更好的数值指标
+%         if num <= 2
+%             num_max = min(3, num + 1);
+%         end
+%         if flag_add == 1
+%             mag_creg = mag_creg / parameter.rdiv;
+%             flag_add = 2;
+%         elseif flag_add == 2
+%             phi_creg = phi_creg / parameter.rdiv;
+%             flag_add = 1;
+%         end
+%     else 
+%         %% 放宽要求，为了前馈和前置滤波器做准备，其中相频优先保证
+%          if flag_add == 1
+%             mag_creg = mag_creg * parameter.rdiv;
+%             flag_add = 2;
+%         elseif flag_add == 2
+%             phi_creg = phi_creg * parameter.rdiv;
+%             flag_add = 1;
+%         end
+%     end
+end
+K2 = P * G_Inertial * later_pre.G;
+K = P * later_pre.G * G_Inertial;
 for i = 1 : trap_pre.num
     K = K * trap_pre.G(i);
 end
+figurename('陷波滤波器2');
+margin(K2* G);
+grid on
 figurename('陷波滤波器');
 margin(K* G);
 grid on
@@ -76,10 +129,11 @@ bforward = 0;
 if mag_creg > parameter.maglim  || phi_creg > parameter.philim
     bforward = 1;
     option.type = 'transfer-function';
-    [forward, exitflag] = design_forward(K, G, option);
+    [forward, exitflag] = design_forward(K, option);
+%     [forward, exitflag] = design_forward(K, G, option);
     figurename('顺馈');
     G1 = tf(K_model, [taum * taue, taum + taue, 1, 0]);
-    bode((K * G + G * forward.G)/ (1 + K * G));
+    bode((K * G1 + G1 * forward.G)/ (1 + K * G1));
     grid on
 end
 

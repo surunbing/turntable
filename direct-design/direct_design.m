@@ -15,9 +15,9 @@ while flag ~= 9
     if flag == 1
         if para.wc < wc_max
             %% 检查是否符合要求
-            if T > Tmax && para.pm <= parameter.pmmax
+            if T > Tmax && para.pm >= parameter.pmmax
                 flag = 9;
-            elseif T > Tmax && para.pm > parameter.pmmax
+            elseif T > Tmax && para.pm < parameter.pmmax
                 flag = -1;
                 T = max(T / div, Tmax);
             elseif T <= Tmax

@@ -54,10 +54,10 @@ advance = FillPhase2(data, ratio, phi_advance, phi_advance_margin, bandwidth);
 P = advance.P * Inertial;
 Design_Lowgain;
 figurename('前向通道');
-bode(P * G);
+margin(P * G);
 hold on
 grid on
-bode(P * G * Glow);
+% bode(P * G * Glow);
 
 [mag, phi] = bode(P, data.fre);
 mag = 20 * log10(reshape(mag, [length(data.fre), 1]));

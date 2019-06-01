@@ -29,7 +29,7 @@ end
 G_speed = G_speed * G_speed_sum;
 
 G_model = tf(K, [taue * taum, taue + taum, 1]);
-G_forward = G_auxiliary / G;
+G_forward = G_auxiliary / G_model * G_speed;
 
 if strcmp(option.type, 'transfer-function')
     GC = (P * G + G_forward * G * parameter.forwardKmax) / (1 + P * G);

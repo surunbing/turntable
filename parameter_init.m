@@ -1,5 +1,5 @@
 bandwidth = 10; % 带宽设置, hz 请设置整数倍
-ratio = 2;
+ratio = 3;
 
 global parameter
 
