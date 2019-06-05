@@ -7,7 +7,7 @@ phi_advance_margin = parameter.phi_advance_margin;
 
 %% Object
 %% МгдиЪ§Он
-ET205 = load('middle_noeso.csv');
+ET205 = load('esosweepbanzai.csv');
 % G_model = tf(K, [taue * taum taue + taum 1 0]);
 % data.fre = linspace(1, 70, 70)' * 2 * pi;
 % [mag, phi] = bode(G_model, data.fre);
