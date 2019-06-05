@@ -175,7 +175,7 @@ taum = parameter.taum;
 taue = parameter.taue;
 bforward = 0;
 % G = tf(K, [taue * taum, taue + taum, 1, 0]);
-philim = parameter.philim + 1;
+philim = parameter.philim;
 while mag_creg > parameter.maglim  || phi_creg > parameter.philim
     bforward = 1;
     option.type = 'transfer-function';
@@ -213,10 +213,6 @@ while mag_creg > parameter.maglim  || phi_creg > parameter.philim
     %% 检查前馈效果
     [bmag, bphi] = Getbindex(data, 0.08, 8);
     
-    if forward.K > 0.5
-       a = 1; 
-    end
-    
     if bmag ~= 1 || bphi ~=1
         [trap, exitflag] = design_instruction_preprocessing(data);
         P_trapp = 1;
@@ -237,12 +233,7 @@ while mag_creg > parameter.maglim  || phi_creg > parameter.philim
         figurename('trap');
         bode(P_trapp);
         grid on
-        if exitflag == 1 || exitflag == 2
-            break;
-        else
-            philim = philim - 0.5;
-        end
-            
+        if 
     else
         break;
     end

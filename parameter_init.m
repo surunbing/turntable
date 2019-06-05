@@ -61,7 +61,7 @@ parameter.pmmax = 45;
 %% 波形整型的相关参数
 parameter.phi_creg = 8;   % 闭环整形相位目标
 parameter.mag_creg = 0.8; % 闭环整形幅值目标, db
-parameter.maglim = 0.7;  % 闭环最终幅值 db
+parameter.maglim = 0.75;  % 闭环最终幅值 db
 parameter.philim = 8;     % 闭环最终相位
 parameter.num_max = 3;    % 整型最大非线性环节数量
 parameter.rdiv = 1.05;    % 指标优化或放开的系数
@@ -85,7 +85,7 @@ parameter.trapohimin = 40;  % 非线性最小相位
 %% 前馈环节
 parameter.para_aux1 = 500;
 parameter.para_aux2 = 500;
-parameter.forwardKmax = 0.7;
+parameter.forwardKmax = 0.5;
 
 
 parameter.tradphi = 135;

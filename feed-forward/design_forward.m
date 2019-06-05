@@ -1,4 +1,4 @@
-function [forward, exitflag] = design_forward(P, option)
+function [forward, exitflag] = design_forward(P, option, philim)
 %   给出前馈环节的增益
 global parameter
 
@@ -10,7 +10,7 @@ forward.G = 1;
 forward.K = 0;
 exitflag = 1;
 maglim = 2.0;%parameter.maglim;
-philim = parameter.philim;
+% philim = parameter.philim;
 kmax = parameter.forwardKmax;
 bandwidth = parameter.bandwidth;
 kmin = 0;
@@ -40,7 +40,7 @@ if strcmp(option.type, 'transfer-function')
         %% 开始设计 二分法
         while 1
             k = 0.5 * (kmax + kmin);
-            GC = (P * G + 1 / G * G_auxiliary * G * k) / (1 + P * G);
+            GC = (P * G + G_forward * G * k) / (1 + P * G);
             data_check = CL_check(GC, bandwidth, maglim, philim);
             if data_check.bmag ~= 1 || data_check.bphi ~= 1
                 kmin = k;

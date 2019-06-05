@@ -20,7 +20,7 @@ mag = 20 * log10(abs(complex_P));
 phi = angle(complex_P) / pi * 180;
 
 for i = 1 : length(frequence)
-   cost = cost + mag(i) * mag(i) * 50 + phi(i) * phi(i); 
+   cost = cost + mag(i) * mag(i) * 10 + phi(i) * phi(i); 
 end
 
 end

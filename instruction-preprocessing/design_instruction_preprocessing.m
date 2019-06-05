@@ -1,4 +1,4 @@
-function [trap] = design_instruction_preprocessing(data)
+function [trap, exitflag] = design_instruction_preprocessing(data)
 global parameter
 
 phi_min = min(data.phi);
