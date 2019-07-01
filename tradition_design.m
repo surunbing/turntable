@@ -133,13 +133,13 @@ subplot 211
 semilogx(data_out.fre, data_out.mag, 'r*-');
 grid on
 hold on
-semilogx(data_p.fre, data_p.mag, 'b*-');
+%semilogx(data_p.fre, data_p.mag, 'b*-');
 % margin(P * G);
 subplot 212
 semilogx(data_out.fre, data_out.phi, 'r*-');
 grid on
 hold on
-semilogx(data_p.fre, data_p.phi, 'b*-');
+%semilogx(data_p.fre, data_p.phi, 'b*-');
 
 figurename('œ›≤®¬À≤®∆˜±’ª∑');
 %% º∆À„±’ª∑
@@ -151,7 +151,7 @@ magp = 20 * log10(abs(complex_openp ./ (1 + complex_openp)));
 semilogx(data_out.fre(1:20), magout(1:20), 'r*-');
 grid on
 hold on
-semilogx(data_p.fre(1:20), magp(1:20), 'b*-');
+%semilogx(data_p.fre(1:20), magp(1:20), 'b*-');
 subplot 212
 phiout = angle(complex_open ./ (1 + complex_open)) / pi * 180;
 for i = 1 : length(phi)
@@ -168,7 +168,7 @@ end
 semilogx(data_out.fre(1:20), phiout(1:20), 'r*-');
 grid on
 hold on
-semilogx(data_p.fre(1:20), phip(1:20), 'b*-');
+%semilogx(data_p.fre(1:20), phip(1:20), 'b*-');
 
 K_model = parameter.K;
 taum = parameter.taum;
@@ -180,9 +180,6 @@ while mag_creg > parameter.maglim  || phi_creg > parameter.philim
     bforward = 1;
     option.type = 'transfer-function';
     [forward, exitflag] = design_forward(P_trap, option,philim);
-    figurename('À≥¿°');
-    bode((P_trap * G + G * forward.G)/ (1 + P_trap * G));
-    grid on 
     %% ªÊ≥ˆ¿Î…¢µƒÕº
     [mag, phi] = bode(forward.G, data_out.fre);
     mag = reshape(mag, [length(data_out.fre), 1]);
@@ -194,12 +191,12 @@ while mag_creg > parameter.maglim  || phi_creg > parameter.philim
     semilogx(data_out.fre(1:20), 20 * log10(abs(complex_close(1:20))), 'r*-');
     grid on
     hold on
-    semilogx(data_out.fre(1:20), magout(1:20), 'b*-');
+%    semilogx(data_out.fre(1:20), magout(1:20), 'b*-');
     subplot 212
     semilogx(data_out.fre(1:20), angle(complex_close(1:20)) / pi * 180, 'r*-');
     grid on
     hold on
-    semilogx(data_out.fre(1:20), phiout(1:20), 'b*-');
+%    semilogx(data_out.fre(1:20), phiout(1:20), 'b*-');
     
     nocunt = round(bandwidth / 2 / pi);
     data.fre = data_out.fre(1:nocunt);
@@ -228,15 +225,15 @@ while mag_creg > parameter.maglim  || phi_creg > parameter.philim
         data_out = translate_data(data_out, P_trapp);
         figurename('pre');
         subplot 211
-        semilogx(data_out.fre, data_out.mag, 'b*-');
+        semilogx(data_out.fre, data_out.mag, 'r*-');
         grid on
         subplot 212
-        semilogx(data_out.fre, data_out.phi, 'b*-');
+        semilogx(data_out.fre, data_out.phi, 'r*-');
         grid on
         
-        figurename('trap');
-        bode(P_trapp);
-        grid on
+%         figurename('trap');
+%         bode(P_trapp);
+%         grid on
         if exitflag == 1 || exitflag == 2
             break;
         else
@@ -272,7 +269,7 @@ if bforward == 1
     a_aux = [1 / (parameter.para_aux1 * 2 * pi), 1];
     b_aux = [1 / (parameter.para_aux2 * 2 * pi), 1];
     [dNumf, dDenf] = c2dm(a, a_aux, TSp, 'tustin');
-    fprintf(fid, 'Link_%02d=%.l2f,%.12f,%.12f, %.12f,%.12f,\n', nQKStart, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKStart, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
     [dNumf, dDenf] = c2dm(b, b_aux, TSp, 'tustin');
     fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKStart + 1, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
     fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKEnd, forward.K / K_model, 0, 0, 0, 0);
@@ -291,13 +288,13 @@ num = 0;
 fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nJZStart + num, -dDend(2), dNumd(1),dNumd(2), 0, 0);
 num = num + 1;
 %≤π≥‰œ‡Œª
-for i = 1 : advance.count + 1
+for i = 1 : advance.count
     a = advance.G(i).Numerator{1, 1};
     b = advance.G(i).Denominator{1, 1};
     [dNuml,dDenl] = c2dm(a, b, TSp, 'tustin');
     fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nJZStart + num + i- 1, -dDenl(2),dNuml(1),dNuml(2), 0, 0);
 end
-num = num + advance.count + 1;
+num = num + advance.count;
 
 % later
 a = later_pre.G.Numerator{1, 1};

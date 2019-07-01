@@ -1,5 +1,5 @@
 bandwidth = 10; % 带宽设置, hz 请设置整数倍
-ratio = 3;
+ratio = 2;
 
 global parameter
 
@@ -39,7 +39,7 @@ nJZEnd = 29;
 nDOF = 0;
 
 % outputfile = 'C:\Users\57531\Documents\school\毕业设计\turntable/controller_noeso.txt';
-outputfile = 'H:\毕业设计\turntable/controller_noeso.txt';
+outputfile = 'H:\毕业设计\turntable/controller_noeso2.txt';
 
 parameter.K = K;
 parameter.taum = taum;
