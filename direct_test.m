@@ -80,36 +80,127 @@ while 1
         end
     end
 end
-K2 = P * G_Inertial * later_pre.G;
-K = P * later_pre.G * G_Inertial;
+P_trap = P * later_pre.G * G_Inertial;
 for i = 1 : trap_pre.num
-    K = K * trap_pre.G(i);
+    P_trap = P_trap * trap_pre.G(i);
 end
-figurename('ÏÝ²¨ÂË²¨Æ÷2');
-margin(K2* G);
-grid on
+data_out = translate_data(dataG, P_trap);
 figurename('ÏÝ²¨ÂË²¨Æ÷');
-margin(K* G);
+subplot 211
+semilogx(data_out.fre, data_out.mag, 'r*-');
 grid on
+subplot 212
+semilogx(data_out.fre, data_out.phi, 'r*-');
+grid on
+
 figurename('ÏÝ²¨ÂË²¨Æ÷±Õ»·');
-bode(K * G / (1 + K * G));
+%% ¼ÆËã±Õ»·
+complex_open = 10 .^ (data_out.mag / 20) .* complex(cos(data_out.phi / 180  * pi), sin(data_out.phi / 180  * pi));
+subplot 211
+magout = 20 * log10(abs(complex_open ./ (1 + complex_open)));
+semilogx(data_out.fre(1:20), magout(1:20), 'r*-');
+grid on
+subplot 212
+phiout = angle(complex_open ./ (1 + complex_open)) / pi * 180;
+for i = 1 : length(phi)
+    if phi(i) > 30
+        phi(i) = phi(i) - 360;
+    end
+end
+semilogx(data_out.fre(1:20), phiout(1:20), 'r*-');
 grid on
 
 %% Ë³À¡
+% K_model = parameter.K;
+% taum = parameter.taum;
+% taue = parameter.taue;
+% bforward = 0;
+% if mag_creg > parameter.maglim  || phi_creg > parameter.philim
+%     bforward = 1;
+%     option.type = 'transfer-function';
+%     [forward, exitflag] = design_forward(K, option);
+% %     [forward, exitflag] = design_forward(K, G, option);
+%     figurename('Ë³À¡');
+%     G1 = tf(K_model, [taum * taue, taum + taue, 1, 0]);
+%     bode((K * G1 + G1 * forward.G)/ (1 + K * G1));
+%     grid on
+% end
+
 K_model = parameter.K;
 taum = parameter.taum;
 taue = parameter.taue;
 bforward = 0;
-if mag_creg > parameter.maglim  || phi_creg > parameter.philim
+philim = parameter.philim + 1;
+while mag_creg > parameter.maglim  || phi_creg > parameter.philim
     bforward = 1;
     option.type = 'transfer-function';
-    [forward, exitflag] = design_forward(K, option);
-%     [forward, exitflag] = design_forward(K, G, option);
-    figurename('Ë³À¡');
-    G1 = tf(K_model, [taum * taue, taum + taue, 1, 0]);
-    bode((K * G1 + G1 * forward.G)/ (1 + K * G1));
+    [forward, exitflag] = design_forward(P_trap, option, philim);
+    %% »æ³öÀëÉ¢µÄÍ¼
+    [mag, phi] = bode(forward.G, data_out.fre);
+    mag = reshape(mag, [length(data_out.fre), 1]);
+    phi = reshape(phi, [length(data_out.fre), 1]);
+    complex_forward = mag .* complex(cos(phi / 180 * pi), sin(phi / 180 * pi));
+    complex_close = (complex_open + complex_G .* complex_forward) ./ (1 + complex_open);
+    figurename('Ë³À¡ÀëÉ¢');
+    subplot 211
+    semilogx(data_out.fre(1:20), 20 * log10(abs(complex_close(1:20))), 'r*-');
     grid on
+    hold on
+%    semilogx(data_out.fre(1:20), magout(1:20), 'b*-');
+    subplot 212
+    semilogx(data_out.fre(1:20), angle(complex_close(1:20)) / pi * 180, 'r*-');
+    grid on
+    hold on
+%    semilogx(data_out.fre(1:20), phiout(1:20), 'b*-');
+    
+    nocunt = round(bandwidth / 2 / pi);
+    data.fre = data_out.fre(1:nocunt);
+    data.mag = abs(complex_close(1:nocunt));
+    data.phi = angle(complex_close(1:nocunt)) / pi * 180;
+    
+    data_out.fre = data_out.fre(1:20);
+    data_out.mag = abs(complex_close(1:20));
+    data_out.phi = angle(complex_close(1:20)) / pi * 180;
+    
+    %% ¼ì²éÇ°À¡Ð§¹û
+    [bmag, bphi] = Getbindex(data, 0.08, 8);
+   
+    if forward.K > 0.5
+       a = 1; 
+    end
+    
+    if bmag ~= 1 || bphi ~=1
+        [trap, exitflag] = design_instruction_preprocessing(data);
+        P_trapp = 1;
+        for i = 1 : trap.num
+            P_trapp = P_trapp * trap.G(i);
+        end
+        data.mag = 20 * log10(data.mag);
+        data_out.mag = 20 * log10(data_out.mag);
+        data_out = translate_data(data_out, P_trapp);
+        figurename('pre');
+        subplot 211
+        semilogx(data_out.fre, data_out.mag, 'r*-');
+        grid on
+        subplot 212
+        semilogx(data_out.fre, data_out.phi, 'r*-');
+        grid on
+        
+%         figurename('trap');
+%         bode(P_trapp);
+%         grid on
+        if exitflag == 1 || exitflag == 2
+            break;
+        else
+            philim = philim - 0.5;
+        end
+            
+    else
+        break;
+    end
 end
+
+autoArrangeFigures;
 
 
 fid = fopen(outputfile, 'wt+');
@@ -127,7 +218,7 @@ if bforward == 1
     a_aux = [1 / (parameter.para_aux1 * 2 * pi), 1];
     b_aux = [1 / (parameter.para_aux2 * 2 * pi), 1];
     [dNumf, dDenf] = c2dm(a, a_aux, TSp, 'tustin');
-    fprintf(fid, 'Link_%02d=%.l2f,%.12f,%.12f, %.12f,%.12f,\n', nQKStart, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKStart, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
     [dNumf, dDenf] = c2dm(b, b_aux, TSp, 'tustin');
     fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKStart + 1, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
     fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKEnd, forward.K / K_model, 0, 0, 0, 0);
@@ -149,6 +240,12 @@ k = omegan * omegan / K_model;
 TSp = 0.0005;
 [dNumd,dDend] = c2dm(a, b, TSp, 'tustin');
 fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nJZStart + num, -dDend(2),-dDend(3),dNumd(1),dNumd(2),dNumd(3));
+num = num + 1;
+
+a = G_Inertial.Numerator{1, 1};
+b = G_Inertial.Denominator{1, 1};
+[dNumt,dDent] = c2dm(a, b, TSp, 'tustin');
+fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nJZStart + num, -dDent(2),-dDent(3),dNumt(1),dNumt(2),dNumt(3));
 num = num + 1;
 
 % later
