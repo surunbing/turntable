@@ -26,10 +26,15 @@ trap_pre = 0;
 later_pre = 0;
 %% 是否需要加入能否设计出的评估
 
-dataG.fre = linspace(1, 70, 70) * 2 * pi;
-[mag, phi] = bode(G, dataG.fre);
-dataG.mag = 20 * log10(reshape(mag, [length(dataG.fre), 1]));
-dataG.phi = reshape(phi, [length(dataG.fre), 1]);
+ET205 = load('middle_noeso.csv');
+dataG.fre = ET205(:, 1) * 2 * pi;
+dataG.mag = 20 .* log10(ET205(:, 2));
+dataG.phi = ET205(:, 3);
+
+% dataG.fre = linspace(1, 70, 70) * 2 * pi;
+% [mag, phi] = bode(G, dataG.fre);
+% dataG.mag = 20 * log10(reshape(mag, [length(dataG.fre), 1]));
+% dataG.phi = reshape(phi, [length(dataG.fre), 1]);
 
 k_search = 0;
 mag_creg_up = mag_creg;
