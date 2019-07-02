@@ -127,7 +127,7 @@ grid on
 %     bode((K * G1 + G1 * forward.G)/ (1 + K * G1));
 %     grid on
 % end
-
+trap.num = 0;
 K_model = parameter.K;
 taum = parameter.taum;
 taue = parameter.taue;
@@ -160,15 +160,16 @@ while mag_creg > parameter.maglim  || phi_creg > parameter.philim
     data.mag = abs(complex_close(1:nocunt));
     data.phi = angle(complex_close(1:nocunt)) / pi * 180;
     
-    data_out.fre = data_out.fre(1:20);
-    data_out.mag = abs(complex_close(1:20));
-    data_out.phi = angle(complex_close(1:20)) / pi * 180;
+    data_pre.fre = data_out.fre(1:20);
+    data_pre.mag = abs(complex_close(1:20));
+    data_pre.phi = angle(complex_close(1:20)) / pi * 180;
     
     %% 检查前馈效果
     [bmag, bphi] = Getbindex(data, 0.08, 8);
    
-    if forward.K > 0.5
-       a = 1; 
+    if exitflag == 0
+        h2 = warndlg('前馈失败!!!');
+        break;
     end
     
     if bmag ~= 1 || bphi ~=1
@@ -178,14 +179,14 @@ while mag_creg > parameter.maglim  || phi_creg > parameter.philim
             P_trapp = P_trapp * trap.G(i);
         end
         data.mag = 20 * log10(data.mag);
-        data_out.mag = 20 * log10(data_out.mag);
-        data_out = translate_data(data_out, P_trapp);
+        data_pre.mag = 20 * log10(data_pre.mag);
+        data_pre = translate_data(data_pre, P_trapp);
         figurename('pre');
         subplot 211
-        semilogx(data_out.fre, data_out.mag, 'r*-');
+        semilogx(data_pre.fre, data_pre.mag, 'r*-');
         grid on
         subplot 212
-        semilogx(data_out.fre, data_out.phi, 'r*-');
+        semilogx(data_pre.fre, data_pre.phi, 'r*-');
         grid on
         
 %         figurename('trap');
