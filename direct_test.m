@@ -204,7 +204,7 @@ end
 
 autoArrangeFigures;
 
-
+TSp = parameter.Ts;
 fid = fopen(outputfile, 'wt+');
 %% 指令预处理
 fprintf(fid, '[DOF_%d]\n', nDOF);
@@ -225,9 +225,10 @@ if bforward == 1
     fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKStart + 1, -dDenf(2),dNumf(1),dNumf(2), 0, 0);
     fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', nQKEnd, forward.K / K_model, 0, 0, 0, 0);
 else
-    for i = nQKStart : 1 : nQKEnd
+    for i = nQKStart : 1 : nQKEnd - 1
         fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', i, 1.0, 0.0, 0.0, 0.0, 0.0);
     end
+    fprintf(fid, 'Link_%02d=%.12f, %.12f, %.12f, %.12f, %.12f,\n', i, 0.0, 0.0, 0.0, 0.0, 0.0);
 end
 
 fprintf(fid, '// %d-%d 为串联校正环节，link%d为增益 不用时全部参数必须为0\n', nJZStart, nJZEnd, nJZEnd);

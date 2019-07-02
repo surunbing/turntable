@@ -36,6 +36,7 @@ if strcmp(option.type, 'transfer-function')
     data_check = CL_check(GC, bandwidth, maglim, philim);
     if data_check.bmag ~= 1 || data_check.bphi ~= 1
         exitflag = 0;
+        k = parameter.forwardKmax;
     else
         %% 开始设计 二分法
         while 1
@@ -50,6 +51,7 @@ if strcmp(option.type, 'transfer-function')
                 kmax = k;
                 if abs((kmin + kmax) * 0.5 - k_pre) < 1e-3
                     k = (kmin + kmax) * 0.5;
+                    exitflag = 1;
                     break;
                 end
                 k_pre = k;
@@ -61,7 +63,7 @@ elseif strcmp(option.type, 'discrete')
 end
 forward.G = G_forward * k;
 forward.K = k;
-exitflag = 1;
+% exitflag = 1;
 end
 
 

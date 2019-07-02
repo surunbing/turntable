@@ -37,9 +37,6 @@ global parameter
 %nJZStart = 7;
 %nJZEnd = 29;
 %nDOF = 0;
-
-TSp = 0.0005;
-
 % outputfile = 'C:\Users\57531\Documents\school\毕业设计\turntable/controller_noeso.txt';
 % outputfile = 'H:\毕业设计\turntable/controller_noeso2.txt';
 %outputfile = 'controller_noeso3.txt';
