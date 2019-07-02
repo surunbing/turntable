@@ -1,6 +1,7 @@
-filename = 'esosweepbanzai.csv';
-nlength = 49;
-type = 0;
+close all
+% filename = 'esosweepbanzai.csv';
+% nlength = 49;
+% type = 0;
 % frequence = linspace(1, nlength, nlength) * 2 * pi;
 if isempty(strfind(filename, '.csv')) == 0 
     ET = load(filename);

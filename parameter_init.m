@@ -1,5 +1,5 @@
-bandwidth = 10; % 带宽设置, hz 请设置整数倍
-ratio = 1.7;
+%bandwidth = 10; % 带宽设置, hz 请设置整数倍
+%ratio = 3;
 
 global parameter
 
@@ -22,24 +22,28 @@ global parameter
 
 
 
-K = 3.491260430644539e+02;     %% ET205半载
-taue = 0.001726113287549;
-taum = 2.465408813244642;
+%K = 3.491260430644539e+02;     %% ET205半载
+%taue = 0.001726113287549;
+%taum = 2.465408813244642;
 
 % K = 1.56 * 180 / pi;
 % taue = 0.0039035;
 % taum = 0.984871194396488;
 
-nZLYCLStart = 0;
-nZLYCLEnd = 3;
-nQKStart = 4;
-nQKEnd = 6;
-nJZStart = 7;
-nJZEnd = 29;
-nDOF = 0;
+%nZLYCLStart = 0;
+%nZLYCLEnd = 3;
+%nQKStart = 4;
+%nQKEnd = 6;
+%nJZStart = 7;
+%nJZEnd = 29;
+%nDOF = 0;
+
+TSp = 0.0005;
 
 % outputfile = 'C:\Users\57531\Documents\school\毕业设计\turntable/controller_noeso.txt';
-outputfile = 'H:\毕业设计\turntable/controller_noeso2.txt';
+% outputfile = 'H:\毕业设计\turntable/controller_noeso2.txt';
+%outputfile = 'controller_noeso3.txt';
+
 
 parameter.K = K;
 parameter.taum = taum;

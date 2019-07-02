@@ -26,10 +26,12 @@ trap_pre = 0;
 later_pre = 0;
 %% 是否需要加入能否设计出的评估
 
-ET205 = load('middle_noeso.csv');
+ET205 = load(featurefilename);
 dataG.fre = ET205(:, 1) * 2 * pi;
 dataG.mag = 20 .* log10(ET205(:, 2));
 dataG.phi = ET205(:, 3);
+
+complex_G = 10 .^ (dataG.mag / 20) .* complex(cos(dataG.phi / 180  * pi), sin(dataG.phi / 180  * pi));
 
 % dataG.fre = linspace(1, 70, 70) * 2 * pi;
 % [mag, phi] = bode(G, dataG.fre);
@@ -102,9 +104,9 @@ semilogx(data_out.fre(1:20), magout(1:20), 'r*-');
 grid on
 subplot 212
 phiout = angle(complex_open ./ (1 + complex_open)) / pi * 180;
-for i = 1 : length(phi)
-    if phi(i) > 30
-        phi(i) = phi(i) - 360;
+for i = 1 : length(phiout)
+    if phiout(i) > 30
+        phiout(i) = phiout(i) - 360;
     end
 end
 semilogx(data_out.fre(1:20), phiout(1:20), 'r*-');
